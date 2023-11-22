@@ -107,6 +107,15 @@ class OCVData:
         return GA(n_chromosomes=10, bounds=array_bounds, obj_func=func_obj,
                   n_pool=7, n_elite=3, n_generations=2).solve()[0]
 
+    def get_soc(self, soc_lib: float,
+                soc_p_min: float, soc_p_max: float,
+                soc_n_min: float, soc_n_max: float) -> tuple[float, float]:
+        array_soc_p = np.linspace(soc_p_min, soc_p_max)
+        array_soc_n = np.flip(np.linspace(soc_n_min, soc_n_max))
+        func_interpolation_soc_p = scipy.interpolate.interp1d(self.array_soc_lib, array_soc_p)
+        func_interpolation_soc_n = scipy.interpolate.interp1d(self.array_soc_lib, array_soc_n)
+        return func_interpolation_soc_p(soc_lib), func_interpolation_soc_n(soc_lib)
+
     def plot_fit(self, soc_p_min: float, soc_p_max: float, soc_n_min: float, soc_n_max: float,
                  cap_exp: Optional[npt.ArrayLike] = None, v_exp: Optional[npt.ArrayLike] = None) -> None:
         array_ocp_p = self._func_interp_ocp(soc_min=soc_p_min, soc_max=soc_p_max,
