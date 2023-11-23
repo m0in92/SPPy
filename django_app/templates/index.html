@@ -13,9 +13,11 @@
     </div>
     <div class="container">
         <form action="/result/" method="POST">
+            <table>
             {% csrf_token %}
-            {{ form }}
-            <button>submit</button>
+            {{ form.as_table }}
+            </table>
+            <button>Submit</button>
         </form>
     </div>
 </body>
