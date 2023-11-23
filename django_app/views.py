@@ -17,27 +17,30 @@ def index(request) -> HttpResponse:
     else:
         form = SimulationVariables()
 
-    return render(request=request, template_name='input_simulation_variables.html', context={'form': form})
+    return render(request=request, template_name='index.html', context={'form': form})
 
 
 def result(request) -> HttpResponse:
+    FIG_HEIGHT = 300  # in px
+    FIG_WIDTH = 300  # in px
+
     simulation_inputs = get_simulation_inputs(request=request)
     sol = perform_simulation(simulation_inputs=simulation_inputs)
 
     # plot V vs. t
-    p1 = figure(title='Voltage Profile', x_axis_label='t [s]', y_axis_label='V [V]')
+    p1 = figure(title='Voltage Profile', x_axis_label='t [s]', y_axis_label='V [V]', height=FIG_HEIGHT)
     p1.line(sol.t, sol.V, line_width=5)
 
     # plot cap vs. t
-    p2 = figure(title='Voltage Profile', x_axis_label='cap [Ahr]', y_axis_label='V [V]')
+    p2 = figure(title='Voltage Profile', x_axis_label='cap [Ahr]', y_axis_label='V [V]', height=FIG_HEIGHT)
     p2.line(sol.cap, sol.V, line_width=5)
 
     # plot soc_p vs. t
-    p3 = figure(title='Positive Electrode SOC', x_axis_label='t [s]', y_axis_label='SOC')
+    p3 = figure(title='Positive Electrode SOC', x_axis_label='t [s]', y_axis_label='SOC', height=FIG_HEIGHT)
     p3.line(sol.t, sol.x_surf_p, line_width=5)
 
     # plot soc_n vs. t
-    p4 = figure(title='Negative Electrode SOC', x_axis_label='t [s]', y_axis_label='SOC')
+    p4 = figure(title='Negative Electrode SOC', x_axis_label='t [s]', y_axis_label='SOC', height=FIG_HEIGHT)
     p4.line(sol.t, sol.x_surf_n, line_width=5)
 
     script, div = components(gridplot([[p1, p2], [p3, p4]]))

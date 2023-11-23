@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    {% load static %}
+    <meta charset="UTF-8">
+    <link rel="stylesheet" href="{% static 'style.css' %}">
+    <title>Parameter Selection</title>
+</head>
+
+<body>
+    <div class="headingBanner">
+        <h1>Battery Simulation Parameters</h1>
+    </div>
+    <div class="container">
+        <form action="/result/" method="POST">
+            {% csrf_token %}
+            {{ form }}
+            <button>submit</button>
+        </form>
+    </div>
+</body>
+</html>
