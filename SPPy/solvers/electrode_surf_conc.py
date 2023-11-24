@@ -317,7 +317,7 @@ class PolynomialApproximation(BaseElectrodeConcSolver):
         super().__init__(electrode_type=electrode_type)
         self.c_s_avg_prev = c_init
         self.c_surf = c_init
-        if type=='two' or type == 'higher':
+        if type == 'two' or type == 'higher':
             self.type = type
         else:
             raise ValueError(f"{type} is not recognized as a solver type")

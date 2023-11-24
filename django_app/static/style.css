@@ -64,3 +64,8 @@ button {
     border-radius: 20px;
     cursor: pointer;
 }
+
+.table_simulation_parameters {
+    margin: auto;
+    padding: 100px;
+}
