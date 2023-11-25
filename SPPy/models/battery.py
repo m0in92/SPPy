@@ -82,7 +82,7 @@ class SPM:
         :param SOC_n: negative electrode SOC
         :param c_e: electrolyte conc. [mol]
         :param T: Battery cell temperature [K]
-        :param I_p_i: positiive electrode intercalation applied current [A]
+        :param I_p_i: positive electrode intercalation applied current [A]
         :param I_n_i: negative electrode intercalation applied current [A]
         :return: Battery cell terminal voltage [V]
         """

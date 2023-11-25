@@ -68,5 +68,6 @@ class TestESC(unittest.TestCase):
                                     h_prev=self.h_prev))
 
     def test_classmethod_v(self):
-        self.assertEqual(ESC.v(i_app=self.i_app, ocv=self.ocv, R0=self.R0, R1=self.R1, i_R1=self.i_R1_prev,
-                               m=self.m, h=self.h_prev, s_prev=self.s_prev, m_0=self.m_0))
+        self.assertEqual(3.6011999999999995, ESC.v(i_app=self.i_app, ocv=self.ocv, R0=self.R0, R1=self.R1,
+                                                   i_R1=self.i_R1_prev, m=self.m, h=self.h_prev, s_prev=self.s_prev,
+                                                   m_0=self.m_0))
