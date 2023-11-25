@@ -53,8 +53,8 @@ class TestElectrodePotentialFVMSolver(unittest.TestCase):
         # The flux [mol m-2 s-1] below is when a current of 1A is applied during discharge.
         j = -5.679e-6 * np.ones(5)  # row vector
         self.assertTrue(
-            np.array_equal(dx ** 2 * Constants.F * self.instance_p.a_s * j.reshape(-1, 1) / self.instance_p.sigma_eff,
-                           self.instance_p._array_j(j=j)))
+            np.allclose(dx ** 2 * Constants.F * self.instance_p.a_s * j.reshape(-1, 1) / self.instance_p.sigma_eff,
+                        self.instance_p._array_j(j=j)))
 
         j = j.reshape(-1, 1)  # column vector
         self.assertTrue(

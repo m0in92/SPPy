@@ -1,5 +1,10 @@
+"""
+This module contains classes and functionality to calculate the lithium concentrations in the solid phase of the
+electrode region
+"""
+
 __author__ = 'Moin Ahmed'
-__copywrite__ = 'Copywrite 2023 by Moin Ahmed. All rights are reserved.'
+__copyright__ = 'Copyright 2023 by Moin Ahmed. All rights are reserved.'
 __status__ = 'deployed'
 
 
