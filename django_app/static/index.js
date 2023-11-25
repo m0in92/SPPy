@@ -2,9 +2,7 @@ const parameterName = document.querySelector("select"); // user parameter name s
 
 parameterName.onclick = () => {
     let parameterSetName = document.querySelector("select").value;
-    console.log(parameterSetName);
     document.getElementById("table_parameter_values_main_heading").innerHTML = parameterSetName;
-    console.log('yes');
     fetch('static/parameter_sets.json')
         .then(response => response.json())
         .then(data => displayParametersetInformation(data[parameterSetName]));}
@@ -46,26 +44,45 @@ function displayParametersetInformation(data) {
     document.getElementById("id_parameter_min_potential_value_bc").innerHTML = data["Minimum Potential Cut-off_bc [V]"];
 }
 
+function plotTimeVoltage(time, voltage) {
+    const ctx = document.getElementById('id_chart');
 
-  const ctx = document.getElementById('id_chart');
-
-  new Chart(ctx, {
-    type: 'line',
-    data: {
-      labels: [0, 1, 2, 3, 4, 5],
-      datasets: [{
-        label: '# of Votes',
-        data: [4.2, 4.0, 3.8, 3.6, 3.24, 3.2],
-        borderWidth: 1,
-          backgroundColor: 'black'
-      }]
-    },
-    options: {
-      scales: {
-        y: {
-          beginAtZero: true
+    const config = {type: 'line',
+        data: {
+        labels: time,
+            datasets: [{
+            // label: '# of Votes',
+                data: voltage,
+                borderWidth: 1,
+                backgroundColor: 'black'
+        }]},
+        options: {
+        scales: {
+            y: {
+                beginAtZero: false
+            }
         }
-      }
     }
-  });
+    }
+
+    var chartObj = new Chart(ctx, config);
+    // chartObj.destroy();
+}
+
+
+async function createPlot() {
+    let response = await fetch('', {
+        method: 'get',
+        headers: {
+            'X-Requested-With': 'XMLHttpRequest',
+            'Content-Type': 'application/json'
+        }
+    });
+
+    let data = await response.json();
+    plotTimeVoltage(data['t [s]'], data['V [V]'])
+    console.log(await data);
+}
+
+
 
