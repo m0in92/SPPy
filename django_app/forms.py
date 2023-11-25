@@ -10,7 +10,9 @@ class SimulationVariables(forms.Form):
                             ("SPM", 'SPM')]
 
     parameter_name = forms.ChoiceField(label="Parameter Name", choices=lst_parameter_name)
-    battery_cell_model = forms.ChoiceField(label="Battery Cell Model", choices=lst_cell_model)
-    solver_type = forms.CharField(max_length=200)
+    # battery_cell_model = forms.ChoiceField(label="Battery Cell Model", choices=lst_cell_model)
+    # solver_type = forms.CharField(max_length=200)
     cycler = forms.CharField(max_length=200)
+    soc_n_init = forms.FloatField(label='Initial Negative Electrode SOC', min_value=-0.1, max_value=1.1)
+    soc_p_init = forms.FloatField(label='Initial Positive Electrode SOC', min_value=-0.1, max_value=1.1)
 

@@ -1,0 +1,102 @@
+body {
+    background-color: #3AAFA9;
+    justify-content: center;
+}
+
+h1 {
+    color: #feffff;
+    /* background-color: #DEF2F1; */
+    text-align: center;
+    /* margin: 50px; */
+}
+
+.headingBanner{
+    width: 100;
+    background-color: #2B7A78;
+}
+
+.container {
+    width: 50%;
+    margin: auto;
+}
+
+form {
+    display: flex;
+    flex-direction: column;
+}
+
+label {
+    color: #17252A;
+    font-weight: bold;
+
+    margin-bottom: 8px;
+    font-size: 20px;
+    text-align: left;
+    float: left;
+}
+
+input {
+    padding: 8px;
+    margin-bottom: 16px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+}
+
+select {
+    padding: 8px;
+    margin-bottom: 16px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    float: left;
+}
+
+button {
+    font-size: 16px;
+    font-weight: bold;
+
+    width: 30%;
+    margin: auto;
+    /* text-align: center; */
+    padding: 10px;
+    background-color: #17252A;
+    color: #fff;
+    border: none;
+    border-radius: 20px;
+    cursor: pointer;
+}
+
+.table_simulation_parameters {
+    margin: auto;
+    padding: 100px;
+}
+
+li {
+    margin: auto;
+    font-size: 20px;
+}
+
+.span_param_name {
+    font-weight: bold;
+}
+
+table {
+    margin: auto;
+    padding: 15px;
+}
+
+.table_main_heading {
+    border: 1px solid black;
+    text-align: center;
+}
+
+th, td {
+    border: 1px solid black;
+}
+
+.parameter_names {
+    text-align: left;
+}
+
+.parameter_values {
+    text-align: center;
+}

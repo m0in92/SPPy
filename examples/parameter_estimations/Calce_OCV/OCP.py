@@ -23,7 +23,7 @@ obj_OCV = OCVData(b_cell=cell, sol_exp=sol_exp,
                   SOC_n_min_init=SOC_n_min, SOC_p_min_init=SOC_init_p,
                   SOC_n_max_init=SOC_n_max, SOC_p_max_init=SOC_p_max)
 
-print(obj_OCV.SOC_from_OCV(4.19787216 ))
+print(obj_OCV.SOC_from_OCV(4.19787216))
 
 obj_OCV.plot()
 

@@ -24,7 +24,7 @@ cell = SPPy.BatteryCell.read_from_parametersets(parameter_set_name='test',
 
 # set-up cycler and solver. Also plot the cycler time [s] and current [A]. For this example the data is extracted from
 # a csv file.
-df = pd.read_csv('../SP/isothermal/example_data.csv')
+df = pd.read_csv('example_data.csv')
 cycler = SPPy.CustomCycler(array_t=df['t [s]'].to_numpy(), array_I=df['I [A]'].to_numpy(), SOC_LIB=1.0,
                            V_min=V_min, V_max=V_max)
 cycler.plot()

@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    {% load static %}
+    <meta charset="UTF-8">
+    <link rel="stylesheet" href="{% static 'style.css' %}">
+    <title>Parameter Selection</title>
+</head>
+
+<body>
+    <div class="headingBanner">
+        <h1>Battery Simulation Parameters</h1>
+    </div>
+    <div class="container">
+        <form action="/result/" method="POST">
+            <table>
+            {% csrf_token %}
+            {{ form.as_table }}
+            </table>
+            <button>Submit</button>
+        </form>
+    </div>
+
+    <table class="table_parameter_values">
+        <tr><h3 class="table_main_heading" id="table_parameter_values_main_heading"></h3></tr>
+
+        <tr><th></th><th>Negative Electrode</th><th>Seperator</th><th>Positive Electrode</th></tr>
+
+        <tr><th class="parameter_names">Diffusivity [<em>m<sup>2</sup>s<sup>-1</sup></em>]</th><th>value_p</th><th>value_sep</th><th>value_n</th></tr>
+        <tr><th class="parameter_names">Reaction Rate [<em>m<sup>2.5</sup>mol<sup>-0.5</sup>s<sup>-1</sup></em>]</th><th>value_p</th><th>value_sep</th><th>value_n</th></tr>
+        <tr><th class="parameter_names">Particle Radius [<em>m</em>]</th><th>value_p</th><th>value_sep</th><th>value_n</th></tr>
+        <tr><th class="parameter_names">Volume Fraction</th><th>value_p</th><th>value_sep</th><th>value_n</th></tr>
+        <tr><th class="parameter_names">Anodic Transfer Co-efficient</th><th>value_p</th><th>value_sep</th><th>value_n</th></tr>
+        <tr><th class="parameter_names">Cathodic Transfer Co-efficient</th><th>value_p</th><th>value_sep</th><th>value_n</th></tr>
+        <tr><th class="parameter_names">Bruggerman Coefficient</th><th>value_p</th><th>value_sep</th><th>value_n</th></tr>
+        <tr><th class="parameter_names">Max. Conc. [<em>mol m<sup>-3</sup></em>]</th><th>value_p</th><th>value_sep</th><th>value_n</th></tr>
+
+
+        <tr><th class="parameter_names">Cross-section Area [<em>m<sup>2</sup></em>]</th><th class="parameter_values" colspan="3">1626</th></tr>
+        <tr><th class="parameter_names">Density [<em>kg m<sup>-3</sup></em>]</th><th class="parameter_values" colspan="3">1626</th></tr>
+        <tr><th class="parameter_names">Volume [<em>m<sup>3</sup></em>]</th><th class="parameter_values" id="id_parameter_values_vol_bc" colspan="3">3.38e-5</th></tr>
+        <tr><th class="parameter_names">Specific Heat [<em>J K<sup>-1</sup> kg<sup>-1</sup></em>]</th><th class="parameter_values" colspan="3">750</th></tr>
+        <tr><th class="parameter_names">Heat Transfer Coefficient [<em>J K<sup>-1</sup> s<sup>-1</sup></em>]</th><th class="parameter_values" colspan="3">1</th></tr>
+        <tr><th class="parameter_names">Surface Area [<em>m<sup>3</sup></em>]</th><th class="parameter_values" colspan="3">0.085</th></tr>
+        <tr><th class="parameter_names">Capacity [<em>A hr</em>]</th><th class="parameter_values" colspan="3">1.65</th></tr>
+        <tr><th class="parameter_names">Maximum Potential Cut-off [<em>V</em>]</th><th class="parameter_values" colspan="3">4.2</th></tr>
+        <tr><th class="parameter_names">Minimum Potential Cut-off [<em>V</em>]</th><th class="parameter_values" colspan="3">2.5</th></tr>
+    </table>
+
+    <ul id="li_parameter_list"></ul>
+
+    <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js" type="text/javascript"></script>
+    <script src="{% static 'index.js' %}"></script>
+</body>
+</html>

@@ -1,22 +1,26 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+  {% load static %}
   <link href=”http://cdn.pydata.org/bokeh/release/bokeh-3.3.1.min.css" rel=”stylesheet” type=”text/css”>
   <link href=”http://cdn.pydata.org/bokeh/release/bokeh-widgets-3.3.1.min.css" rel=”stylesheet” type=”text/css”>
-    <meta charset="UTF-8">
-    <title>Title</title>
+  <meta charset="UTF-8">
+  <link rel="stylesheet" href="{% static 'style.css' %}">
+  <title>Simulation Results</title>
 </head>
 <body>
+  <div class="headingBanner">
+    <h1>Simulation Results</h1>
+  </div>
 
-  {{div| safe}}
+  <div class="container">{{div| safe}}</div>
 
+
+  <script src="https://cdn.bokeh.org/bokeh/release/bokeh-3.3.1.min.js"></script>
+  <script src="https://cdn.bokeh.org/bokeh/release/bokeh-widgets-3.3.1.min.js"></script>
+  <script src="https://cdn.bokeh.org/bokeh/release/bokeh-tables-3.3.1.min.js"></script>
+  <script src="https://cdn.bokeh.org/bokeh/release/bokeh-api-3.3.1.min.js"></script>
+  {{script| safe}}
 </body>
-
-
-<script src="https://cdn.bokeh.org/bokeh/release/bokeh-3.3.1.min.js"></script>
-<script src="https://cdn.bokeh.org/bokeh/release/bokeh-widgets-3.3.1.min.js"></script>
-<script src="https://cdn.bokeh.org/bokeh/release/bokeh-tables-3.3.1.min.js"></script>
-<script src="https://cdn.bokeh.org/bokeh/release/bokeh-api-3.3.1.min.js"></script>
-{{script| safe}}
 
 </html>

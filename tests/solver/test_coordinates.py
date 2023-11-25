@@ -1,6 +1,8 @@
 import unittest
 
-from SPPy.solvers.co_ordinates import FVMCoordinates
+import numpy as np
+
+from SPPy.solvers.co_ordinates import FVMCoordinates, FDMCoordinates
 
 
 class TestFVMCoordinates(unittest.TestCase):
@@ -66,3 +68,45 @@ class TestFVMCoordinates(unittest.TestCase):
         self.assertEqual(self.instance.dx_p, self.instance.array_dx[-1])
         self.assertEqual(30, len(self.instance.array_dx))
 
+
+class TestFDMCoordinates(unittest.TestCase):
+    L_n = 8.5e-5
+    L_s = 2.5e-5
+    L_p = 8.8e-5
+    num_grid_n: int = 10
+    num_grid_s: int = 10
+    num_grid_p: int = 10
+    instance = FDMCoordinates(L_n=L_n, L_s=L_s, L_p=L_p,
+                              num_grid_n=num_grid_n, num_grid_s=num_grid_s, num_grid_p=num_grid_n)
+
+    def test_constructor(self):
+        self.assertEqual(self.L_n, self.instance.L_n)
+        self.assertEqual(self.L_s, self.instance.L_s)
+        self.assertEqual(self.L_p, self.instance.L_p)
+
+        self.assertEqual(self.num_grid_n, self.instance.num_grid_n)
+        self.assertEqual(self.num_grid_s, self.instance.num_grid_s)
+        self.assertEqual(self.num_grid_p, self.instance.num_grid_p)
+
+        self.assertEqual(8.5e-6, self.instance.dx_n)
+        self.assertEqual(2.5e-6, self.instance.dx_s)
+        self.assertEqual(8.8e-6, self.instance.dx_p)
+
+    def test_array_x_n(self):
+        array_actual = np.array([0, 8.5e-6, 17e-6, 25.5e-6, 34e-6, 42.5e-6, 51.0e-6,
+                                 59e-6, 67.5e-6, 76e-6, 85e-6])
+        self.assertEqual(10, len(self.instance.array_x_n))
+        print(self.instance.array_x_n)
+        self.assertTrue(np.array_equal(array_actual, self.instance.array_x_n))
+
+    def test_array_x_s(self):
+        pass
+
+    def test_array_x_p(self):
+        pass
+
+    def test_array_x(self):
+        pass
+
+    def test_array_x(self):
+        pass

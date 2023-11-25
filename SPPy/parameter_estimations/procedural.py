@@ -1,65 +1,146 @@
-from typing import Union
+from typing import Union, Callable, Optional
 
 import numpy as np
 import numpy.typing as npt
 import matplotlib.pyplot as plt
-import scipy.interpolate
+import scipy
 
 import SPPy
+from SPPy.calc_helpers.computational_intelligence_algorithms import GA
 
 
 class OCVData:
-    def __init__(self, b_cell: SPPy.BatteryCell, sol_exp: SPPy.Solution,
-                 SOC_n_min_init: float, SOC_n_max_init: float,
-                 SOC_p_min_init: float, SOC_p_max_init: float):
-        self.b_cell = b_cell
-        self.exp_data = sol_exp
-        self.SOC_n_min = SOC_n_min_init
-        self.SOC_n_max = SOC_n_max_init
-        self.SOC_p_min = SOC_p_min_init
-        self.SOC_p_max = SOC_p_max_init
+    """
+    This class finds the stociometric limits of the positive and the negative electrodes using the low C-rate
+    battery cycling.
+    Optimization is performed whereby the fitted OCV is compared with the experimental results
+    """
 
-    def OCP_n(self, SOC_LIB: float):
-        SOC_n = SOC_LIB * (self.SOC_n_max - self.SOC_n_min) + self.SOC_n_min
-        return self.b_cell.elec_n.func_OCP(SOC_n)
+    def __init__(self, func_ocp_p: Callable, func_ocp_n: Callable,
+                 soc_n_min_1: float, soc_n_min_2: float,
+                 soc_n_max_1: float, soc_n_max_2: float,
+                 soc_p_min_1: float, soc_p_min_2: float,
+                 soc_p_max_1: float, soc_p_max_2: float,
+                 charge_or_discharge: str):
+        self.func_ocp_p = func_ocp_p
+        self.func_ocp_n = func_ocp_n
 
-    def OCP_p(self, SOC_LIB: float):
-        SOC_p = SOC_LIB * (self.SOC_p_max - self.SOC_p_min) + self.SOC_p_min
-        return np.flip(self.b_cell.elec_p.func_OCP(SOC_p))
+        self.SOC_N_MIN_1 = soc_n_min_1
+        self.SOC_N_MIN_2 = soc_n_min_2
+        self.SOC_N_MAX_1 = soc_n_max_1
+        self.SOC_N_MAX_2 = soc_n_max_2
+        self.SOC_P_MIN_1 = soc_p_min_1
+        self.SOC_P_MIN_2 = soc_p_min_2
+        self.SOC_P_MAX_1 = soc_p_max_1
+        self.SOC_P_MAX_2 = soc_p_max_2
 
-    def OCV(self, SOC_LIB: Union[float, npt.ArrayLike]):
-        OCP_p_ = self.OCP_p(SOC_LIB=SOC_LIB)
-        OCP_n_ = self.OCP_n(SOC_LIB=SOC_LIB)
-        return OCP_p_, OCP_n_, OCP_p_ - OCP_n_
+        self.cycling_step: str = charge_or_discharge
 
-    def mse(self, array_SOC_LIB: npt.ArrayLike = np.linspace(0, 1)):
-        _,_,array_sim = self.OCV(array_SOC_LIB)
-        return np.mean((self.exp_data.V - array_sim) ** 2)
+        self.SOC_LIB_MIN = 0.0
+        self.SOC_LIB_MAX = 1.0
 
-    def SOC_from_OCV(self, OCV: float, array_SOC: npt.ArrayLike = np.linspace(0,1)) -> tuple[float, float, float]:
-        array_OCP_p, array_OCP_n, array_OCV = self.OCV(SOC_LIB=array_SOC)
-        f_OCP_p = scipy.interpolate.interp1d(array_OCP_p, array_SOC)
-        f_OCP_n = scipy.interpolate.interp1d(array_OCP_n, array_SOC)
-        f_OCV = scipy.interpolate.interp1d(array_OCV, array_SOC)
-        return f_OCP_p(OCV), f_OCP_n(OCV), f_OCV(OCV)
+    @property
+    def array_soc_lib(self):
+        return np.linspace(self.SOC_LIB_MIN, self.SOC_LIB_MAX)
 
-    def plot(self, array_SOC_LIB: npt.ArrayLike = np.linspace(0, 1)):
-        # func_OCV_exp = scipy.interpolate.interp1d(self.exp_data.cap, self.exp_data.V)
-        # Plots
+    @staticmethod
+    def _func_interp_ocp_exp(array_cap_exp: npt.ArrayLike, array_v_exp: npt.ArrayLike):
+        return scipy.interpolate.interp1d(array_cap_exp, array_v_exp)
+
+    def array_soc(self, soc_min: float, soc_max: float) -> npt.ArrayLike:
+        return np.linspace(soc_min, soc_max)
+
+    def array_ocp_p(self, soc_min: float, soc_max: float) -> npt.ArrayLike:
+        array_soc_p = self.array_soc(soc_min=soc_min, soc_max=soc_max)
+        if self.cycling_step == 'discharge':
+            return self.func_ocp_p(array_soc_p)
+        elif self.cycling_step == 'charge':
+            return np.flip(self.func_ocp_p(array_soc_p))
+        else:
+            raise TypeError('Unknown charging step.')
+
+    def array_ocp_n(self, soc_min: float, soc_max: float) -> npt.ArrayLike:
+        array_soc_n = self.array_soc(soc_min=soc_min, soc_max=soc_max)
+        if self.cycling_step == 'discharge':
+            return np.flip(self.func_ocp_n(array_soc_n))
+        elif self.cycling_step == 'charge':
+            return self.func_ocp_n(array_soc_n)
+        else:
+            raise TypeError('Unknown charging step.')
+
+    def _func_interp_ocp(self, soc_min: float, soc_max: float, interpolation_type: str) -> Callable:
+        if interpolation_type == 'p':
+            array_ocp_p_: npt.ArrayLike = self.array_ocp_p(soc_min=soc_min, soc_max=soc_max)
+            return scipy.interpolate.interp1d(self.array_soc_lib, array_ocp_p_)
+        elif interpolation_type == 'n':
+            array_ocp_n_: npt.ArrayLike = self.array_ocp_n(soc_min=soc_min, soc_max=soc_max)
+            return scipy.interpolate.interp1d(self.array_soc_lib, array_ocp_n_)
+
+    def ocv_lib(self, ocp_p: float, ocp_n: float) -> float:
+        return ocp_p - ocp_n
+
+    def mse(self, array_v_exp: npt.ArrayLike, array_v_fit: npt.ArrayLike) -> float:
+        return np.mean((array_v_exp - array_v_fit) ** 2)
+
+    def find_optimized_parameters(self, array_cap_exp: npt.ArrayLike, array_v_exp_: npt.ArrayLike):
+        def func_obj(lst_param: list) -> float:
+            # extract the params from the parameter set below
+            soc_p_min, soc_p_max, soc_n_min, soc_n_max = lst_param[0], lst_param[1], lst_param[2], lst_param[3]
+
+            # calculate the OCV of the LIB below
+            array_ocp_p = self._func_interp_ocp(soc_min=soc_p_min, soc_max=soc_p_max,
+                                                interpolation_type='p')(self.array_soc_lib)
+            array_ocp_n = self._func_interp_ocp(soc_min=soc_n_min, soc_max=soc_n_max,
+                                                interpolation_type='n')(self.array_soc_lib)
+            array_ocv = self.ocv_lib(ocp_p=array_ocp_p, ocp_n=array_ocp_n)
+
+            # MSE calculation below
+            array_v_exp = self._func_interp_ocp_exp(array_cap_exp=array_cap_exp,
+                                                    array_v_exp=array_v_exp_)(self.array_soc_lib)
+            mse: float = self.mse(array_v_exp=array_v_exp, array_v_fit=array_ocv)
+            return mse
+
+        array_bounds: npt.ArrayLike = np.array([[self.SOC_P_MIN_1, self.SOC_P_MIN_2],
+                                                [self.SOC_P_MAX_1, self.SOC_P_MAX_2],
+                                                [self.SOC_N_MIN_1, self.SOC_N_MIN_2],
+                                                [self.SOC_N_MAX_1, self.SOC_N_MAX_2]])
+        return GA(n_chromosomes=10, bounds=array_bounds, obj_func=func_obj,
+                  n_pool=7, n_elite=3, n_generations=2).solve()[0]
+
+    def get_soc(self, soc_lib: float,
+                soc_p_min: float, soc_p_max: float,
+                soc_n_min: float, soc_n_max: float) -> tuple[float, float]:
+        array_soc_p = np.linspace(soc_p_min, soc_p_max)
+        array_soc_n = np.flip(np.linspace(soc_n_min, soc_n_max))
+        func_interpolation_soc_p = scipy.interpolate.interp1d(self.array_soc_lib, array_soc_p)
+        func_interpolation_soc_n = scipy.interpolate.interp1d(self.array_soc_lib, array_soc_n)
+        return func_interpolation_soc_p(soc_lib), func_interpolation_soc_n(soc_lib)
+
+    def plot_fit(self, soc_p_min: float, soc_p_max: float, soc_n_min: float, soc_n_max: float,
+                 cap_exp: Optional[npt.ArrayLike] = None, v_exp: Optional[npt.ArrayLike] = None) -> None:
+        array_ocp_p = self._func_interp_ocp(soc_min=soc_p_min, soc_max=soc_p_max,
+                                            interpolation_type='p')(self.array_soc_lib)
+        array_ocp_n = self._func_interp_ocp(soc_min=soc_n_min, soc_max=soc_n_max,
+                                            interpolation_type='n')(self.array_soc_lib)
+        array_ocv = self.ocv_lib(ocp_p=array_ocp_p, ocp_n=array_ocp_n)
+
         fig = plt.figure()
-        ax1 = fig.add_subplot(211)
-        _,_,array_OCV_ = self.OCV(SOC_LIB=self.exp_data.cap_discharge)
-        ax1.plot(self.exp_data.cap_discharge, array_OCV_, label='sim')
-        ax1.plot(self.exp_data.cap_discharge, self.exp_data.V, label='OCV')
-        ax1.plot(array_SOC_LIB, self.OCP_p(array_SOC_LIB), linestyle='--', label='$OCP_p$')
-        ax1.plot(array_SOC_LIB, self.OCP_n(array_SOC_LIB), linestyle='--', label='$OCP_n$')
 
-        ax2 = fig.add_subplot(212)
-        ax2.plot(self.exp_data.cap_discharge, self.exp_data.V - array_OCV_,
-                 label=f'{self.mse(array_SOC_LIB=self.exp_data.cap_discharge)}')
-        ax2.set_ylabel('$\Delta$V')
-        ax2.legend()
+        ax1 = fig.add_subplot(111)
+        ax1.plot(self.array_soc_lib, array_ocp_p, '--', label=r'${OCP_p}$')
+        ax1.plot(self.array_soc_lib, array_ocp_n, '--', label=r'${OCP_n}$')
+        ax1.plot(self.array_soc_lib, array_ocv, label=r'$OCV_{LIB}^{fit}$')
 
+        if cap_exp is not None and v_exp is not None:
+            ax1.plot(cap_exp, v_exp, label=r'$OCV_{LIB}^{exp}$')
+
+            # MSE calculation below
+            array_v_exp = self._func_interp_ocp_exp(array_cap_exp=cap_exp, array_v_exp=v_exp)(self.array_soc_lib)
+            mse: float = self.mse(array_v_exp=array_v_exp, array_v_fit=array_ocv)
+            ax1.set_title(f'MSE: {mse}')
+
+        ax1.set_xlabel('Cap. [Ahr]')
+        ax1.set_ylabel('V [V]')
         ax1.legend()
         plt.show()
 
@@ -82,7 +163,8 @@ class DriveCycleData:
 
         # set up solver and cycler
         cycler = SPPy.CustomCycler(t_array=0, I_array=0, SOC_LIB=1.0)
-        solver = SPPy.SPPySolver(b_cell=self.b_cell, N=5, isothermal=True, degradation=False, electrode_SOC_solver='poly')
+        solver = SPPy.SPPySolver(b_cell=self.b_cell, N=5, isothermal=True, degradation=False,
+                                 electrode_SOC_solver='poly')
 
     def ga(self):
         pass

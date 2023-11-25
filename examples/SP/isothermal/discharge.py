@@ -3,7 +3,7 @@ This script contains the example usage of the single particle model for the disc
 """
 
 __author__ = 'Moin Ahmed'
-__copywrite__ = 'Copywrite 2023 by Moin Ahmed. All rights reserved.'
+__copyright__ = 'Copyright 2023 by SPPy. All rights reserved.'
 __status__ = 'deployed'
 
 import SPPy

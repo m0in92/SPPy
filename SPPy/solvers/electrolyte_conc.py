@@ -110,3 +110,7 @@ class ElectrolyteConcFVMSolver:
         elif solver_method == 'inverse':
             M = np.linalg.inv(self.M_ce(dt=dt))
             self.array_c_e = np.ndarray.flatten(M @ b)
+
+
+class ElectrolyteConcROMSolver:
+    pass
