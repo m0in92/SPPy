@@ -69,3 +69,34 @@ button {
     margin: auto;
     padding: 100px;
 }
+
+li {
+    margin: auto;
+    font-size: 20px;
+}
+
+.span_param_name {
+    font-weight: bold;
+}
+
+table {
+    margin: auto;
+    padding: 15px;
+}
+
+.table_main_heading {
+    border: 1px solid black;
+    text-align: center;
+}
+
+th, td {
+    border: 1px solid black;
+}
+
+.parameter_names {
+    text-align: left;
+}
+
+.parameter_values {
+    text-align: center;
+}
