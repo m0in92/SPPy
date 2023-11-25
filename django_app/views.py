@@ -1,5 +1,6 @@
 from django.shortcuts import render
 from django.http import HttpResponse, HttpResponseRedirect
+from django.http import JsonResponse
 from bokeh.plotting import figure
 from bokeh.embed import components
 from bokeh.layouts import row, gridplot
@@ -16,6 +17,15 @@ def index(request) -> HttpResponse:
             HttpResponseRedirect('/result/')
     else:
         form = SimulationVariables()
+
+    if request.headers.get('X-Requested-With') == 'XMLHttpRequest':
+        simulation_inputs: tuple = ('test', 'discharge', 0.75, 0.48)
+        sol = perform_simulation(simulation_inputs=simulation_inputs)
+        # return JsonResponse({'number': [1,2,3,4,5]})
+        # simulation_inputs = get_simulation_inputs(request=request)
+        # sol = perform_simulation(simulation_inputs=simulation_inputs)
+        return JsonResponse({'t [s]': sol.t.tolist(),
+                             'V [V]': sol.V.tolist()})
 
     return render(request=request, template_name='index.html', context={'form': form})
 
