@@ -4,3 +4,6 @@ pandas
 pytest
 scipy
 tqdm
+bokeh
+django
+

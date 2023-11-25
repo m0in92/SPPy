@@ -1,23 +1,20 @@
 body {
     background-color: #3AAFA9;
-    justify-content: center;
 }
 
 h1 {
     color: #feffff;
-    /* background-color: #DEF2F1; */
     text-align: center;
-    /* margin: 50px; */
 }
 
 .headingBanner{
-    width: 100;
+    width: 100%;
     background-color: #2B7A78;
 }
 
 .container {
     width: 50%;
-    margin: auto;
+    margin: 0px;
 }
 
 form {
@@ -80,12 +77,12 @@ li {
 }
 
 table {
-    margin: auto;
+    float: left;
+    margin: 0px;
     padding: 15px;
 }
 
 .table_main_heading {
-    border: 1px solid black;
     text-align: center;
 }
 
@@ -99,4 +96,8 @@ th, td {
 
 .parameter_values {
     text-align: center;
+}
+
+.container, .plots {
+    float: left;
 }
