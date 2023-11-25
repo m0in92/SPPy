@@ -19,11 +19,8 @@ def index(request) -> HttpResponse:
         form = SimulationVariables()
 
     if request.headers.get('X-Requested-With') == 'XMLHttpRequest':
-        simulation_inputs: tuple = ('test', 'discharge', 0.75, 0.48)
+        simulation_inputs: tuple = ('test', 'discharge', 0.4956, 0.7568 )
         sol = perform_simulation(simulation_inputs=simulation_inputs)
-        # return JsonResponse({'number': [1,2,3,4,5]})
-        # simulation_inputs = get_simulation_inputs(request=request)
-        # sol = perform_simulation(simulation_inputs=simulation_inputs)
         return JsonResponse({'t [s]': sol.t.tolist(),
                              'V [V]': sol.V.tolist()})
 

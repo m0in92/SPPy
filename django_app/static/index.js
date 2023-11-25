@@ -76,7 +76,7 @@ async function createPlot() {
         headers: {
             'X-Requested-With': 'XMLHttpRequest',
             'Content-Type': 'application/json'
-        }
+        },
     });
 
     let data = await response.json();
