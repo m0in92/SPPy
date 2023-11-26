@@ -13,7 +13,7 @@
     </div>
 
     <div class="container">
-        <form action="/result/" method="POST">
+        <form action="" method="POST">
             <table>
             {% csrf_token %}
             {{ form.as_table }}
@@ -92,8 +92,12 @@
     </table>
     </div>
 
+    <!-- Div containing the t and V plot -->
     <div class="plots">
-        <canvas id="id_chart" height="250", width="500"></canvas>
+        <canvas id="id_chart_tV" height="250" width="250"></canvas>
+        <canvas id="id_chart_tsoc_p" height="250" width="250"></canvas>
+        <canvas id="id_chart_tsoc_n" height="250" width="250"></canvas>
+        <canvas id="id_chart_ttemp" height="250" width="250"></canvas>
     </div>
 
 
@@ -101,5 +105,57 @@
     <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js" type="text/javascript"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script src="{% static 'index.js' %}"></script>
+    <script>
+        const ctxTV = document.getElementById('id_chart_tV');
+        const configTV = {type: 'line',
+            data: {
+            labels: {{ t_sim }},
+            datasets: [{
+                label: 'Terminal Voltage [V]',
+                data: {{ v_sim }},
+                borderWidth: 1,
+                backgroundColor: 'black'}]},
+            options: {scales: {y: {beginAtZero: false}}}};
+        var chartObjTV = new Chart(ctxTV, configTV);
+
+        const ctxSOCp = document.getElementById('id_chart_tsoc_p');
+        const configSOCp = {type: 'line',
+            data: {
+            labels: {{ t_sim }},
+            datasets: [{
+                label: 'SOC_p',
+                data: {{ soc_p_sim }},
+                borderWidth: 1,
+                backgroundColor: 'black'}]},
+            options: {
+            scales: {y: {beginAtZero: false}}}};
+        var chartObjSOCp = new Chart(ctxSOCp, configSOCp);
+
+        const ctxSOCn = document.getElementById('id_chart_tsoc_n');
+        const configSOCn = {type: 'line',
+            data: {
+            labels: {{ t_sim }},
+            datasets: [{
+                label: 'SOC_n',
+                data: {{ soc_n_sim }},
+                borderWidth: 1,
+                backgroundColor: 'black'}]},
+            options: {
+            scales: {y: {beginAtZero: false}}}};
+        var chartObjSOCn = new Chart(ctxSOCn, configSOCn);
+
+        const ctxttemp = document.getElementById('id_chart_ttemp');
+        const configttemp = {type: 'line',
+            data: {
+            labels: {{ t_sim }},
+            datasets: [{
+                label: 'Temp [C]',
+                data: {{ temp_sim }},
+                borderWidth: 1,
+                backgroundColor: 'black'}]},
+            options: {
+            scales: {y: {beginAtZero: false}}}};
+        var chartObjttemp = new Chart(ctxttemp, configttemp);
+    </script>
 </body>
 </html>

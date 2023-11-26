@@ -1,4 +1,5 @@
 const parameterName = document.querySelector("select"); // user parameter name selection
+fetchParametersetJson(parameterName.value); // displays the default parameter set value when the page loads
 
 parameterName.onclick = () => {
     let parameterSetName = document.querySelector("select").value;
@@ -6,6 +7,12 @@ parameterName.onclick = () => {
     fetch('static/parameter_sets.json')
         .then(response => response.json())
         .then(data => displayParametersetInformation(data[parameterSetName]));}
+
+function fetchParametersetJson(parameterSetName) {
+    fetch('static/parameter_sets.json')
+        .then(response => response.json())
+        .then(data => displayParametersetInformation(data[parameterSetName]));
+}
 
 function displayParametersetInformation(data) {
     // positive electrode parameters are updated below
@@ -44,45 +51,47 @@ function displayParametersetInformation(data) {
     document.getElementById("id_parameter_min_potential_value_bc").innerHTML = data["Minimum Potential Cut-off_bc [V]"];
 }
 
-function plotTimeVoltage(time, voltage) {
-    const ctx = document.getElementById('id_chart');
+// displayParametersetInformation()
 
-    const config = {type: 'line',
-        data: {
-        labels: time,
-            datasets: [{
-            // label: '# of Votes',
-                data: voltage,
-                borderWidth: 1,
-                backgroundColor: 'black'
-        }]},
-        options: {
-        scales: {
-            y: {
-                beginAtZero: false
-            }
-        }
-    }
-    }
-
-    var chartObj = new Chart(ctx, config);
-    // chartObj.destroy();
-}
-
-
-async function createPlot() {
-    let response = await fetch('', {
-        method: 'get',
-        headers: {
-            'X-Requested-With': 'XMLHttpRequest',
-            'Content-Type': 'application/json'
-        },
-    });
-
-    let data = await response.json();
-    plotTimeVoltage(data['t [s]'], data['V [V]'])
-    console.log(await data);
-}
+// function plotTimeVoltage(time, voltage) {
+//     const ctx = document.getElementById('id_chart');
+//
+//     const config = {type: 'line',
+//         data: {
+//         labels: time,
+//             datasets: [{
+//             // label: '# of Votes',
+//                 data: voltage,
+//                 borderWidth: 1,
+//                 backgroundColor: 'black'
+//         }]},
+//         options: {
+//         scales: {
+//             y: {
+//                 beginAtZero: false
+//             }
+//         }
+//     }
+//     }
+//
+//     var chartObj = new Chart(ctx, config);
+//     // chartObj.destroy();
+// }
+//
+//
+// async function createPlot() {
+//     let response = await fetch('', {
+//         method: 'get',
+//         headers: {
+//             'X-Requested-With': 'XMLHttpRequest',
+//             'Content-Type': 'application/json'
+//         },
+//     });
+//
+//     let data = await response.json();
+//     plotTimeVoltage(data['t [s]'], data['V [V]'])
+//     console.log(await data);
+// }
 
 
 

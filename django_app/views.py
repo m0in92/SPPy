@@ -8,23 +8,39 @@ from bokeh.layouts import row, gridplot
 from django_app.forms import SimulationVariables
 
 import SPPy
+from SPPy.calc_helpers.constants import Constants
 
 
 def index(request) -> HttpResponse:
+    t_sim: list = []  # list of floats intended to store the time from the simulation
+    v_sim: list = []  # list of floats intended to store the voltage from the simulation
+    soc_p_sim: list = []   # list of floats intended to store the soc_p from the simulation
+    soc_n_sim: list = []  # list of floats intended to store the soc_p from the simulation
+    temp_sim: list = []  # list of floats intended to store the soc_p from the simulation
     if request.method == "POST":
         form = SimulationVariables(request.POST)
         if form.is_valid():
-            HttpResponseRedirect('/result/')
+            simulation_inputs = get_simulation_inputs(request=request)
+            sol: SPPy.Solution = perform_simulation(simulation_inputs=simulation_inputs)
+            sol.T = sol.T - Constants.T_abs  # Converts the temperature to degrees C
+            t_sim, v_sim, soc_p_sim, soc_n_sim, temp_sim = sol.t.tolist(), \
+                                                 sol.V.tolist(), \
+                                                 sol.x_surf_p.tolist(), sol.x_surf_n.tolist(), sol.T.tolist()
     else:
         form = SimulationVariables()
 
-    if request.headers.get('X-Requested-With') == 'XMLHttpRequest':
-        simulation_inputs: tuple = ('test', 'discharge', 0.4956, 0.7568 )
-        sol = perform_simulation(simulation_inputs=simulation_inputs)
-        return JsonResponse({'t [s]': sol.t.tolist(),
-                             'V [V]': sol.V.tolist()})
+    # if request.headers.get('X-Requested-With') == 'XMLHttpRequest':
+    #     simulation_inputs: tuple = ('test', 'discharge', 0.4956, 0.7568 )
+    #     sol = perform_simulation(simulation_inputs=simulation_inputs)
+    #     return JsonResponse({'t [s]': sol.t.tolist(),
+    #                          'V [V]': sol.V.tolist()})
 
-    return render(request=request, template_name='index.html', context={'form': form})
+    return render(request=request, template_name='index.html', context={'form': form,
+                                                                        't_sim': t_sim,
+                                                                        'v_sim': v_sim,
+                                                                        'soc_p_sim': soc_p_sim,
+                                                                        'soc_n_sim': soc_n_sim,
+                                                                        'temp_sim': temp_sim})
 
 
 def result(request) -> HttpResponse:
@@ -82,7 +98,7 @@ def perform_simulation(simulation_inputs: tuple[str, str, float, float]) -> SPPy
 
     # set-up cycler and solver
     dc = SPPy.Discharge(discharge_current=I, v_min=V_min, SOC_LIB_min=SOC_min, SOC_LIB=SOC_LIB)
-    solver = SPPy.SPPySolver(b_cell=cell, N=5, isothermal=True, degradation=False, electrode_SOC_solver='poly')
+    solver = SPPy.SPPySolver(b_cell=cell, N=5, isothermal=False, degradation=False, electrode_SOC_solver='poly')
 
     # simulate
     sol = solver.solve(cycler_instance=dc)
