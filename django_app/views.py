@@ -35,7 +35,7 @@ def index(request) -> HttpResponse:
     #     return JsonResponse({'t [s]': sol.t.tolist(),
     #                          'V [V]': sol.V.tolist()})
 
-    return render(request=request, template_name='index.html', context={'form': form,
+    return render(request=request, template_name='sim_sp.html', context={'form': form,
                                                                         't_sim': t_sim,
                                                                         'v_sim': v_sim,
                                                                         'soc_p_sim': soc_p_sim,

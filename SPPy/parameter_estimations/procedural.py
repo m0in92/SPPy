@@ -16,6 +16,11 @@ class OCVData:
     Optimization is performed whereby the fitted OCV is compared with the experimental results
     """
 
+    SOC_LIB_MIN = 0.0
+    SOC_LIB_MAX = 1.0
+
+    array_soc_lib = np.linspace(SOC_LIB_MIN, SOC_LIB_MAX)
+
     def __init__(self, func_ocp_p: Callable, func_ocp_n: Callable,
                  soc_n_min_1: float, soc_n_min_2: float,
                  soc_n_max_1: float, soc_n_max_2: float,
@@ -36,18 +41,16 @@ class OCVData:
 
         self.cycling_step: str = charge_or_discharge
 
-        self.SOC_LIB_MIN = 0.0
-        self.SOC_LIB_MAX = 1.0
-
-    @property
-    def array_soc_lib(self):
-        return np.linspace(self.SOC_LIB_MIN, self.SOC_LIB_MAX)
+    # @property
+    # def array_soc_lib(self):
+    #     return np.linspace(self.SOC_LIB_MIN, self.SOC_LIB_MAX)
 
     @staticmethod
     def _func_interp_ocp_exp(array_cap_exp: npt.ArrayLike, array_v_exp: npt.ArrayLike):
         return scipy.interpolate.interp1d(array_cap_exp, array_v_exp)
 
-    def array_soc(self, soc_min: float, soc_max: float) -> npt.ArrayLike:
+    @classmethod
+    def array_soc(soc_min: float, soc_max: float) -> npt.ArrayLike:
         return np.linspace(soc_min, soc_max)
 
     def array_ocp_p(self, soc_min: float, soc_max: float) -> npt.ArrayLike:
@@ -76,7 +79,8 @@ class OCVData:
             array_ocp_n_: npt.ArrayLike = self.array_ocp_n(soc_min=soc_min, soc_max=soc_max)
             return scipy.interpolate.interp1d(self.array_soc_lib, array_ocp_n_)
 
-    def ocv_lib(self, ocp_p: float, ocp_n: float) -> float:
+    @classmethod
+    def ocv_lib(cls, ocp_p: float, ocp_n: float) -> float:
         return ocp_p - ocp_n
 
     def mse(self, array_v_exp: npt.ArrayLike, array_v_fit: npt.ArrayLike) -> float:
@@ -107,13 +111,24 @@ class OCVData:
         return GA(n_chromosomes=10, bounds=array_bounds, obj_func=func_obj,
                   n_pool=7, n_elite=3, n_generations=2).solve()[0]
 
-    def get_soc(self, soc_lib: float,
+    @classmethod
+    def get_soc(cls, soc_lib: Union[float, npt.ArrayLike],
                 soc_p_min: float, soc_p_max: float,
-                soc_n_min: float, soc_n_max: float) -> tuple[float, float]:
-        array_soc_p = np.linspace(soc_p_min, soc_p_max)
-        array_soc_n = np.flip(np.linspace(soc_n_min, soc_n_max))
-        func_interpolation_soc_p = scipy.interpolate.interp1d(self.array_soc_lib, array_soc_p)
-        func_interpolation_soc_n = scipy.interpolate.interp1d(self.array_soc_lib, array_soc_n)
+                soc_n_min: float, soc_n_max: float  ) -> tuple[float, float]:
+        """
+        Returns a tuple which contains the values of positive and negative electrode SOC from the LIB SOC.
+        :param soc_lib: state-of-charge of the lithium-ion battery
+        :param soc_p_min: minimum state-of-charge of the positive electrode
+        :param soc_p_max: maximum state-of-charge of the negative electrode
+        :param soc_n_min: minimum state-of-charge of the positive electrode
+        :param soc_n_max: maximum state-of-charge of the negative electode
+
+        :return: (tuple[float, float]) soc of the positive and negative electrode, respectively.
+        """
+        array_soc_p = np.flip(np.linspace(soc_p_min, soc_p_max))
+        array_soc_n = np.linspace(soc_n_min, soc_n_max)
+        func_interpolation_soc_p = scipy.interpolate.interp1d(OCVData.array_soc_lib, array_soc_p)
+        func_interpolation_soc_n = scipy.interpolate.interp1d(OCVData.array_soc_lib, array_soc_n)
         return func_interpolation_soc_p(soc_lib), func_interpolation_soc_n(soc_lib)
 
     def plot_fit(self, soc_p_min: float, soc_p_max: float, soc_n_min: float, soc_n_max: float,

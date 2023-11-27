@@ -26,6 +26,8 @@ class TestParameterSets(unittest.TestCase):
         self.assertEqual(0.5, params.alpha_p)
         self.assertEqual(298.15, params.T_ref_p)
         self.assertEqual(1.5, params.brugg_p)
+        self.assertEqual(0.4956, params.soc_min_p)
+        self.assertEqual(0.989011, params.soc_max_p)
 
         # Below tests for the negative electrode parameter extraction
         self.assertEqual(0.0596, params.A_n)
@@ -42,6 +44,8 @@ class TestParameterSets(unittest.TestCase):
         self.assertEqual(0.5, params.alpha_n)
         self.assertEqual(298.15, params.T_ref_n)
         self.assertEqual(1.5, params.brugg_n)
+        self.assertEqual(0.01890232, params.soc_min_n)
+        self.assertEqual(0.7568, params.soc_max_n)
 
         # Below test for the electrolyte parameters
         self.assertEqual(1000, params.conc_es)

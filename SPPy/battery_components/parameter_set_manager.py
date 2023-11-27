@@ -5,7 +5,7 @@ Contains the classes and functionality for the extracting battery cell parameter
 __all__ = ['ParameterSets']
 
 __author__ = 'Moin Ahmed'
-__copywrite__ = 'Copywrite 2023 by Moin Ahmed. All rights reserved'
+__copyright__ = 'Copyright 2023 by Moin Ahmed. All rights reserved'
 __status__ = 'deployed'
 
 
@@ -47,6 +47,8 @@ class ParameterSets:
         self.Ea_R_p = df['Activation Energy of Reaction [J mol^-1]']
         self.alpha_p = df['Anodic Transfer Coefficient']
         self.brugg_p = df['Bruggerman Coefficient']
+        self.soc_min_p = df['soc_min']
+        self.soc_max_p = df['soc_max']
 
         # Negative electrode parameters are extracted below
         df = ParameterSets._parse_csv(file_path=self.NEGATIVE_ELECTRODE_DIR)  # Read and parse the csv file.
@@ -64,6 +66,8 @@ class ParameterSets:
         self.Ea_R_n = df['Activation Energy of Reaction [J mol^-1]']
         self.alpha_n = df['Anodic Transfer Coefficient']
         self.brugg_n = df['Bruggerman Coefficient']
+        self.soc_min_n = df['soc_min']
+        self.soc_max_n = df['soc_max']
         # SEI parameters for the negative electrode are extracted below
         self.U_s = df['SEI Reference Overpotential [V]']
         self.i_s = df['SEI Exchange Current Density [A m^-1]']
