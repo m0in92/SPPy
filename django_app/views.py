@@ -70,12 +70,11 @@ def result(request) -> HttpResponse:
     return render(request=request, template_name='result.html', context={'script': script, 'div': div})
 
 
-def get_simulation_inputs(request) -> tuple[str, str, float, float]:
+def get_simulation_inputs(request) -> tuple[str, str, float]:
     parameter_name = request.POST.get('parameter_name')
     cycler = request.POST.get('cycler')
-    soc_p_init = request.POST.get('soc_p_init')
-    soc_n_init = request.POST.get('soc_n_init')
-    return parameter_name, cycler, soc_p_init, soc_n_init
+    soc_lib_init = request.POST.get('soc_lib_init')
+    return parameter_name, cycler, soc_lib_init
 
 
 def perform_simulation(simulation_inputs: tuple[str, str, float, float]) -> SPPy.Solution:
@@ -88,12 +87,11 @@ def perform_simulation(simulation_inputs: tuple[str, str, float, float]) -> SPPy
 
     # Modelling parameters
     parameter_set_name = simulation_inputs[0]
-    soc_init_p, soc_init_n = float(simulation_inputs[2]), float(simulation_inputs[3])  # conditions in the literature source. Guo et al
+    soc_lib_init = simulation_inputs[2]
 
     # Setup battery components
     cell = SPPy.BatteryCell.read_from_parametersets(parameter_set_name=parameter_set_name,
-                                                    SOC_init_p=soc_init_p,
-                                                    SOC_init_n=soc_init_n,
+                                                    soc_lib_init=soc_lib_init,
                                                     temp_init=T)
 
     # set-up cycler and solver

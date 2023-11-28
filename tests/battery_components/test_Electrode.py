@@ -23,11 +23,14 @@ class testElectrode(unittest.TestCase):
     T = 298.15
     SOC_init = 0.59
     SOC = SOC_init
+    soc_min, soc_max = 0.4956, 0.989011
     electrode_type = 'none'
 
     elec = electrode.Electrode(L=L, A=A, max_conc=max_conc, epsilon=epsilon, kappa=kappa, S=S, R=R, T_ref=T_ref,
                                D_ref=D_ref, k_ref=k_ref, Ea_D=Ea_D, Ea_R=Ea_R, brugg=brugg, T=T, SOC_init=SOC_init,
-                               alpha=0.5, func_OCP=funcs.OCP_ref_p, func_dOCPdT=funcs.dOCPdT_p)
+                               soc_min=soc_min, soc_max=soc_max,
+                               alpha=0.5,
+                               func_OCP=funcs.OCP_ref_p, func_dOCPdT=funcs.dOCPdT_p)
 
     def test_Electrode_constructor(self):
         """
@@ -51,7 +54,7 @@ class testElectrode(unittest.TestCase):
                                        kappa=self.kappa, S=self.S, R=self.R, T_ref=self.T_ref,
                                        D_ref=self.D_ref, k_ref=self.k_ref, Ea_D=self.Ea_D, Ea_R=self.Ea_R,
                                        brugg=self.brugg, T=T,
-                                       SOC_init=SOC_init,
+                                       SOC_init=SOC_init, soc_min=self.soc_min, soc_max=self.soc_max,
                                        alpha=0.5, func_OCP=funcs.OCP_ref_p, func_dOCPdT=13)
         # Check with a SOC above upper threshold
         SOC_init = 1.2
@@ -60,7 +63,7 @@ class testElectrode(unittest.TestCase):
                                 kappa=self.kappa, S=self.S, R=self.R, T_ref=self.T_ref,
                                 D_ref=self.D_ref, k_ref=self.k_ref, Ea_D=self.Ea_D, Ea_R=self.Ea_R,
                                 brugg=self.brugg, T=T,
-                                SOC_init=SOC_init,
+                                SOC_init=SOC_init, soc_min=self.soc_min, soc_max=self.soc_max,
                                 alpha=0.5, func_OCP=funcs.OCP_ref_p, func_dOCPdT=13)
 
     def test_SOC_setter(self):
@@ -97,7 +100,8 @@ class testElectrode(unittest.TestCase):
                                        D_ref=self.D_ref, k_ref=self.k_ref, Ea_D=self.Ea_D, Ea_R=self.Ea_R,
                                        brugg=self.brugg, T=T,
                                        SOC_init=self.SOC_init,
-                                       alpha=0.5, func_OCP=funcs.OCP_ref_p, func_dOCPdT=13)
+                                       soc_min=self.soc_min, soc_max=self.soc_max,
+                                       alpha=0.5, func_OCP=13, func_dOCPdT=funcs.dOCPdT_p)
 
     def test_invalid_func_dOCPdT_input(self):
         """
@@ -109,5 +113,10 @@ class testElectrode(unittest.TestCase):
         with self.assertRaises(TypeError):
             # Create an instance of the Electrode object using a value (instead of a valid function) for func_dOCPdT
             # parameter.
-            electrode.Electrode(file_path=TEST_POS_ELEC_DIR, SOC_init=SOC_init, T=T, func_OCP=funcs.OCP_ref_p,
-                                func_dOCPdT=13)
+            elec = electrode.Electrode(L=self.L, A=self.A, max_conc=self.max_conc, epsilon=self.epsilon,
+                                       kappa=self.kappa, S=self.S, R=self.R, T_ref=self.T_ref,
+                                       D_ref=self.D_ref, k_ref=self.k_ref, Ea_D=self.Ea_D, Ea_R=self.Ea_R,
+                                       brugg=self.brugg, T=T,
+                                       SOC_init=self.SOC_init,
+                                       soc_min=self.soc_min, soc_max=self.soc_max,
+                                       alpha=0.5, func_OCP=funcs.OCP_ref_p, func_dOCPdT=13)
