@@ -5,7 +5,7 @@ Contains classes and functionalities for the electrode related objects
 __all__ = ['Electrode', 'PElectrode', 'NElectrode']
 
 __author__ = 'Moin Ahmed'
-__copywrite__ = 'Copywrite 2023 by Moin Ahmed. All rights reserved'
+__copyright__ = 'Copyright 2023 by Moin Ahmed. All rights reserved'
 __status__ = 'deployed'
 
 from typing import Optional
@@ -40,6 +40,8 @@ class Electrode:
     alpha: float  # Anodic Transfer Coefficient
     brugg: float  # Bruggerman Coefficient
     SOC_init: float  # initial SOC
+    soc_min: float  # min. electrode soc
+    soc_max: float  # max. electrode soc
     func_OCP: collections.abc.Callable[[float], [float]] # electrode open-circuit potential function that takes SOC as
     # its arguments
     func_dOCPdT: collections.abc.Callable[[float], [float]] # the function that represents the change of open-curcuit

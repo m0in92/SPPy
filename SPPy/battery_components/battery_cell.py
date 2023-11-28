@@ -12,6 +12,8 @@ from dataclasses import dataclass
 from typing import Callable, Self, Optional
 
 import numpy as np
+import numpy.typing as npt
+import scipy
 
 from SPPy.calc_helpers import constants
 from SPPy.battery_components.parameter_set_manager import ParameterSets
@@ -61,7 +63,8 @@ class BatteryCell:
         return self.T_amb_
 
     @classmethod
-    def read_from_parametersets(cls, parameter_set_name: str, SOC_init_p: float, SOC_init_n: float,
+    def read_from_parametersets(cls, parameter_set_name: str, soc_lib_init: float,
+                                # SOC_init_p: float, SOC_init_n: float,
                                 temp_init: float) -> Self:
         param_set = ParameterSets(name=parameter_set_name)
         rho = param_set.rho
@@ -73,27 +76,52 @@ class BatteryCell:
         V_max = param_set.V_max
         V_min = param_set.V_min
         # initialize electrodes and electrolyte
+        soc_init_p, soc_init_n = BatteryCell._get_electrode_soc_from_lib_soc(soc_lib=soc_lib_init,
+                                                                             soc_p_min=param_set.soc_min_p,
+                                                                             soc_p_max=param_set.soc_max_p,
+                                                                             soc_n_min=param_set.soc_min_p,
+                                                                             soc_n_max=param_set.soc_max_n)
         obj_elec_p = electrode.PElectrode(L=param_set.L_p, A=param_set.A_p, kappa=param_set.kappa_p,
                                           epsilon=param_set.epsilon_p, S=param_set.S_p, max_conc=param_set.max_conc_p,
                                           R=param_set.R_p, k_ref=param_set.k_ref_p, D_ref=param_set.D_ref_p,
                                           Ea_R=param_set.Ea_R_p, Ea_D=param_set.Ea_D_p, alpha=param_set.alpha_p,
                                           T_ref=param_set.T_ref_p, brugg=param_set.brugg_p,
                                           func_OCP=param_set.OCP_ref_p_, func_dOCPdT=param_set.dOCPdT_p_,
-                                          SOC_init=SOC_init_p, T=temp_init)
+                                          SOC_init=soc_init_p, soc_min=param_set.soc_min_p, soc_max=param_set.soc_max_p,
+                                          T=temp_init)
         obj_elec_n = electrode.NElectrode(L=param_set.L_n, A=param_set.A_n, kappa=param_set.kappa_n,
                                           epsilon=param_set.epsilon_n, S=param_set.S_n, max_conc=param_set.max_conc_n,
                                           R=param_set.R_n, k_ref=param_set.k_ref_n, D_ref=param_set.D_ref_n,
                                           Ea_R=param_set.Ea_R_n, Ea_D=param_set.Ea_D_n, alpha=param_set.alpha_n,
-                                          T_ref=param_set.T_ref_n, brugg=param_set.brugg_n,
+                                          T_ref=param_set.T_ref_n,
+                                          brugg=param_set.brugg_n,
                                           func_OCP=param_set.OCP_ref_n_, func_dOCPdT=param_set.dOCPdT_n_,
                                           U_s=param_set.U_s, i_s=param_set.i_s, MW_SEI=param_set.MW_SEI,
                                           rho_SEI=param_set.rho_SEI, kappa_SEI=param_set.kappa_SEI,
-                                          SOC_init=SOC_init_n, T=temp_init)
+                                          SOC_init=soc_init_n, soc_min=param_set.soc_min_n, soc_max=param_set.soc_max_n,
+                                          T=temp_init)
         obj_electrolyte = electrolyte.Electrolyte(L=param_set.L_es, conc=param_set.conc_es, kappa=param_set.kappa_es,
                                                   epsilon_sep=param_set.epsilon_es, brugg=param_set.brugg_es)
 
         return cls(T_=temp_init, rho=rho, Vol=Vol, C_p=C_p, h=h, A=A, cap=cap, V_max=V_max, V_min=V_min,
                    elec_p=obj_elec_p, elec_n=obj_elec_n, electrolyte=obj_electrolyte)
+
+    @classmethod
+    def _get_electrode_soc_from_lib_soc(cls, soc_lib: float,
+                                        soc_p_min: float, soc_p_max: float,
+                                        soc_n_min: float, soc_n_max: float) -> tuple[float, float]:
+        SOC_LIB_MIN: float = 0.0  # it is assumed that the min SOC_LIB is 0.0
+        SOC_LIB_MAX: float = 1.0  # it is assumed that the max SOC_LIB is 1.0
+
+        array_soc_lib: npt.ArrayLike = np.linspace(SOC_LIB_MIN, SOC_LIB_MAX)
+        array_soc_p: npt.ArrayLike = np.flip(np.linspace(soc_p_min, soc_p_max))
+        array_soc_n: npt.ArrayLike = np.linspace(soc_n_min, soc_n_max)
+
+        # below is the interpolation of soc_lib with the electrode socs
+        func_ocp_p: Callable = scipy.interpolate.interp1d(array_soc_lib, array_soc_p)
+        func_ocp_n: Callable = scipy.interpolate.interp1d(array_soc_lib, array_soc_n)
+
+        return func_ocp_p(soc_lib), func_ocp_n(soc_lib)
 
 
 @dataclass

@@ -13,3 +13,5 @@ Activation Energy of Diffusion [J mol^-1],2.90E+04,Guo et al.
 Anodic Transfer Coefficient,5.00E-01,Guo et al.
 Reference Temperature [K],298.15,Guo et al.
 Bruggerman Coefficient,1.50E+00,
+soc_min,0.4956,Guo et al.
+soc_max,0.989011,Guo et al.
