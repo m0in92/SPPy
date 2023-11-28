@@ -103,56 +103,36 @@
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script src="{% static 'index.js' %}"></script>
     <script>
+        var tArray = {{ t_sim }};
+        var vArray = {{ v_sim }};
+        var socPArray = {{ soc_p_sim }};
+        var socNArray = {{ soc_n_sim }};
+        var tempArray = {{ temp_sim }};
+
+        tArray = tArray.map(function (each_element) {return Number(each_element.toFixed(0))});
+
+        function LinePlotConfig(xArray, yArray, plotLabel) {
+            return {type: 'line',
+                data: {labels: xArray,
+                    datasets: [{label: plotLabel, data: yArray, borderWidth: 1, backgroundColor: 'black'}]},
+                options: {scales: {y: {beginAtZero: false}}}};
+        }
+
         const ctxTV = document.getElementById('id_chart_tV');
-        const configTV = {type: 'line',
-            data: {
-            labels: {{ t_sim }},
-            datasets: [{
-                label: 'Terminal Voltage [V]',
-                data: {{ v_sim }},
-                borderWidth: 1,
-                backgroundColor: 'black'}]},
-            options: {scales: {y: {beginAtZero: false}}}};
+        const configTV = LinePlotConfig(tArray, vArray, 'Terminal Voltage [V]');
         var chartObjTV = new Chart(ctxTV, configTV);
 
         const ctxSOCp = document.getElementById('id_chart_tsoc_p');
-        const configSOCp = {type: 'line',
-            data: {
-            labels: {{ t_sim }},
-            datasets: [{
-                label: 'SOC_p',
-                data: {{ soc_p_sim }},
-                borderWidth: 1,
-                backgroundColor: 'black'}]},
-            options: {
-            scales: {y: {beginAtZero: false}}}};
+        const configSOCp = LinePlotConfig(tArray, socPArray, 'SOC_p')
         var chartObjSOCp = new Chart(ctxSOCp, configSOCp);
 
         const ctxSOCn = document.getElementById('id_chart_tsoc_n');
-        const configSOCn = {type: 'line',
-            data: {
-            labels: {{ t_sim }},
-            datasets: [{
-                label: 'SOC_n',
-                data: {{ soc_n_sim }},
-                borderWidth: 1,
-                backgroundColor: 'black'}]},
-            options: {
-            scales: {y: {beginAtZero: false}}}};
+        const configSOCn = LinePlotConfig(tArray, socNArray, 'SOC_n')
         var chartObjSOCn = new Chart(ctxSOCn, configSOCn);
 
         const ctxttemp = document.getElementById('id_chart_ttemp');
-        const configttemp = {type: 'line',
-            data: {
-            labels: {{ t_sim }},
-            datasets: [{
-                label: 'Temp [C]',
-                data: {{ temp_sim }},
-                borderWidth: 1,
-                backgroundColor: 'black'}]},
-            options: {
-            scales: {y: {beginAtZero: false}}}};
-        var chartObjttemp = new Chart(ctxttemp, configttemp);
+        const configtemp = LinePlotConfig(tArray, tempArray, 'Temp [C]')
+        var chartObjttemp = new Chart(ctxttemp, configtemp);
     </script>
 </body>
 </html>
