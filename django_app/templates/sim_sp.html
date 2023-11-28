@@ -91,6 +91,10 @@
 
     <!-- Div containing the t and V plot -->
     <div class="plots">
+        <div id="id_chart_tV"></div>
+        <div id="id_chart_tsoc_p"></div>
+        <div id="id_chart_tsoc_n"></div>
+        <div id="id_chart_ttemp"></div>
         <canvas id="id_chart_tV" height="150" width="150"></canvas>
         <canvas id="id_chart_tsoc_p" height="150" width="150"></canvas>
         <canvas id="id_chart_tsoc_n" height="150" width="150"></canvas>
@@ -101,6 +105,7 @@
 
     <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js" type="text/javascript"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdn.plot.ly/plotly-2.27.0.min.js" charset="utf-8"></script>
     <script src="{% static 'index.js' %}"></script>
     <script>
         var tArray = {{ t_sim }};
@@ -108,6 +113,67 @@
         var socPArray = {{ soc_p_sim }};
         var socNArray = {{ soc_n_sim }};
         var tempArray = {{ temp_sim }};
+        let yaxis_data =
+            [[vArray,"id_chart_tV"],
+                [socPArray,"id_chart_tsoc_p"],
+                [socNArray,"id_chart_tsoc_n"],
+                [tempArray, "id_chart_ttemp"]]
+        for ( let i = 0 ; i < tArray.length ; i++ ) {
+            var traces = [{
+                type: 'scatter',
+                x: tArray,
+                y: yaxis_data[i][0],
+                mode: 'lines',
+                name: 'Red',
+                line: {
+                  color: 'rgb(219, 64, 82)',
+                  width: 3
+                }
+            }];
+            var layout = {
+                width: 500,
+                height: 500,
+                plot_bgcolor:'rgb(0, 0, 0, 0)',
+                paper_bgcolor:'rgb(0, 0, 0, 0)',
+            };
+            Plotly.newPlot(yaxis_data[i][1], traces, layout);
+        }
+        /*trace1 = {
+        type: 'scatter',
+        x: {{ t_sim }},
+        y: {{ soc_p_sim }},
+        mode: 'lines',
+        name: 'Red',
+        line: {
+          color: 'rgb(219, 64, 82)',
+          width: 3
+          }
+        };
+
+        trace2 = {
+            type: 'scatter',
+            x: {{ t_sim }},
+            y: {{ soc_n_sim }},
+          mode: 'lines',
+          name: 'Blue',
+          line: {
+            color: 'rgb(55, 128, 191)',
+            width: 1
+          }
+        };
+
+        var layout = {
+          width: 500,
+          height: 500
+        };
+
+        var data = [trace1, trace2];
+
+        Plotly.newPlot('myDiv', data, layout);
+
+
+        //////////////////////////////////////////
+
 
         tArray = tArray.map(function (each_element) {return Number(each_element.toFixed(0))});
 
@@ -132,7 +198,7 @@
 
         const ctxttemp = document.getElementById('id_chart_ttemp');
         const configtemp = LinePlotConfig(tArray, tempArray, 'Temp [C]')
-        var chartObjttemp = new Chart(ctxttemp, configtemp);
+        var chartObjttemp = new Chart(ctxttemp, configtemp);*/
     </script>
 </body>
 </html>
