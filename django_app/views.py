@@ -23,17 +23,11 @@ def index(request) -> HttpResponse:
             simulation_inputs = get_simulation_inputs(request=request)
             sol: SPPy.Solution = perform_simulation(simulation_inputs=simulation_inputs)
             sol.T = sol.T - Constants.T_abs  # Converts the temperature to degrees C
-            t_sim, v_sim, soc_p_sim, soc_n_sim, temp_sim = sol.t.tolist(), \
-                                                 sol.V.tolist(), \
-                                                 sol.x_surf_p.tolist(), sol.x_surf_n.tolist(), sol.T.tolist()
+            t_sim, v_sim, soc_p_sim, soc_n_sim, temp_sim = sol.t[::10].tolist(), \
+                                                 sol.V[::10].tolist(), \
+                                                 sol.x_surf_p[::10].tolist(), sol.x_surf_n[::10].tolist(), sol.T[::10].tolist()
     else:
         form = SimulationVariables()
-
-    # if request.headers.get('X-Requested-With') == 'XMLHttpRequest':
-    #     simulation_inputs: tuple = ('test', 'discharge', 0.4956, 0.7568 )
-    #     sol = perform_simulation(simulation_inputs=simulation_inputs)
-    #     return JsonResponse({'t [s]': sol.t.tolist(),
-    #                          'V [V]': sol.V.tolist()})
 
     return render(request=request, template_name='sim_sp.html', context={'form': form,
                                                                         't_sim': t_sim,
@@ -43,31 +37,31 @@ def index(request) -> HttpResponse:
                                                                         'temp_sim': temp_sim})
 
 
-def result(request) -> HttpResponse:
-    FIG_HEIGHT = 300  # in px
-    FIG_WIDTH = 300  # in px
-
-    simulation_inputs = get_simulation_inputs(request=request)
-    sol = perform_simulation(simulation_inputs=simulation_inputs)
-
-    # plot V vs. t
-    p1 = figure(title='Voltage Profile', x_axis_label='t [s]', y_axis_label='V [V]', height=FIG_HEIGHT)
-    p1.line(sol.t, sol.V, line_width=5)
-
-    # plot cap vs. t
-    p2 = figure(title='Voltage Profile', x_axis_label='cap [Ahr]', y_axis_label='V [V]', height=FIG_HEIGHT)
-    p2.line(sol.cap, sol.V, line_width=5)
-
-    # plot soc_p vs. t
-    p3 = figure(title='Positive Electrode SOC', x_axis_label='t [s]', y_axis_label='SOC', height=FIG_HEIGHT)
-    p3.line(sol.t, sol.x_surf_p, line_width=5)
-
-    # plot soc_n vs. t
-    p4 = figure(title='Negative Electrode SOC', x_axis_label='t [s]', y_axis_label='SOC', height=FIG_HEIGHT)
-    p4.line(sol.t, sol.x_surf_n, line_width=5)
-
-    script, div = components(gridplot([[p1, p2], [p3, p4]]))
-    return render(request=request, template_name='result.html', context={'script': script, 'div': div})
+# def result(request) -> HttpResponse:
+#     FIG_HEIGHT = 300  # in px
+#     FIG_WIDTH = 300  # in px
+#
+#     simulation_inputs = get_simulation_inputs(request=request)
+#     sol = perform_simulation(simulation_inputs=simulation_inputs)
+#
+#     # plot V vs. t
+#     p1 = figure(title='Voltage Profile', x_axis_label='t [s]', y_axis_label='V [V]', height=FIG_HEIGHT)
+#     p1.line(sol.t, sol.V, line_width=5)
+#
+#     # plot cap vs. t
+#     p2 = figure(title='Voltage Profile', x_axis_label='cap [Ahr]', y_axis_label='V [V]', height=FIG_HEIGHT)
+#     p2.line(sol.cap, sol.V, line_width=5)
+#
+#     # plot soc_p vs. t
+#     p3 = figure(title='Positive Electrode SOC', x_axis_label='t [s]', y_axis_label='SOC', height=FIG_HEIGHT)
+#     p3.line(sol.t, sol.x_surf_p, line_width=5)
+#
+#     # plot soc_n vs. t
+#     p4 = figure(title='Negative Electrode SOC', x_axis_label='t [s]', y_axis_label='SOC', height=FIG_HEIGHT)
+#     p4.line(sol.t, sol.x_surf_n, line_width=5)
+#
+#     script, div = components(gridplot([[p1, p2], [p3, p4]]))
+#     return render(request=request, template_name='result.html', context={'script': script, 'div': div})
 
 
 def get_simulation_inputs(request) -> tuple[str, str, float]:
