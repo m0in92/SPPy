@@ -12,8 +12,8 @@
     <div class="headingBanner">
         <h1>Battery Simulation Parameters</h1>
     </div>
-
-    <div class="container">
+    <div class="flex_container">
+        <div class="container">
         <form action="" method="POST">
             <table>
             {% csrf_token %}
@@ -87,16 +87,18 @@
             <th class="parameter_values" id="id_parameter_max_potential_value_bc" colspan="3">4.2</th></tr>
         <tr><th class="parameter_names">Minimum Potential Cut-off [<em>V</em>]</th>
             <th class="parameter_values" id="id_parameter_min_potential_value_bc" colspan="3">2.5</th></tr>
-    </table>
+        </table>
+        </div>
+
+        <!-- Div containing the t and V plot -->
+        <div class="plots">
+            <div id="id_chart_tV"></div>
+            <div id="id_chart_tsoc_p"></div>
+            <div id="id_chart_tsoc_n"></div>
+            <div id="id_chart_ttemp"></div>
+        </div>
     </div>
 
-    <!-- Div containing the t and V plot -->
-    <div class="plots">
-        <div id="id_chart_tV"></div>
-        <div id="id_chart_tsoc_p"></div>
-        <div id="id_chart_tsoc_n"></div>
-        <div id="id_chart_ttemp"></div>
-    </div>
 
 
 

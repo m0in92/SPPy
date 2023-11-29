@@ -8,14 +8,22 @@ h1 {
     text-align: center;
 }
 
-.headingBanner{
+.headingBanner {
     width: 100%;
     background-color: #2B7A78;
 }
 
+.flex_container {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    justify-content: space-between;
+}
+
 .container {
-    width: 50%;
-    margin: 0px;
+    width: 100%;
+    margin: 0;
+    max-width: 616px;
 }
 
 form {
@@ -63,9 +71,9 @@ button {
     cursor: pointer;
 }
 
-.table_simulation_parameters {
+.table_parameter_values {
     margin: auto;
-    padding: 100px;
+    /*padding: 100px;*/
 }
 
 li {
@@ -99,10 +107,29 @@ th, td {
     text-align: center;
 }
 
-.container, .plots {
-    float: left;
+.plots {
+    max-width: calc(100% - 616px);
+    flex-grow: 1;
+    display: flex;
+    justify-content: center;
+    flex-direction: row;
+    flex-wrap: wrap;
 }
 
-/*.plots {*/
-/*    float: right;*/
-/*}*/
+div[id^="id_chart"] {
+    width: 500px;
+    height: 500px;
+}
+
+@media (max-width: 1100px){
+    .flex_container {
+        flex-direction: column;
+    }
+    .container {
+        align-items: center;
+    }
+    .plots {
+        flex-direction: column;
+        max-width: 100%;
+    }
+}
