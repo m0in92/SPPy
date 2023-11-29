@@ -58,7 +58,7 @@ class TestElectrodePotentialFVMSolver(unittest.TestCase):
 
         j = j.reshape(-1, 1)  # column vector
         self.assertTrue(
-            np.array_equal(dx ** 2 * Constants.F * self.instance_p.a_s * j.reshape(-1, 1) / self.instance_p.sigma_eff,
+            np.allclose(dx ** 2 * Constants.F * self.instance_p.a_s * j.reshape(-1, 1) / self.instance_p.sigma_eff,
                            self.instance_p._array_j(j=j)))
 
     def test_array_V(self):

@@ -22,10 +22,13 @@ class TestNElectrode(unittest.TestCase):
     alpha_n = 0.5
     T_ref_n = 298.15
     brugg_n = 1.5
+    soc_min: float = 0.01890232
+    soc_max: float = 0.7568
     n_elec = electrode.NElectrode(L=L_n, A=A_n, kappa=kappa_n, epsilon=epsilon_n, S=S_n, max_conc=max_conc_n,
                                   R=R_n, k_ref=k_ref_n, D_ref=D_ref_n, Ea_R=Ea_R_n, Ea_D=Ea_D_n, alpha=alpha_n,
-                                  T_ref=T_ref_n, brugg=brugg_n, SOC_init=SOC_init, func_OCP=funcs.OCP_ref_n,
-                                  func_dOCPdT=funcs.dOCPdT_n, T=298.15)
+                                  T_ref=T_ref_n, brugg=brugg_n, SOC_init=SOC_init, soc_min=soc_min, soc_max=soc_max,
+                                  func_OCP=funcs.OCP_ref_n, func_dOCPdT=funcs.dOCPdT_n,
+                                  T=298.15)
 
     def test_NElectrode(self):
         """

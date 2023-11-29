@@ -1,9 +1,6 @@
 from django.shortcuts import render
 from django.http import HttpResponse, HttpResponseRedirect
 from django.http import JsonResponse
-from bokeh.plotting import figure
-from bokeh.embed import components
-from bokeh.layouts import row, gridplot
 
 from django_app.forms import SimulationVariables
 
@@ -35,33 +32,6 @@ def index(request) -> HttpResponse:
                                                                         'soc_p_sim': soc_p_sim,
                                                                         'soc_n_sim': soc_n_sim,
                                                                         'temp_sim': temp_sim})
-
-
-# def result(request) -> HttpResponse:
-#     FIG_HEIGHT = 300  # in px
-#     FIG_WIDTH = 300  # in px
-#
-#     simulation_inputs = get_simulation_inputs(request=request)
-#     sol = perform_simulation(simulation_inputs=simulation_inputs)
-#
-#     # plot V vs. t
-#     p1 = figure(title='Voltage Profile', x_axis_label='t [s]', y_axis_label='V [V]', height=FIG_HEIGHT)
-#     p1.line(sol.t, sol.V, line_width=5)
-#
-#     # plot cap vs. t
-#     p2 = figure(title='Voltage Profile', x_axis_label='cap [Ahr]', y_axis_label='V [V]', height=FIG_HEIGHT)
-#     p2.line(sol.cap, sol.V, line_width=5)
-#
-#     # plot soc_p vs. t
-#     p3 = figure(title='Positive Electrode SOC', x_axis_label='t [s]', y_axis_label='SOC', height=FIG_HEIGHT)
-#     p3.line(sol.t, sol.x_surf_p, line_width=5)
-#
-#     # plot soc_n vs. t
-#     p4 = figure(title='Negative Electrode SOC', x_axis_label='t [s]', y_axis_label='SOC', height=FIG_HEIGHT)
-#     p4.line(sol.t, sol.x_surf_n, line_width=5)
-#
-#     script, div = components(gridplot([[p1, p2], [p3, p4]]))
-#     return render(request=request, template_name='result.html', context={'script': script, 'div': div})
 
 
 def get_simulation_inputs(request) -> tuple[str, str, float]:
