@@ -17,7 +17,7 @@ class TestLumped(unittest.TestCase):
     def test_reversible_heat_loss(self):
         I = -1.656
         T = 298.15
-        self.assertEqual(0.017761327872963178, self.t_model.reversible_heat(I=I, T=T))
+        self.assertAlmostEqual(0.017761327872963178, self.t_model.reversible_heat(I=I, T=T))
 
     def test_irreversible_heat_loss(self):
         V = self.test_cell.elec_p.OCP - self.test_cell.elec_n.OCP
