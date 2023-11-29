@@ -32,7 +32,7 @@ class ECMSolution:
     array_I_R1: np.ndarray = field(default_factory=lambda: np.array([]))  # current across the R1 resistor
 
     @classmethod
-    def read_from_csv_file(cls, filepath: str) -> Self:
+    def read_from_csv_file(cls, filepath: str):
         """
         Reads the csv file containing the experimental data and stores the data in its numpy arrays. The labelling
         of the columns in the experimental csv file needs to follow a certain naming conventions.
@@ -47,7 +47,7 @@ class ECMSolution:
 
     @classmethod
     def read_from_arrays(cls, array_t: npt.ArrayLike, array_i: npt.ArrayLike, array_v: npt.ArrayLike,
-                         array_temp: npt.ArrayLike, array_soc: Optional[npt.ArrayLike]) -> Self:
+                         array_temp: npt.ArrayLike, array_soc: Optional[npt.ArrayLike]):
         """
         Initiates a Solution instance from the numpy arrays
         :param array_t:
