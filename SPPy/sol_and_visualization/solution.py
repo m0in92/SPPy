@@ -8,6 +8,13 @@ __author__ = 'Moin Ahmed'
 __copywrite__ = 'Copywrite 2023 by Moin Ahmed. All rights are reserved.'
 __status__ = 'deployed'
 
+import sys
+PYTHON_MAIN_VERSION = sys.version_info[0]
+PYTHON_MINOR_VERSION = sys.version_info[1]
+if PYTHON_MINOR_VERSION >= 11:
+    from typing import Self
+else:
+    from typing_extensions import Self
 
 import pickle
 from typing import Self, Optional
