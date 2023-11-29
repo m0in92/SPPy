@@ -5,7 +5,7 @@ contains the class and functionality for the battery cell objects
 __all__ = ['BatteryCell', 'ECMBatteryCell']
 
 __author__ = 'Moin Ahmed'
-__copywrite__ = 'Copywrite 2023 by Moin Ahmed. All rights reserved.'
+__copyright__ = 'Copyright 2023 by Moin Ahmed. All rights reserved.'
 __status__ = 'deployed'
 
 import sys
