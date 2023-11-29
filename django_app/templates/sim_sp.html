@@ -4,6 +4,7 @@
     {% load static %}
     <meta charset="UTF-8">
     <link rel="stylesheet" href="{% static 'style.css' %}">
+
     <title>Parameter Selection</title>
 </head>
 
@@ -91,16 +92,16 @@
 
     <!-- Div containing the t and V plot -->
     <div class="plots">
-        <canvas id="id_chart_tV" height="150" width="150"></canvas>
-        <canvas id="id_chart_tsoc_p" height="150" width="150"></canvas>
-        <canvas id="id_chart_tsoc_n" height="150" width="150"></canvas>
-        <canvas id="id_chart_ttemp" height="150" width="150"></canvas>
+        <div id="id_chart_tV"></div>
+        <div id="id_chart_tsoc_p"></div>
+        <div id="id_chart_tsoc_n"></div>
+        <div id="id_chart_ttemp"></div>
     </div>
 
 
 
     <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js" type="text/javascript"></script>
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdn.plot.ly/plotly-2.27.0.min.js" charset="utf-8"></script>
     <script src="{% static 'index.js' %}"></script>
     <script>
         var tArray = {{ t_sim }};
@@ -108,31 +109,63 @@
         var socPArray = {{ soc_p_sim }};
         var socNArray = {{ soc_n_sim }};
         var tempArray = {{ temp_sim }};
-
-        tArray = tArray.map(function (each_element) {return Number(each_element.toFixed(0))});
-
-        function LinePlotConfig(xArray, yArray, plotLabel) {
-            return {type: 'line',
-                data: {labels: xArray,
-                    datasets: [{label: plotLabel, data: yArray, borderWidth: 1, backgroundColor: 'black'}]},
-                options: {scales: {y: {beginAtZero: false}}}};
+        let yaxis_data =
+            [[vArray,"id_chart_tV", "Potential [V]"],
+                [socPArray,"id_chart_tsoc_p", "SOC_p"],
+                [socNArray,"id_chart_tsoc_n", "SOC_n"],
+                [tempArray, "id_chart_ttemp", "Temperature [°C]"]]
+        for ( let i = 0 ; i < tArray.length ; i++ ) {
+            var traces = [{
+                type: 'scatter',
+                x: tArray,
+                y: yaxis_data[i][0],
+                mode: 'lines',
+                name: 'Red',
+                line: {
+                  color: 'rgb(219, 64, 82)',
+                  width: 3
+                },
+            }];
+            var layout = {
+                width: 500,
+                length: 500,
+                plot_bgcolor:'rgb(0, 0, 0, 0)',
+                paper_bgcolor:'rgb(0, 0, 0, 0)',
+                margin: {
+                    t: 25, //top margin
+                    l: 45, //left margin
+                    r: 45, //right margin,
+                    b: 45 //bottom margin}
+                    },
+                yaxis: {
+                    autorange: true,
+                    showgrid: true,
+                    showline: true,
+                    mirror: 'ticks',
+                    gridwidth: 1,
+                    tickfont: {
+                        size: 14
+                    },
+                    title: {
+                        text: yaxis_data[i][2]
+                    },
+                },
+                xaxis: {
+                    tickfont: {
+                        size: 14
+                    },
+                    title: {
+                        text: "Time [s]",
+                        font: {
+                            size: 14
+                        }
+                    },
+                    showline: true,
+                    mirror: 'ticks',
+                }
+            };
+            Plotly.newPlot(yaxis_data[i][1], traces, layout);
         }
-
-        const ctxTV = document.getElementById('id_chart_tV');
-        const configTV = LinePlotConfig(tArray, vArray, 'Terminal Voltage [V]');
-        var chartObjTV = new Chart(ctxTV, configTV);
-
-        const ctxSOCp = document.getElementById('id_chart_tsoc_p');
-        const configSOCp = LinePlotConfig(tArray, socPArray, 'SOC_p')
-        var chartObjSOCp = new Chart(ctxSOCp, configSOCp);
-
-        const ctxSOCn = document.getElementById('id_chart_tsoc_n');
-        const configSOCn = LinePlotConfig(tArray, socNArray, 'SOC_n')
-        var chartObjSOCn = new Chart(ctxSOCn, configSOCn);
-
-        const ctxttemp = document.getElementById('id_chart_ttemp');
-        const configtemp = LinePlotConfig(tArray, tempArray, 'Temp [C]')
-        var chartObjttemp = new Chart(ctxttemp, configtemp);
     </script>
 </body>
 </html>
