@@ -6,5 +6,6 @@ Contains the classes and functionalities for creating the battery cell component
 __all__ = ['battery_cell', 'electrode', 'electrolyte', 'parameter_set_manager']
 
 __author__ = 'Moin Ahmed'
-__copywrite__ = 'Copywrite 2023 by Moin Ahmed. All rights reserved.'
+__copyright__ = 'Copyright 2023 by Moin Ahmed. All rights reserved.'
 __status__ = 'deployed'
+

@@ -17,7 +17,7 @@ import numpy.typing as npt
 import scipy
 
 from SPPy.calc_helpers import constants
-from SPPy.battery_components.parameter_set_manager import ParameterSets
+from SPPy.battery_components.parameter_set_manager import ParameterSets, ECMParameterSets
 from SPPy.battery_components import electrolyte, electrode
 
 # Below checks for the Python3 version and imports the relevant packages for the type hinting. Note that the keyword
@@ -163,6 +163,17 @@ class ECMBatteryCell:
     M_0: Optional[float] = None  # The instantaneous hysteresis co-efficient [V]
     M: Optional[float] = None  # SOC-dependent hysteresis co-efficient [V]
     gamma: Optional[float] = None  # Hysteresis time-constant
+
+    @classmethod
+    def read_from_parametersets(cls, parameter_set_name: str, soc_init: float, temp_init: float) -> Self:
+        param = ECMParameterSets(name=parameter_set_name)
+        return cls(R0_ref=param.R0_ref, R1_ref=param.R1_ref, C1=param.C1, temp_ref=param.temp_ref,
+                   Ea_R0=param.Ea_R0,Ea_R1=param.Ea_R1,
+                   rho=param.rho, vol=param.rho, c_p=param.c_p, h=param.h, area=param.h, cap=param.cap,
+                   v_min=param.v_min, v_max=param.v_max,
+                   soc_init=soc_init, temp_init=temp_init,
+                   func_eta=param.func_eta, func_ocv=param.func_ocv, func_docvdtemp=param.func_docvdtemp,
+                   M_0=param.M_0, M=param.M, gamma=param.gamma)
 
     def __post_init__(self):
         self.temp_ = self.temp_init

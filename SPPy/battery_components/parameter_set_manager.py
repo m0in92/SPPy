@@ -2,13 +2,14 @@
 Contains the classes and functionality for the extracting battery cell parameters
 """
 
-__all__ = ['ParameterSets']
+__all__ = ['ParameterSets', 'ECMParameterSets']
 
 __author__ = 'Moin Ahmed'
 __copyright__ = 'Copyright 2023 by Moin Ahmed. All rights reserved'
 __status__ = 'deployed'
 
 
+from typing import Optional, Callable
 import importlib
 
 import pandas as pd
@@ -131,10 +132,6 @@ class ParameterSets:
         Checks if the inputted parameter name is in the parameter set. If not available, it raises an exception.
         """
         flag_name_present: bool = False
-        # if name not in cls.list_parameters_sets():
-        #     raise ValueError(f'{name} not in parameter sets.')
-        # else:
-        #     flag_name_present = True
         if name in cls.list_parameters_sets():
             flag_name_present = True
         return flag_name_present
@@ -147,3 +144,46 @@ class ParameterSets:
         :return: the dataframe with the column containing numerical values only.
         """
         return pd.read_csv(file_path, index_col=0)["Value"]
+
+
+class ECMParameterSets:
+    """
+    Class to collect ECM parameters from the csv file
+    """
+    PARAMETER_SET_DIR = PARAMETER_SET_ECM_DIR
+
+    def __init__(self, name: str) -> None:
+        self.name = name
+
+        file_path: str = os.path.join(ECMParameterSets.PARAMETER_SET_DIR, self.name, 'param.csv')
+        df = self._parse_csv(file_path=file_path)
+        self.R0_ref: float = df["R0 ref [ohm]"]  # resistance value of R0 [ohm]
+        self.R1_ref: float = df['R1_ref [ohm]']  # resistance value of R1 [ohm]
+        self.C1: float = df['C1 [F]']  # capacitance of capacitor in RC circuit [ohm]
+        self.temp_ref: float = df['temp_ref [K]']  # reference temperature for R0_ref and R1_ref
+        self.Ea_R0: float = df['Ea_R0 [J/mol]']  # activation energy for R0 [J/mol]
+        self.Ea_R1: float = df['Ea_R1 [J/mol]']  # activation energy for R1 [J/mol]
+
+        self.rho: float = df['rho [kg/m3]']  # battery density (mostly for thermal modelling), kg/m3
+        self.vol: float = df['vol [m3]']  # battery cell volume, m3
+        self.c_p: float = df['C_p [J/(Kkg)]']  # specific heat capacity, J / (K kg)
+        self.h: float = df['h [J/(SK)]'] # heat transfer coefficient, J / (S K)
+        self.area: float = df['area [m2]']  # surface area, m2
+        self.cap: float = df['cap [Ahr]']  # capacity, Ah
+        self.v_max: float = df['V_max [V]']  # maximum potential
+        self.v_min: float = df['V_min [V]']  # minimum potential
+
+        # The parameters below relate the dynamic and instantaneous hysteresis
+        self.M_0: Optional[float] = df['M_0 [V]']  # The instantaneous hysteresis co-efficient [V]
+        self.M: Optional[float] = df['M [V]']  # SOC-dependent hysteresis co-efficient [V]
+        self.gamma: Optional[float] = df['gamma']  # Hysteresis time-constant
+
+        func_module = importlib.import_module(f'parameter_sets_ecm.{self.name}.funcs')  # imports the python module
+        self.func_eta: Callable = func_module.func_eta  # func for the Columbic efficiency as a func of SOC and temp
+        self.func_ocv: Callable = func_module.func_ocv  # func which outputs the battery OCV from its SOC
+        self.func_docvdtemp: Callable = func_module.func_docvdtemp  # function which outputs the change of OCV with
+        # respect to temperature from its SOC
+
+    @classmethod
+    def _parse_csv(self, file_path: str) -> pd.DataFrame:
+        return pd.read_csv(file_path, index_col=0)['Value']

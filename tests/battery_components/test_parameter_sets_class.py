@@ -1,7 +1,11 @@
+from typing import Callable
+
+import numpy as np
 import unittest
 import os
 
 from SPPy.battery_components.battery_cell import ParameterSets
+from SPPy.battery_components.parameter_set_manager import ECMParameterSets
 
 
 class TestParameterSets(unittest.TestCase):
@@ -82,3 +86,62 @@ class TestParameterSets(unittest.TestCase):
             if parameter_set_name not in ParameterSets.list_parameters_sets():
                 return False
         return True
+
+
+class TestECMParameterSet(unittest.TestCase):
+    instance_test: ECMParameterSets = ECMParameterSets('test')
+
+    def test_file_path(self):
+        """
+        Ensures PARAMETER_SET_DIR is set to two parents above.
+        """
+        self.assertTrue(os.path.join('.', '.', 'parameter_sets_ecm'), self.instance_test.PARAMETER_SET_DIR)
+
+    def test_constructor(self):
+        # Check for the instance field types
+        self.assertTrue(isinstance(self.instance_test.R0_ref, np.float64))
+        self.assertTrue(isinstance(self.instance_test.R1_ref, np.float64))
+        self.assertTrue(isinstance(self.instance_test.C1, np.float64))
+        self.assertTrue(isinstance(self.instance_test.temp_ref, np.float64))
+        self.assertTrue(isinstance(self.instance_test.Ea_R0, np.float64))
+        self.assertTrue(isinstance(self.instance_test.Ea_R1, np.float64))
+
+        self.assertTrue(isinstance(self.instance_test.rho, np.float64))
+        self.assertTrue(isinstance(self.instance_test.vol, np.float64))
+        self.assertTrue(isinstance(self.instance_test.c_p, np.float64))
+        self.assertTrue(isinstance(self.instance_test.h, np.float64))
+        self.assertTrue(isinstance(self.instance_test.area, np.float64))
+        self.assertTrue(isinstance(self.instance_test.cap, np.float64))
+        self.assertTrue(isinstance(self.instance_test.v_max, np.float64))
+        self.assertTrue(isinstance(self.instance_test.v_min, np.float64))
+
+        self.assertTrue(np.isnan(self.instance_test.M_0))
+        self.assertTrue(np.isnan(self.instance_test.M))
+        self.assertTrue(np.isnan(self.instance_test.gamma))
+
+        self.assertTrue(isinstance(self.instance_test.func_eta, Callable))
+        self.assertTrue(isinstance(self.instance_test.func_ocv, Callable))
+        self.assertTrue(isinstance(self.instance_test.func_docvdtemp, Callable))
+
+        # Check for the instance values
+        self.assertEqual('test', self.instance_test.name)
+        self.assertEqual(0.005, self.instance_test.R0_ref)
+        self.assertTrue(0.001, self.instance_test.R1_ref)
+        self.assertTrue(0.03, self.instance_test.C1)
+        self.assertTrue(298.15, self.instance_test.temp_ref)
+        self.assertTrue(400, self.instance_test.Ea_R0)
+        self.assertTrue(400, self.instance_test.Ea_R1)
+
+        self.assertTrue(1626, self.instance_test.rho)
+        self.assertTrue(3.38e-5, self.instance_test.vol)
+        self.assertTrue(750, self.instance_test.c_p)
+        self.assertTrue(0.085, self.instance_test.h)
+        self.assertTrue(1, self.instance_test.area)
+        self.assertTrue(1.65, self.instance_test.cap)
+        self.assertTrue(4.2, self.instance_test.v_max)
+        self.assertTrue(2.5, self.instance_test.v_min)
+
+        self.assertEqual(1.0, self.instance_test.func_eta(0.5, 298.15))
+        self.assertEqual(3.7913774209371964, self.instance_test.func_ocv(0.5))
+        self.assertEqual(-0.0002942358440153894, self.instance_test.func_docvdtemp(0.5))
+

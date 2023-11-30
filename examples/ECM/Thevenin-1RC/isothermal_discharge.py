@@ -5,6 +5,7 @@ import numpy as np
 import SPPy
 
 
+
 def func_eta(SOC, temp):
     return 1
 
@@ -24,12 +25,13 @@ SOC_min = 0
 SOC_LIB = 1
 
 # setup the battery cell
-cell = SPPy.ECMBatteryCell(R0_ref=0.005, R1_ref=0.001, C1=0.03, temp_ref=298.15, Ea_R0=400, Ea_R1=400,
+cell = SPPy.ECMBatteryCell(R0_ref=0.005, R1_ref=0.001, C1=0.03, temp_ref=298.15, Ea_R0=4000, Ea_R1=4000,
                            rho=1626, vol=3.38e-5, c_p=750, h=1, area=0.085, cap=1.65, v_max=4.2, v_min=2.5,
-                           soc_init=0.98, temp_init=298.15, func_eta=func_eta, func_ocv=func_OCV, func_docvdtemp=func_dOCVdT)
+                           soc_init=0.98, temp_init=298.15, func_eta=func_eta,
+                           func_ocv=func_OCV, func_docvdtemp=func_dOCVdT)
 # set-up cycler and solver
 dc = SPPy.Discharge(discharge_current=I, v_min=V_min, SOC_LIB_min=SOC_min, SOC_LIB=SOC_LIB)
-solver = SPPy.DTSolver(battery_cell_instance=cell, isothermal=False)
+solver = SPPy.DTSolver(battery_cell_instance=cell, isothermal=True)
 # solve
 sol = solver.solve(cycling_step=dc)
 

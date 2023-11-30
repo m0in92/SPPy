@@ -1,3 +1,10 @@
+"""
+This module calculates and stores a function for the OCV and the dOCV/dT using the simulation results from the
+simgle particle model.
+"""
+
+__author__ = "Moin Ahmed"
+
 import pickle
 
 import matplotlib.pyplot as plt
@@ -16,7 +23,7 @@ SOC_LIB = 1
 SOC_init_p, SOC_init_n = 0.4956, 0.7568  # conditions in the literature source. Guo et al
 
 # Setup battery components
-cell = SPPy.BatteryCell(parameter_set_name='test', SOC_init_p=SOC_init_p, SOC_init_n=SOC_init_n, T=T)
+cell = SPPy.BatteryCell(parameter_set_name='test', SOC_init_p=SOC_init_p, SOC_init_n=SOC_init_n, temp_init=T)
 cell.cap = 1.92
 
 # set-up cycler and solver
