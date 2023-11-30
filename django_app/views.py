@@ -12,7 +12,7 @@ __status__ = "developement"
 from django.shortcuts import render
 from django.http import HttpResponse
 
-from django_app.forms import SPSimulationVariables
+from django_app.forms import ECMSimulationVariables, SPSimulationVariables
 
 import SPPy
 from SPPy.calc_helpers.constants import Constants
@@ -23,7 +23,14 @@ def index(request) -> HttpResponse:
 
 
 def ecm(request) -> HttpResponse:
-    return render(request=request, template_name='ecm.html', context={})
+    if request.method == "POST":
+        form = ECMSimulationVariables(request.POST)
+        if form.is_valid():
+            print("Pressed")
+    else:
+        form = ECMSimulationVariables()
+
+    return render(request=request, template_name='ecm.html', context={'form': form})
 
 
 def sp(request) -> HttpResponse:

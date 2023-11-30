@@ -1,12 +1,25 @@
+"""
+This module contains the forms (inherited from Django's Forms) to be used for the django apps.
+"""
+__all__ = ['ECMSimulationVariables', 'SPSimulationVariables']
+
+__authors__ = "Moin Ahmed"
+__copyright__ = "Copyright 2023 by SPPy. All Rights Reserved."
+
+
 from django import forms
 
-from SPPy.battery_components.parameter_set_manager import ParameterSets
+from SPPy.battery_components.parameter_set_manager import ParameterSets, ECMParameterSets
 
 
 class ECMSimulationVariables(forms.Form):
-    R_0 = forms.FloatField(label="R0")
-    R_1 = forms.FloatField(label="R1")
-    C = forms.FloatField(label="C1")
+    """
+    Contains the field ECM simulation's user inputs.
+    """
+    lst_parameter_name: list = [(param_set_name, param_set_name)
+                                for param_set_name in ECMParameterSets.lst_parameter_names()]
+
+    parameter_name = forms.ChoiceField(label="Parameter Name", choices=lst_parameter_name)
 
 
 class SPSimulationVariables(forms.Form):

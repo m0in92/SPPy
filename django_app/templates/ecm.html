@@ -2,13 +2,131 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
+    {% load static %}
+    <link rel="stylesheet" href="{% static 'style.css' %}">
+    <style>
+        header {
+            padding: 10px;
+            background: #2B7A78;
+            width: 100%;
+        }
+    </style>
     <title>Equivalent Circuit Model</title>
 </head>
 <body>
 <div>
-  <header></header>
-  <section></section>
-  <footer></footer>
+    <header>
+        <h1>Equivalent Circuit Model</h1>
+    </header>
+    <section>
+        <div class="container">
+            <form action="" method="POST">
+                <table>
+                    {% csrf_token %}
+                    {{ form.as_table }}
+                </table>
+                <button>Submit</button>
+            </form>
+
+            <table class="table_parameter_values">
+                <tr>
+                    <th colspan="2"><h3 class="table_main_heading" id="table_parameter_values_main_heading"></h3></th>
+                </tr>
+                <tr>
+                    <th>Parameter Name</th>
+                    <th>Parameter Value</th>
+                </tr>
+
+                <tr>
+                    <th class="parameter_names">Reference R0</th>
+                    <th class="parameter_values"></th>
+                </tr>
+                <tr>
+                    <th class="parameter_names">Reference R1</th>
+                    <th class="parameter_values"></th>
+                </tr>
+                <tr>
+                    <th class="parameter_names">C1 [F]</th>
+                    <th class="parameter_values"></th>
+                </tr>
+                <tr>
+                    <th class="parameter_names">Reference Temperature [K]</th>
+                    <th class="parameter_values"></th>
+                </tr>
+                <tr>
+                    <th class="parameter_names">R0 Activation Energy [J/mol]</th>
+                    <th class="parameter_values"></th>
+                </tr>
+                <tr>
+                    <th class="parameter_names">R1 Activation Energy [J/mol]</th>
+                    <th class="parameter_values"></th>
+                </tr>
+                <tr>
+                    <th class="parameter_names">Instantaneous hysteresis co-efficient [V]</th>
+                    <th class="parameter_values"></th>
+                </tr>
+                <tr>
+                    <th class="parameter_names">SOC-dependent hysteresis co-efficient [V]</th>
+                    <th class="parameter_values"></th>
+                </tr>
+                <tr>
+                    <th class="parameter_names">Hysteresis time-constant</th>
+                    <th class="parameter_values"></th>
+                </tr>
+
+                <!--                         General Battery Cell Parameters below------------------------------------->
+                <tr>
+                    <th class="parameter_names">Cross-section Area [<em>m<sup>2</sup></em>]</th>
+                    <th class="parameter_values" id="id_parameter_values_cross_section_area_bc" colspan="3">1626</th>
+                </tr>
+                <tr>
+                    <th class="parameter_names">Density [<em>kg m<sup>-3</sup></em>]</th>
+                    <th class="parameter_values" id="id_parameter_values_density_bc" colspan="3">1626</th>
+                </tr>
+                <tr>
+                    <th class="parameter_names">Volume [<em>m<sup>3</sup></em>]</th>
+                    <th class="parameter_values" id="id_parameter_values_volume_bc" colspan="3">3.38e-5</th>
+                </tr>
+                <tr>
+                    <th class="parameter_names">Specific Heat [<em>J K<sup>-1</sup> kg<sup>-1</sup></em>]</th>
+                    <th class="parameter_values" id="id_parameter_values_specific_heat_bc" colspan="3">750</th>
+                </tr>
+                <tr>
+                    <th class="parameter_names">Heat Transfer Coefficient [<em>J K<sup>-1</sup> s<sup>-1</sup></em>]
+                    </th>
+                    <th class="parameter_values" id="id_parameter_heat_transfer_coefficient_bc" colspan="3">1</th>
+                </tr>
+                <tr>
+                    <th class="parameter_names">Surface Area [<em>m<sup>3</sup></em>]</th>
+                    <th class="parameter_values" id="id_parameter_surface_area_bc" colspan="3">0.085</th>
+                </tr>
+                <tr>
+                    <th class="parameter_names">Capacity [<em>A hr</em>]</th>
+                    <th class="parameter_values" id="id_parameter_value_capacity_bc" colspan="3">1.65</th>
+                </tr>
+                <tr>
+                    <th class="parameter_names">Maximum Potential Cut-off [<em>V</em>]</th>
+                    <th class="parameter_values" id="id_parameter_max_potential_value_bc" colspan="3">4.2</th>
+                </tr>
+                <tr>
+                    <th class="parameter_names">Minimum Potential Cut-off [<em>V</em>]</th>
+                    <th class="parameter_values" id="id_parameter_min_potential_value_bc" colspan="3">2.5</th>
+                </tr>
+
+            </table>
+        </div>
+
+    </section>
+    <footer></footer>
+
+    <script>
+        const parameterNameSelect = document.querySelector("select")
+        let tableHeadingElement = document.getElementById("table_parameter_values_main_heading")
+
+        parameterNameSelect.onclick = () => {
+            tableHeadingElement.innerHTML = parameterNameSelect.value
+        }
+    </script>
 </div>
 
 </body>
