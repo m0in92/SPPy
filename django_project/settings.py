@@ -26,7 +26,7 @@ SECRET_KEY = 'django-insecure--2@$m57j91oo-*c!r!^h!$g98m89mx_h$q*@-$&r6#0&2cz79s
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['www.bmssim.com', 'bmssim.com']
+ALLOWED_HOSTS = ['www.bmssim.com', 'bmssim.com', '127.0.0.1']
 
 
 # Application definition
