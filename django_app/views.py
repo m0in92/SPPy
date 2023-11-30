@@ -91,3 +91,11 @@ def perform_simulation(simulation_inputs: tuple[str, str, float, float]) -> SPPy
     # simulate
     sol = solver.solve(cycler_instance=dc)
     return sol
+
+
+class Simulator:
+    """
+    Contains the functionality to perform battery cell simulations usinf SPPy package.
+    """
+    def __init__(self, battery_model: str):
+        self.battery_model: str = ""

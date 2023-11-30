@@ -146,5 +146,5 @@ class TestECMParameterSet(unittest.TestCase):
         self.assertEqual(-0.0002942358440153894, self.instance_test.func_docvdtemp(0.5))
 
     def test_list_parameter_names(self):
-        self.assertTrue('test' in self.instance_test.lst_parameter_names)
+        self.assertTrue('test' in self.instance_test.lst_parameter_names())
 
