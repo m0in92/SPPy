@@ -9,6 +9,10 @@ from SPPy.calc_helpers.constants import Constants
 
 
 def index(request) -> HttpResponse:
+    return render(request=request, template_name='index.html', context={})
+
+
+def sp(request) -> HttpResponse:
     t_sim: list = []  # list of floats intended to store the time from the simulation
     v_sim: list = []  # list of floats intended to store the voltage from the simulation
     soc_p_sim: list = []   # list of floats intended to store the soc_p from the simulation
@@ -26,7 +30,7 @@ def index(request) -> HttpResponse:
     else:
         form = SimulationVariables()
 
-    return render(request=request, template_name='sim_sp.html', context={'form': form,
+    return render(request=request, template_name='sp.html', context={'form': form,
                                                                         't_sim': t_sim,
                                                                         'v_sim': v_sim,
                                                                         'soc_p_sim': soc_p_sim,
