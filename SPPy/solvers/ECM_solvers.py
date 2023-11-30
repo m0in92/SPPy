@@ -133,7 +133,7 @@ class DTSolver(BaseSolver):
                 step_completed = False
                 while not step_completed:
                     t_curr = t_prev + dt
-                    i_app = -cycler.get_current(step=step)
+                    i_app = -cycler.get_current(step_name=step, t=t_curr)
 
                     # break condition for rest time
                     if step == "rest" and t_curr > cycler.rest_time:
@@ -154,9 +154,9 @@ class DTSolver(BaseSolver):
                                                           A=self.b_cell.area, T_amb=self.b_cell.temp_init)
 
                     # loop termination criteria
-                    if ((step == "charge") and (v > cycler.V_max)):
+                    if (step == "charge") and (v > cycler.v_max):
                         step_completed = True
-                    if ((step == "discharge") and (v < cycler.V_min)):
+                    if (step == "discharge") and (v < cycler.v_min):
                         step_completed = True
 
                     # Below updates the simulation parameters for the next iteration

@@ -184,7 +184,6 @@ class TestECMBatteryCell(unittest.TestCase):
         self.assertTrue(self.test_cell_Thevenin.M is None)
         self.assertTrue(self.test_cell_Thevenin.M_0 is None)
 
-
     def test_battery_cell_parameters_for_ESC_simulations(self):
         self.assertEqual(self.test_cell_ESC.rho, 1626)
         self.assertEqual(self.test_cell_ESC.vol, 3.38e-5)
@@ -206,6 +205,30 @@ class TestECMBatteryCell(unittest.TestCase):
 
         self.assertEqual(4.4782e-4, self.test_cell_ESC.M_0)
         self.assertEqual(0.0012, self.test_cell_ESC.M)
+
+    def test_read_from_parameterset(self):
+        b_cell: SPPy.ECMBatteryCell = SPPy.ECMBatteryCell.read_from_parametersets(parameter_set_name='test',
+                                                                                  soc_init=1.0, temp_init=298.15)
+        self.assertEqual(0.005, b_cell.R0_ref)
+        self.assertTrue(0.001, b_cell.R1_ref)
+        self.assertTrue(0.03, b_cell.C1)
+        self.assertTrue(298.15, b_cell.temp_ref)
+        self.assertTrue(400, b_cell.Ea_R0)
+        self.assertTrue(400, b_cell.Ea_R1)
+
+        self.assertTrue(1626, b_cell.rho)
+        self.assertTrue(3.38e-5, b_cell.vol)
+        self.assertTrue(750, b_cell.c_p)
+        self.assertTrue(0.085, b_cell.h)
+        self.assertTrue(1, b_cell.area)
+        self.assertTrue(1.65, b_cell.cap)
+        self.assertTrue(4.2, b_cell.v_max)
+        self.assertTrue(2.5, b_cell.v_min)
+
+        self.assertEqual(1.0, b_cell.func_eta(0.5, 298.15))
+        self.assertEqual(3.7913774209371964, b_cell.func_ocv(0.5))
+        self.assertEqual(-0.0002942358440153894, b_cell.func_docvdtemp(0.5))
+
 
 
 
