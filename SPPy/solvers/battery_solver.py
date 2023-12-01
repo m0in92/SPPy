@@ -193,7 +193,7 @@ class SPPySolver(BaseSolver):
                     if isinstance(cycler, CustomDischarge):
                         I = cycler.get_current(step, t_prev)
                     else:
-                        I = cycler.get_current(step)
+                        I = cycler.get_current(step, t_prev)
                     t_curr = t_prev + t_increment
                     dt = t_increment
 
@@ -264,7 +264,7 @@ class SPPySolver(BaseSolver):
                     if verbose:
                         print("time elapsed [s]: ", cycler.time_elapsed, ", cycle_no: ", cycle_no,
                               'step: ', step, "current [A]", I, ", terminal voltage [V]: ", V, ", SOC_LIB: ",
-                              cycler.SOC_LIB,
+                              cycler.SOC_LIB, "SOC_p: ", self.b_cell.elec_p.SOC, "SOC_n: ", self.b_cell.elec_n.SOC,
                               "cap: ", cap)
 
         return Solution(base_solution_instance=self.sol_init, name=sol_name, save_csv_dir=save_csv_dir)

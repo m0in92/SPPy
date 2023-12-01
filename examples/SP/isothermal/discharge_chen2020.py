@@ -15,10 +15,10 @@ V_min = 2.5
 SOC_min = 0.1
 
 # Modelling parameters
-soc_lib_init = 1.0
+soc_lib_init = 0.99
 
 # Setup battery components
-cell = SPPy.BatteryCell.read_from_parametersets(parameter_set_name='Chen_2020', soc_lib_init=soc_lib_init,
+cell: SPPy.BatteryCell = SPPy.BatteryCell.read_from_parametersets(parameter_set_name='Chen_2020', soc_lib_init=1.0,
                                                 # SOC_init_p=SOC_init_p, SOC_init_n=SOC_init_n,
                                                 temp_init=temp)
 # set-up cycler and solver
@@ -26,7 +26,7 @@ dc = SPPy.Discharge(discharge_current=I, v_min=V_min, SOC_LIB_min=SOC_min, SOC_L
 solver = SPPy.SPPySolver(b_cell=cell, N=5, isothermal=True, degradation=False, electrode_SOC_solver='poly')
 
 # simulate
-sol = solver.solve(cycler_instance=dc)
+sol: SPPy.Solution = solver.solve(cycler_instance=dc, verbose=True, t_increment=0.01)
 
 # Plot
 sol.comprehensive_isothermal_plot()

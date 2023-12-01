@@ -18,7 +18,7 @@ def dOCPdT_p(SOC):
 def OCP_ref_n(SOC):
     return 0.13966 + 0.68920 * np.exp(-49.20361 * SOC) + 0.41903 * np.exp(-254.40067 * SOC) \
             - np.exp(49.97886 * SOC - 43.37888) - 0.028221 * np.arctan(22.52300 * SOC - 3.65328) \
-            -0.01308 * np.arctan(28.34801* SOC - 13.43960)
+            -0.01308 * np.arctan(28.34801 * SOC - 13.43960)
 
 
 def dOCPdT_n(SOC):
