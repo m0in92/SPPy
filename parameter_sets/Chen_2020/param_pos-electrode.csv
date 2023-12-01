@@ -1,0 +1,17 @@
+Name,Value,Reference
+Electrode Area [m^2],0.1027,Chen et al
+Electrode Thickness [m],7.56E-05,Chen et al
+Ionic Conductivity [S m^-1],0.18,Chen et al
+Volume Fraction,0.335,Chen et al
+Electroactive Area [m^2],,
+Max. Conc. [mol m^-3],63104,Chen et al
+Radius [m],5.22E-06,Chen et al
+Reference Rate Constant [m^2.5 mol^-0.5 s^-1],3.42E-06,
+Reference Diffusitivity [m^2 s^-1],1.48E-15,Chen et al
+Activation Energy of Reaction [J mol^-1],17.8E03,Chen et al
+Activation Energy of Diffusion [J mol^-1],,
+Anodic Transfer Coefficient,0.5,
+Reference Temperature [K],,
+Bruggerman Coefficient,2.43,Chen et al
+soc_min,"",
+soc_max,,
