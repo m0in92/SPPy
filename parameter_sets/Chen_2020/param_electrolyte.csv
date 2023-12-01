@@ -1,0 +1,6 @@
+Name,Value,Reference
+Conc. [mol m^-3],1000,Chen et al
+Thickness [m],1.20E-05,Chen et al
+Ionic Conductivity [S m^-1],0.9487,Chen et al
+Volume Fraction,0.47,Chen et al
+Bruggerman Coefficient,2.57,Chen et al
