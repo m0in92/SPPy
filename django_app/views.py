@@ -104,15 +104,22 @@ class Simulator:
     """
     Contains the functionality to perform battery cell simulations using SPPy package.
     """
+    available_models: list = ['SP', 'ECM']  # inherent battery models
 
     def __init__(self, battery_model: str):
+        """
+        Constructor for the simulator class.
+        :param battery_model: (str) string representing the battery model.
+        """
         if self.check_for_valid_battery_models(battery_model=battery_model):
             self.battery_model: str = battery_model
 
     @classmethod
     def check_for_valid_battery_models(cls, battery_model: str) -> bool:
-        available_models: list = ['SP', 'ECM']
-        if battery_model not in available_models:
+        """
+        Raise ValueError in case the inputted battery model is not amongst the inherent battery models.
+        """
+        if battery_model not in Simulator.available_models:
             raise ValueError('battery_model not available.')
         else:
             return True

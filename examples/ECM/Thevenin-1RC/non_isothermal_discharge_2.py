@@ -26,6 +26,8 @@ SOC_LIB = 1
 # setup the battery cell
 cell = SPPy.ECMBatteryCell.read_from_parametersets(parameter_set_name='test', soc_init=1.0,
                                                    temp_init=298.15)
+# cell.ocv = func_OCV
+# cell.func_docvdtemp = func_dOCVdT
 # set-up cycler and solver
 dc = SPPy.Discharge(discharge_current=I, v_min=V_min, SOC_LIB_min=SOC_min, SOC_LIB=SOC_LIB)
 solver = SPPy.DTSolver(battery_cell_instance=cell, isothermal=False)

@@ -12,6 +12,9 @@ from .views import Simulator
 class TestSimulatorFromViews(unittest.TestCase):
     instance: Simulator = Simulator(battery_model='SP')
 
+    def test_constructor(self):
+        pass
+
     def test_battery_model_check(self):
         self.assertTrue(self.instance.check_for_valid_battery_models('SP'))
         self.assertTrue(self.instance.check_for_valid_battery_models('ECM'))

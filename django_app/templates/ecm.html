@@ -10,6 +10,15 @@
             background: #2B7A78;
             width: 100%;
         }
+        footer {
+            /*position: fixed;*/
+            /*bottom: 0;*/
+            /*left: 0;*/
+            width: 100%;
+            padding: 10px;
+            background: #2B7A78;
+            text-align: center;
+        }
     </style>
     <title>Equivalent Circuit Model</title>
 </head>
@@ -124,7 +133,9 @@
         </div>
 
     </section>
-    <footer></footer>
+    <footer>
+        <h3>Copyright SPPy 2023. All Rights Reserved.</h3>
+    </footer>
 
     <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js" type="text/javascript"></script>
     <script src="https://cdn.plot.ly/plotly-2.27.0.min.js" charset="utf-8"></script>
@@ -136,10 +147,30 @@
             tableHeadingElement.innerHTML = parameterNameSelect.value
         }
 
-        var tArray = {{ t_sim }};
-        var vArray = {{ v_sim }};
-        var socLIBArray = {{ soc_lib }};
-        var tempArray = {{ temp_sim }};
+        var tArray = {
+        {
+            t_sim
+        }
+        }
+        ;
+        var vArray = {
+        {
+            v_sim
+        }
+        }
+        ;
+        var socLIBArray = {
+        {
+            soc_lib
+        }
+        }
+        ;
+        var tempArray = {
+        {
+            temp_sim
+        }
+        }
+        ;
         let yaxis_data =
             [[vArray, "id_chart_tV", "Potential [V]"],
                 [socLIBArray, "id_chart_tsoc_lib", "SOC LIB"],

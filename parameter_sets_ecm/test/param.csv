@@ -8,11 +8,11 @@ Ea_R1 [J/mol],400,moin
 rho [kg/m3],1626,Guo et al.
 vol [m3],3.38E-05,Guo et al.
 C_p [J/(Kkg)],750,Guo et al.
-h [J/(SK)],0.085,Guo et al.
+h [J/(SK)],1,Guo et al.
 cap [Ahr],1.65,Guo et al.
 V_max [V],4.2,Guo et al.
 V_min [V],2.5,Guo et al.
 M_0 [V],,
 M [V],,
 gamma,,
-area [m2],1,Guo et al.
+area [m2],0.085,Guo et al.
