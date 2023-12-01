@@ -1,0 +1,21 @@
+{
+    "test": {
+        "R0 ref_bc [ohm]": "0.005",
+        "R1_ref_bc [ohm]": "0.001",
+        "C1_bc [F]": "0.03",
+        "temp_ref_bc [K]": "298.15",
+        "Ea_R0_bc [J/mol]": "400",
+        "Ea_R1_bc [J/mol]": "400",
+        "rho_bc [kg/m3]": "1626",
+        "vol_bc [m3]": "3.38E-05",
+        "C_p_bc [J/(Kkg)]": "750",
+        "h_bc [J/(SK)]": "0.085",
+        "cap_bc [Ahr]": "1.65",
+        "V_max_bc [V]": "4.2",
+        "V_min_bc [V]": "2.5",
+        "M_0_bc [V]": "",
+        "M_bc [V]": "",
+        "gamma_bc": "",
+        "area_bc [m2]": "1"
+    }
+}

@@ -2,13 +2,233 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
+    {% load static %}
+    <link rel="stylesheet" href="{% static 'style.css' %}">
+    <style>
+        header {
+            padding: 10px;
+            background: #2B7A78;
+            width: 100%;
+        }
+        footer {
+            /*position: fixed;*/
+            /*bottom: 0;*/
+            /*left: 0;*/
+            width: 100%;
+            padding: 10px;
+            background: #2B7A78;
+            text-align: center;
+        }
+    </style>
     <title>Equivalent Circuit Model</title>
 </head>
 <body>
 <div>
-  <header></header>
-  <section></section>
-  <footer></footer>
+    <header>
+        <h1>Equivalent Circuit Model</h1>
+    </header>
+    <section>
+        <div class="container">
+            <form action="" method="POST">
+                <table>
+                    {% csrf_token %}
+                    {{ form.as_table }}
+                </table>
+                <button>Submit</button>
+            </form>
+
+            <table class="table_parameter_values">
+                <tr>
+                    <th colspan="2"><h3 class="table_main_heading" id="table_parameter_values_main_heading"></h3></th>
+                </tr>
+                <tr>
+                    <th>Parameter Name</th>
+                    <th>Parameter Value</th>
+                </tr>
+
+                <tr>
+                    <th class="parameter_names">Reference R0</th>
+                    <th class="parameter_values"></th>
+                </tr>
+                <tr>
+                    <th class="parameter_names">Reference R1</th>
+                    <th class="parameter_values"></th>
+                </tr>
+                <tr>
+                    <th class="parameter_names">C1 [F]</th>
+                    <th class="parameter_values"></th>
+                </tr>
+                <tr>
+                    <th class="parameter_names">Reference Temperature [K]</th>
+                    <th class="parameter_values"></th>
+                </tr>
+                <tr>
+                    <th class="parameter_names">R0 Activation Energy [J/mol]</th>
+                    <th class="parameter_values"></th>
+                </tr>
+                <tr>
+                    <th class="parameter_names">R1 Activation Energy [J/mol]</th>
+                    <th class="parameter_values"></th>
+                </tr>
+                <tr>
+                    <th class="parameter_names">Instantaneous hysteresis co-efficient [V]</th>
+                    <th class="parameter_values"></th>
+                </tr>
+                <tr>
+                    <th class="parameter_names">SOC-dependent hysteresis co-efficient [V]</th>
+                    <th class="parameter_values"></th>
+                </tr>
+                <tr>
+                    <th class="parameter_names">Hysteresis time-constant</th>
+                    <th class="parameter_values"></th>
+                </tr>
+
+                <!--                         General Battery Cell Parameters below------------------------------------->
+                <tr>
+                    <th class="parameter_names">Cross-section Area [<em>m<sup>2</sup></em>]</th>
+                    <th class="parameter_values" id="id_parameter_values_cross_section_area_bc" colspan="3">1626</th>
+                </tr>
+                <tr>
+                    <th class="parameter_names">Density [<em>kg m<sup>-3</sup></em>]</th>
+                    <th class="parameter_values" id="id_parameter_values_density_bc" colspan="3">1626</th>
+                </tr>
+                <tr>
+                    <th class="parameter_names">Volume [<em>m<sup>3</sup></em>]</th>
+                    <th class="parameter_values" id="id_parameter_values_volume_bc" colspan="3">3.38e-5</th>
+                </tr>
+                <tr>
+                    <th class="parameter_names">Specific Heat [<em>J K<sup>-1</sup> kg<sup>-1</sup></em>]</th>
+                    <th class="parameter_values" id="id_parameter_values_specific_heat_bc" colspan="3">750</th>
+                </tr>
+                <tr>
+                    <th class="parameter_names">Heat Transfer Coefficient [<em>J K<sup>-1</sup> s<sup>-1</sup></em>]
+                    </th>
+                    <th class="parameter_values" id="id_parameter_heat_transfer_coefficient_bc" colspan="3">1</th>
+                </tr>
+                <tr>
+                    <th class="parameter_names">Surface Area [<em>m<sup>3</sup></em>]</th>
+                    <th class="parameter_values" id="id_parameter_surface_area_bc" colspan="3">0.085</th>
+                </tr>
+                <tr>
+                    <th class="parameter_names">Capacity [<em>A hr</em>]</th>
+                    <th class="parameter_values" id="id_parameter_value_capacity_bc" colspan="3">1.65</th>
+                </tr>
+                <tr>
+                    <th class="parameter_names">Maximum Potential Cut-off [<em>V</em>]</th>
+                    <th class="parameter_values" id="id_parameter_max_potential_value_bc" colspan="3">4.2</th>
+                </tr>
+                <tr>
+                    <th class="parameter_names">Minimum Potential Cut-off [<em>V</em>]</th>
+                    <th class="parameter_values" id="id_parameter_min_potential_value_bc" colspan="3">2.5</th>
+                </tr>
+
+            </table>
+        </div>
+
+        <!-- Div containing the t and V plot -->
+        <div class="plots">
+            <div id="id_chart_tV"></div>
+            <div id="id_chart_tsoc_lib"></div>
+            <div id="id_chart_ttemp"></div>
+        </div>
+
+    </section>
+    <footer>
+        <h3>Copyright SPPy 2023. All Rights Reserved.</h3>
+    </footer>
+
+    <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js" type="text/javascript"></script>
+    <script src="https://cdn.plot.ly/plotly-2.27.0.min.js" charset="utf-8"></script>
+    <script>
+        const parameterNameSelect = document.querySelector("select")
+        let tableHeadingElement = document.getElementById("table_parameter_values_main_heading")
+
+        parameterNameSelect.onclick = () => {
+            tableHeadingElement.innerHTML = parameterNameSelect.value
+        }
+
+        var tArray = {
+        {
+            t_sim
+        }
+        }
+        ;
+        var vArray = {
+        {
+            v_sim
+        }
+        }
+        ;
+        var socLIBArray = {
+        {
+            soc_lib
+        }
+        }
+        ;
+        var tempArray = {
+        {
+            temp_sim
+        }
+        }
+        ;
+        let yaxis_data =
+            [[vArray, "id_chart_tV", "Potential [V]"],
+                [socLIBArray, "id_chart_tsoc_lib", "SOC LIB"],
+                [tempArray, "id_chart_ttemp", "Temperature [°C]"]]
+        for (let i = 0; i < tArray.length; i++) {
+            var traces = [{
+                type: 'scatter',
+                x: tArray,
+                y: yaxis_data[i][0],
+                mode: 'lines',
+                name: 'Red',
+                line: {
+                    color: 'rgb(219, 64, 82)',
+                    width: 3
+                },
+            }];
+            var layout = {
+                width: 500,
+                length: 500,
+                plot_bgcolor: 'rgb(0, 0, 0, 0)',
+                paper_bgcolor: 'rgb(0, 0, 0, 0)',
+                margin: {
+                    t: 25, //top margin
+                    l: 45, //left margin
+                    r: 45, //right margin,
+                    b: 45 //bottom margin}
+                },
+                yaxis: {
+                    autorange: true,
+                    showgrid: true,
+                    showline: true,
+                    mirror: 'ticks',
+                    gridwidth: 1,
+                    tickfont: {
+                        size: 14
+                    },
+                    title: {
+                        text: yaxis_data[i][2]
+                    },
+                },
+                xaxis: {
+                    tickfont: {
+                        size: 14
+                    },
+                    title: {
+                        text: "Time [s]",
+                        font: {
+                            size: 14
+                        }
+                    },
+                    showline: true,
+                    mirror: 'ticks',
+                }
+            };
+            Plotly.newPlot(yaxis_data[i][1], traces, layout);
+        }
+    </script>
+    <script src="{% static 'ecm.js' %}"></script>
 </div>
 
 </body>

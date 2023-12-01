@@ -25,7 +25,7 @@
         nav, section {
             float: left;
             padding: 20px;
-            min-height: 300px;
+            min-height: 500px;
         }
 
         section {
@@ -51,7 +51,7 @@
 
         img {
             display: none;
-            width: 80%;
+            width: 50%;
             margin-left: auto;
             margin-right: auto;
         }
@@ -79,7 +79,7 @@
                 </ul>
                 <li><a href="">Battery Cell Simulations</a></li>
                 <ul>
-                    <li><a href=""
+                    <li><a href="{% url 'sppy:ecm' %}"
                            onmouseover="describe(this, underConstructionHeading, underConstructionDescription)"
                            onmouseout="normalDescription(this)">Equivalent Circuit Model</a></li>
                     <li><a href="{% url 'sppy:sp' %}"
@@ -91,6 +91,22 @@
                     <li><a href=""
                            onmouseover="describe(this, underConstructionHeading, underConstructionDescription)"
                            onmouseout="normalDescription(this)">Pseudo Two Dimensional Model</a></li>
+                </ul>
+                <li><a href="">Insights</a></li>
+                <ul>
+                    <li><a href="" onmouseover="describe(this, underConstructionHeading, underConstructionDescription)"
+                           onmouseout="normalDescription(this)">Range Estimations</a></li>
+                    <li><a href="" onmouseover="describe(this, underConstructionHeading, underConstructionDescription)"
+                           onmouseout="normalDescription(this)">Life Cycle Estimations</a></li>
+                </ul>
+                <li><a href="">Battery Management System Monitoring</a></li>
+                <ul>
+                    <li><a href="" onmouseover="describe(this, underConstructionHeading, underConstructionDescription)"
+                           onmouseout="normalDescription(this)">SOC Estimations with Kalman Filter</a></li>
+                    <li><a href="" onmouseover="describe(this, underConstructionHeading, underConstructionDescription)"
+                           onmouseout="normalDescription(this)">SOH Estimations with Kalman Filter</a></li>
+                    <li><a href="" onmouseover="describe(this, underConstructionHeading, underConstructionDescription)"
+                           onmouseout="normalDescription(this)">Potential Fault Detection</a></li>
                 </ul>
             </ul>
         </nav>

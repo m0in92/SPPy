@@ -185,5 +185,13 @@ class ECMParameterSets:
         # respect to temperature from its SOC
 
     @classmethod
+    def lst_parameter_names(cls) -> list:
+        """
+        List containing the ECM parameter names.
+        """
+        return os.listdir(ECMParameterSets.PARAMETER_SET_DIR)
+
+    @classmethod
     def _parse_csv(self, file_path: str) -> pd.DataFrame:
         return pd.read_csv(file_path, index_col=0)['Value']
+
