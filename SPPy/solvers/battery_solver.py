@@ -108,6 +108,9 @@ class SPPySolver(BaseSolver):
         :param dt: time difference between the current and previous time step [s].
         :return: (float) change in delta SOC
         """
+        if isinstance(Q, str):
+            Q = float(Q)
+        # print(type(I), type(dt),type(Q))
         return (1 / 3600) * (np.abs(I) * dt / Q)
 
     def calc_SOC_cap(self, cap_prev: float, Q: float, I: float, dt: float):
