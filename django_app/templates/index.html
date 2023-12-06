@@ -37,9 +37,9 @@
     </nav>
 </header>
 <div>
-    <nav class="nav-sims">
-        <ul class="main_ul">
-            <li><a href="">Application Dynamics Simulations</a></li>
+    <nav class="nav-sims-options">
+        <ul class="ul-sims-options">
+            <li><span class="main-sim-options-span">Application Dynamics Simulation</span></li>
             <ul>
                 <li><a href=""
                        onmouseover="describe(this, underConstructionHeading, underConstructionDescription)"
@@ -51,7 +51,7 @@
                        onmouseover="describe(this, underConstructionHeading, underConstructionDescription)"
                        onmouseout="normalDescription(this)">Stationary Energy Storage System</a></li>
             </ul>
-            <li><a href="">Battery Cell Simulations</a></li>
+            <li><span class="main-sim-options-span">Battery Cell Simulations</span></li>
             <ul>
                 <li><a href="{% url 'sppy:ecm' %}"
                        onmouseover="describe(this, underConstructionHeading, underConstructionDescription)"
@@ -100,14 +100,14 @@
     </footer>
 </div>
 <script>
-    // The following variables store the strings for the sub-headings
+    // The following variables store the strings for the subheadings
     let normalHeading = "Welcome to the simulation portal.";
     let spHeading = "Single Particle Model";
     let underConstructionHeading = "Under Construction";
 
     // The following variables store the strings for the descriptions
     let welcomeDescription =
-        "Please hover on the items on the left for a basic description. Click on them to be redirected to the\n" +
+        "Please hover on the items on the left for a basic description. Click on them to be redirected to the " +
         "relevant simulations page.";
     let spDescription =
         "Outputs the battery cell voltage, electrode SOC, and lumped thermal profile from parameter-set " +

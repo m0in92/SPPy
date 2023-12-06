@@ -3,12 +3,18 @@
     --secondary-background-color: #2B7A78;
     --light-color: #FFDEAD;
     --font-color: white;
-    --font-size-md: 2.4rem;
+    --font-size-md: 2rem;
+    --font-size-lsm: 1.7rem;
     --font-size-sm: 1.6rem;
     --gap: 2rem
 }
 
 /*Resuable classes*/
+
+.container {
+    display: flex;
+    flex-direction: row;
+}
 
 /* Base Styles */
 * {
@@ -30,8 +36,15 @@ a {
     color: inherit;
 }
 
-li {
+ul {
     list-style: none;
+}
+
+li {
+    padding-left: 2rem;
+    /*list-style: none;*/
+    margin: auto;
+    font-size: var(--font-size-sm);
 }
 
 img {
@@ -43,7 +56,7 @@ img {
 
 section {
     padding: 2rem;
-    width: 70%;
+    /*width: 70%;*/
 }
 
 p {
@@ -54,13 +67,42 @@ p {
     padding: 0;
 }
 
+table {
+    float: left;
+    margin: 0px;
+    padding: 15px;
+}
+
+th, td {
+    border: 1px solid black;
+}
+
+button {
+    font-size: var(--font-size-sm);
+    /*font-weight: bold;*/
+
+    /*width: 30%;*/
+    margin: auto;
+    /* text-align: center; */
+    padding: 2rem;
+    background-color: #17252A;
+    color: var(--font-color);
+    border: none;
+    outline: none;
+    border-radius: 20px;
+    cursor: pointer;
+}
+
+h3 {
+    font-size: var(--font-size-lsm);
+}
+
 footer {
     position: fixed;
     bottom: 0;
-    left: 0;
     width: 100%;
     padding: 10px;
-    background: #2B7A78;
+    background: var(--secondary-background-color);
     text-align: center;
 }
 
@@ -94,9 +136,9 @@ footer {
     gap: var(--gap);
 }
 
- /*Navbar and Section*/
+ /* Index Page - Navbar and Section */
 
-.nav-sims, section-description {
+.nav-sims-options, section-description {
     float: left;
     padding: 20px;
     min-height: 500px;
@@ -107,7 +149,48 @@ footer {
     height: 100%;
 }
 
-.main_ul {
-    padding: 0;
+.main-sim-options-span {
+    font-weight: bold;
+    font-size: var(--font-size-lsm);
 }
 
+/* Table containing parameter values */
+.table_parameter_values{
+
+}
+
+.parameter_names {
+    text-align: left;
+}
+
+.span_param_name {
+    font-weight: bold;
+}
+
+/* Simulation plots related */
+.plots {
+    max-width: calc(100% - 616px);
+    flex-grow: 1;
+    display: flex;
+    justify-content: center;
+    flex-direction: row;
+    flex-wrap: wrap;
+}
+
+div[id^="id_chart"] {
+    width: 500px;
+    height: 500px;
+}
+
+@media (max-width: 1100px){
+    .flex_container {
+        flex-direction: column;
+    }
+    .container {
+        align-items: center;
+    }
+    .plots {
+        flex-direction: column;
+        max-width: 100%;
+    }
+}
