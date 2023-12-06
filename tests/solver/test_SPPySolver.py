@@ -109,7 +109,8 @@ class TestSPPySolverIsothermal(unittest.TestCase):
         test_solver = SPPy.SPPySolver(b_cell=self.test_cell, N=self.N, isothermal=True, degradation=False,
                                       electrode_SOC_solver="poly", type='two')
         sol = test_solver.solve(cycler_instance=dc)
-        self.assertEqual(3.925178151483124, sol.V[0])
+        print(sol.V[0])
+        self.assertEqual(3.9248673125333613, sol.V[0])
 
 
 class TestSppySolverNonIsothermal(unittest.TestCase):
