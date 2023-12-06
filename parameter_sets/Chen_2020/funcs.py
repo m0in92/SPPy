@@ -7,6 +7,7 @@ def OCP_ref_p(soc: float) -> float:
     :param soc:
     :return:
     """
+    # soc = 1 - soc
     return -0.8090*soc + 4.4875 - 0.0428*np.tanh(18.5138*(soc-0.5542)) - 17.7326*np.tanh(15.7890*(soc-0.3117)) + \
            17.5842 * np.tanh(15.9308 * (soc-0.3120))
 

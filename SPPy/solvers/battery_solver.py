@@ -61,7 +61,7 @@ class SPPySolver(BaseSolver):
             self.SOC_solver_p = PolynomialApproximation(
                 c_init=self.b_cell.elec_p.max_conc * self.b_cell.elec_p.SOC_init,
                 electrode_type='p', type=type)
-            self.SOC_solver_n = PolynomialApproximation(c_init=self.b_cell.elec_n.max_conc * self.b_cell.elec_n.SOC,
+            self.SOC_solver_n = PolynomialApproximation(c_init=self.b_cell.elec_n.max_conc * self.b_cell.elec_n.SOC_init,
                                                         electrode_type='n', type=type)
 
         self.t_model = Lumped(b_cell=self.b_cell)  # thermal model object
