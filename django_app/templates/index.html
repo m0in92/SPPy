@@ -4,124 +4,100 @@
     <meta charset="UTF-8">
     {% load static %}
     <title>BMSSim | Home</title>
-    <link rel="stylesheet" href="{% static 'style.css' %}">
     <link rel="shortcut icon" href="{% static 'favicon.png' %}" type="image/x-icon">
-    <style>
-        header {
-            padding: 10px;
-            background: #2B7A78;
-            width: 100%;
-        }
-
-        footer {
-            position: fixed;
-            bottom: 0;
-            left: 0;
-            width: 100%;
-            padding: 10px;
-            background: #2B7A78;
-            text-align: center;
-        }
-
-        nav, section {
-            float: left;
-            padding: 20px;
-            min-height: 500px;
-        }
-
-        section {
-            width: 70%;
-            background: #DEF2F1;
-        }
-
-        nav ul {
-            list-style: none;
-        }
-
-        .main_ul {
-            padding: 0;
-        }
-
-        p {
-            font-size: larger;
-            font-family: serif;
-            line-height: 2;
-            white-space: pre;
-            padding: 0;
-        }
-
-        img {
-            display: none;
-            width: 50%;
-            margin-left: auto;
-            margin-right: auto;
-        }
-    </style>
+    <link rel="stylesheet" href="{% static 'index.css' %}">
 </head>
 <body>
-<div>
-    <header>
-        <h1>Dashboard</h1>
-    </header>
-    <div>
-        <nav>
-            <ul class="main_ul">
-                <li><a href="">Application Dynamics Simulations</a></li>
-                <ul>
-                    <li><a href=""
-                           onmouseover="describe(this, underConstructionHeading, underConstructionDescription)"
-                           onmouseout="normalDescription(this)">Electric Vehicles</a></li>
-                    <li><a href=""
-                           onmouseover="describe(this, underConstructionHeading, underConstructionDescription)"
-                           onmouseout="normalDescription(this)">Electric Bikes</a></li>
-                    <li><a href=""
-                           onmouseover="describe(this, underConstructionHeading, underConstructionDescription)"
-                           onmouseout="normalDescription(this)">Stationary Energy Storage System</a></li>
-                </ul>
-                <li><a href="">Battery Cell Simulations</a></li>
-                <ul>
-                    <li><a href="{% url 'sppy:ecm' %}"
-                           onmouseover="describe(this, underConstructionHeading, underConstructionDescription)"
-                           onmouseout="normalDescription(this)">Equivalent Circuit Model</a></li>
-                    <li><a href="{% url 'sppy:sp' %}"
-                           onmouseover="describe(this, spHeading, spDescription, true)"
-                           onmouseout="normalDescription(this)">Single Particle Model</a></li>
-                    <li><a href=""
-                           onmouseover="describe(this, underConstructionHeading, underConstructionDescription)"
-                           onmouseout="normalDescription(this)">Enhanced Single Particle Model</a></li>
-                    <li><a href=""
-                           onmouseover="describe(this, underConstructionHeading, underConstructionDescription)"
-                           onmouseout="normalDescription(this)">Pseudo Two Dimensional Model</a></li>
-                </ul>
-                <li><a href="">Insights</a></li>
-                <ul>
-                    <li><a href="" onmouseover="describe(this, underConstructionHeading, underConstructionDescription)"
-                           onmouseout="normalDescription(this)">Range Estimations</a></li>
-                    <li><a href="" onmouseover="describe(this, underConstructionHeading, underConstructionDescription)"
-                           onmouseout="normalDescription(this)">Life Cycle Estimations</a></li>
-                </ul>
-                <li><a href="">Battery Management System Monitoring</a></li>
-                <ul>
-                    <li><a href="" onmouseover="describe(this, underConstructionHeading, underConstructionDescription)"
-                           onmouseout="normalDescription(this)">SOC Estimations with Kalman Filter</a></li>
-                    <li><a href="" onmouseover="describe(this, underConstructionHeading, underConstructionDescription)"
-                           onmouseout="normalDescription(this)">SOH Estimations with Kalman Filter</a></li>
-                    <li><a href="" onmouseover="describe(this, underConstructionHeading, underConstructionDescription)"
-                           onmouseout="normalDescription(this)">Potential Fault Detection</a></li>
-                </ul>
-            </ul>
-        </nav>
-        <section>
-            <h2>Description</h2>
-            <h3 id="id_h3_description"></h3>
-            <p id="id_p_description"></p>
+<header>
+    <nav class="navbar container">
+        <!--            logo-->
+        <a href="{% url 'sppy:index' %}">
+            <h2 class="logo"><span class="logo-span">BMS</span>Sim</h2>
+        </a>
 
-            <img id="id_img" src="{% static 'img.png' %}" alt="">
-        </section>
-        <footer>
-            <h3>Copyright SPPy 2023. All Rights Reserved.</h3>
-        </footer>
-    </div>
+        <!--            Webpage Name Title-->
+        <h1>Dashboard</h1>
+
+        <!--            Menu-->
+        <div class="menu">
+            <ul class="menu-list">
+                <li class="link-list">
+                    <a href="{% url 'sppy:index' %}">
+                        <span class="menu-texts-span">Home</span>
+                    </a>
+                </li>
+                <li class="link-list">
+                    <a href="">
+                        <span class="menu-texts-span">About</span>
+                    </a>
+                </li>
+            </ul>
+        </div>
+
+    </nav>
+</header>
+<div>
+    <nav class="nav-sims">
+        <ul class="main_ul">
+            <li><a href="">Application Dynamics Simulations</a></li>
+            <ul>
+                <li><a href=""
+                       onmouseover="describe(this, underConstructionHeading, underConstructionDescription)"
+                       onmouseout="normalDescription(this)">Electric Vehicles</a></li>
+                <li><a href=""
+                       onmouseover="describe(this, underConstructionHeading, underConstructionDescription)"
+                       onmouseout="normalDescription(this)">Electric Bikes</a></li>
+                <li><a href=""
+                       onmouseover="describe(this, underConstructionHeading, underConstructionDescription)"
+                       onmouseout="normalDescription(this)">Stationary Energy Storage System</a></li>
+            </ul>
+            <li><a href="">Battery Cell Simulations</a></li>
+            <ul>
+                <li><a href="{% url 'sppy:ecm' %}"
+                       onmouseover="describe(this, underConstructionHeading, underConstructionDescription)"
+                       onmouseout="normalDescription(this)">Equivalent Circuit Model</a></li>
+                <li><a href="{% url 'sppy:sp' %}"
+                       onmouseover="describe(this, spHeading, spDescription, true)"
+                       onmouseout="normalDescription(this)">Single Particle Model</a></li>
+                <li><a href=""
+                       onmouseover="describe(this, underConstructionHeading, underConstructionDescription)"
+                       onmouseout="normalDescription(this)">Enhanced Single Particle Model</a></li>
+                <li><a href=""
+                       onmouseover="describe(this, underConstructionHeading, underConstructionDescription)"
+                       onmouseout="normalDescription(this)">Pseudo Two Dimensional Model</a></li>
+            </ul>
+            <li><a href="">Insights</a></li>
+            <ul>
+                <li><a href="" onmouseover="describe(this, underConstructionHeading, underConstructionDescription)"
+                       onmouseout="normalDescription(this)">Range Estimations</a></li>
+                <li><a href="" onmouseover="describe(this, underConstructionHeading, underConstructionDescription)"
+                       onmouseout="normalDescription(this)">Life Cycle Estimations</a></li>
+            </ul>
+            <li><a href="">Battery Management System Monitoring</a></li>
+            <ul>
+                <li><a href="" onmouseover="describe(this, underConstructionHeading, underConstructionDescription)"
+                       onmouseout="normalDescription(this)">SOC Estimations with Kalman Filter</a></li>
+                <li><a href="" onmouseover="describe(this, underConstructionHeading, underConstructionDescription)"
+                       onmouseout="normalDescription(this)">SOH Estimations with Kalman Filter</a></li>
+                <li><a href="" onmouseover="describe(this, underConstructionHeading, underConstructionDescription)"
+                       onmouseout="normalDescription(this)">Potential Fault Detection</a></li>
+            </ul>
+        </ul>
+    </nav>
+
+    <!--    Section - Description-->
+    <section class="section section-description">
+        <h2>Description</h2>
+        <h3 id="id_h3_description"></h3>
+        <p id="id_p_description"></p>
+
+        <img id="id_img" src="{% static 'img.png' %}" alt="">
+    </section>
+
+    <!--    Footer-->
+    <footer>
+        <h3>Copyright SPPy 2023. All Rights Reserved.</h3>
+    </footer>
 </div>
 <script>
     // The following variables store the strings for the sub-headings

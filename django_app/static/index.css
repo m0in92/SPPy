@@ -1,0 +1,113 @@
+:root {
+    --primary-background-color: #DEF2F1;
+    --secondary-background-color: #2B7A78;
+    --light-color: #FFDEAD;
+    --font-color: white;
+    --font-size-md: 2.4rem;
+    --font-size-sm: 1.6rem;
+    --gap: 2rem
+}
+
+/*Resuable classes*/
+
+/* Base Styles */
+* {
+    margin: 0;
+    padding: 0;
+}
+
+html {
+    font-size: 12px;
+}
+
+body {
+    font-size: var(--font-size-sm);
+    background-color: var(--primary-background-color);
+}
+
+a {
+    text-decoration: none;
+    color: inherit;
+}
+
+li {
+    list-style: none;
+}
+
+img {
+    display: none;
+    width: 50%;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+section {
+    padding: 2rem;
+    width: 70%;
+}
+
+p {
+    font-size: var(--font-size-sm);
+    font-family: serif;
+    line-height: 2;
+    white-space: pre;
+    padding: 0;
+}
+
+footer {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    padding: 10px;
+    background: #2B7A78;
+    text-align: center;
+}
+
+
+/* Header */
+.navbar {
+    display: flex;
+    align-content: center;
+    justify-content: space-between;
+    padding-block: 1.5rem;
+
+    background-color: var(--secondary-background-color);
+    color: var(--font-color);
+}
+
+.logo {
+    padding-left: 5rem;
+}
+
+.logo-span {
+    color: peru;
+}
+
+.menu {
+    align-items: center;
+    padding-right: 5rem;
+}
+
+.menu-list {
+    display: flex;
+    gap: var(--gap);
+}
+
+ /*Navbar and Section*/
+
+.nav-sims, section-description {
+    float: left;
+    padding: 20px;
+    min-height: 500px;
+}
+
+.nav-sims {
+    padding: 2rem;
+    height: 100%;
+}
+
+.main_ul {
+    padding: 0;
+}
+
