@@ -1,5 +1,5 @@
 :root {
-    --primary-background-color: #DEF2F1;
+        --primary-background-color: #DEF2F1;
     --secondary-background-color: #2B7A78;
     --light-color: #FFDEAD;
     --font-color: white;
@@ -12,8 +12,7 @@
 /*Resuable classes*/
 
 .container {
-    display: flex;
-    flex-direction: row;
+    align-items: normal;
 }
 
 /* Base Styles */
@@ -68,7 +67,7 @@ p {
 }
 
 table {
-    float: left;
+    /*float: left;*/
     margin: 0px;
     padding: 15px;
 }
@@ -154,10 +153,7 @@ footer {
     font-size: var(--font-size-lsm);
 }
 
-/* Table containing parameter values */
-.table_parameter_values{
-
-}
+/* Battery Cell Simulation Table Pages - Parameter values and Plots */
 
 .parameter_names {
     text-align: left;
@@ -168,6 +164,7 @@ footer {
 }
 
 /* Simulation plots related */
+
 .plots {
     max-width: calc(100% - 616px);
     flex-grow: 1;

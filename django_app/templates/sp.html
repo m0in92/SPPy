@@ -52,138 +52,127 @@
             </table>
             <button>Submit</button>
         </form>
+
+
+        <table class="table_parameter_values">
+            <tr>
+                <th colspan="4"><h3 class="table_main_heading" id="table_parameter_values_main_heading"></h3></th>
+            </tr>
+
+            <tr>
+                <th></th>
+                <th>Negative Electrode</th>
+                <th>Seperator</th>
+                <th>Positive Electrode</th>
+            </tr>
+
+            <!--        Below are the parameters specific for electrode and seperator regions-->
+            <tr>
+                <th class="parameter_names">Solid Phase Diffusivity [<em>m<sup>2</sup>s<sup>-1</sup></em>]</th>
+                <th id="id_parameter_value_diffusivity_p">value_p</th>
+                <th></th>
+                <th id="id_parameter_value_diffusivity_n">value_n</th>
+            </tr>
+
+            <tr>
+                <th class="parameter_names">Reaction Rate [<em>m<sup>2.5</sup>mol<sup>-0.5</sup>s<sup>-1</sup></em>]</th>
+                <th id="id_parameter_value_reaction_rate_p">value_p</th>
+                <th></th>
+                <th id="id_parameter_value_reaction_rate_n">value_n</th>
+            </tr>
+
+            <tr>
+                <th class="parameter_names">Particle Radius [<em>m</em>]</th>
+                <th id="id_parameter_value_particle_radius_p">value_p</th>
+                <th></th>
+                <th id="id_parameter_value_particle_radius_n">value_n</th>
+            </tr>
+
+            <tr>
+                <th class="parameter_names">Volume Fraction</th>
+                <th id="id_parameter_value_volume_fraction_p">value_p</th>
+                <th id="id_parameter_value_volume_fraction_sep">value_sep</th>
+                <th id="id_parameter_value_volume_fraction_n">value_n</th>
+            </tr>
+
+            <tr>
+                <th class="parameter_names">Anodic Transfer Co-efficient</th>
+                <th id="id_parameter_value_anodic_transfer_coefficient_p">value_p</th>
+                <th></th>
+                <th id="id_parameter_value_anodic_transfer_coefficient_n">value_n</th>
+            </tr>
+
+            <tr>
+                <th class="parameter_names">Cathodic Transfer Co-efficient</th>
+                <th id="id_parameter_value_cathodic_transfer_coefficient_p">value_p</th>
+                <th></th>
+                <th id="id_parameter_value_cathodic_transfer_coefficient_n">value_n</th>
+            </tr>
+
+            <tr>
+                <th class="parameter_names">Bruggerman Coefficient</th>
+                <th id="id_parameter_value_bruggerman_coefficient_p">value_p</th>
+                <th id="id_parameter_value_bruggerman_coefficient_sep">value_sep</th>
+                <th id="id_parameter_value_bruggerman_coefficient_n">value_n</th>
+            </tr>
+
+            <tr>
+                <th class="parameter_names">Max. Conc. [<em>mol m<sup>-3</sup></em>]</th>
+                <th id="id_parameter_value_max_conc_p">value_p</th>
+                <th></th>
+                <th id="id_parameter_value_max_conc_n">value_n</th>
+            </tr>
+
+            <!--        General Battery Cell Parameters below-->
+            <tr>
+                <th class="parameter_names">Cross-section Area [<em>m<sup>2</sup></em>]</th>
+                <th class="parameter_values" id="id_parameter_values_cross_section_area_bc" colspan="3">1626</th>
+            </tr>
+            <tr>
+                <th class="parameter_names">Density [<em>kg m<sup>-3</sup></em>]</th>
+                <th class="parameter_values" id="id_parameter_values_density_bc" colspan="3">1626</th>
+            </tr>
+            <tr>
+                <th class="parameter_names">Volume [<em>m<sup>3</sup></em>]</th>
+                <th class="parameter_values" id="id_parameter_values_volume_bc" colspan="3">3.38e-5</th>
+            </tr>
+            <tr>
+                <th class="parameter_names">Specific Heat [<em>J K<sup>-1</sup> kg<sup>-1</sup></em>]</th>
+                <th class="parameter_values" id="id_parameter_values_specific_heat_bc" colspan="3">750</th>
+            </tr>
+            <tr>
+                <th class="parameter_names">Heat Transfer Coefficient [<em>J K<sup>-1</sup> s<sup>-1</sup></em>]</th>
+                <th class="parameter_values" id="id_parameter_heat_transfer_coefficient_bc" colspan="3">1</th>
+            </tr>
+            <tr>
+                <th class="parameter_names">Surface Area [<em>m<sup>3</sup></em>]</th>
+                <th class="parameter_values" id="id_parameter_surface_area_bc" colspan="3">0.085</th>
+            </tr>
+            <tr>
+                <th class="parameter_names">Capacity [<em>A hr</em>]</th>
+                <th class="parameter_values" id="id_parameter_value_capacity_bc" colspan="3">1.65</th>
+            </tr>
+            <tr>
+                <th class="parameter_names">Maximum Potential Cut-off [<em>V</em>]</th>
+                <th class="parameter_values" id="id_parameter_max_potential_value_bc" colspan="3">4.2</th>
+            </tr>
+            <tr>
+                <th class="parameter_names">Minimum Potential Cut-off [<em>V</em>]</th>
+                <th class="parameter_values" id="id_parameter_min_potential_value_bc" colspan="3">2.5</th>
+            </tr>
+        </table>
+    </div>
+
+    <!-- Div containing the t and V plot -->
+    <div class="plots">
+        <div id="id_chart_tV"></div>
+        <div id="id_chart_tsoc_p"></div>
+        <div id="id_chart_tsoc_n"></div>
+        <div id="id_chart_ttemp"></div>
     </div>
 </section>
 
 
-<!--<div class="flex_container">-->
-<!--    <div class="container">-->
-<!--        <form action="" method="POST">-->
-<!--            <table>-->
-<!--                {% csrf_token %}-->
-<!--                {{ form.as_table }}-->
-<!--            </table>-->
-<!--            <button>Submit</button>-->
-<!--        </form>-->
-<!--    </div>-->
-
-    <table class="table_parameter_values">
-        <tr>
-            <th colspan="4"><h3 class="table_main_heading" id="table_parameter_values_main_heading"></h3></th>
-        </tr>
-
-        <tr>
-            <th></th>
-            <th>Negative Electrode</th>
-            <th>Seperator</th>
-            <th>Positive Electrode</th>
-        </tr>
-
-        <!--        Below are the parameters specific for electrode and seperator regions-->
-        <tr>
-            <th class="parameter_names">Solid Phase Diffusivity [<em>m<sup>2</sup>s<sup>-1</sup></em>]</th>
-            <th id="id_parameter_value_diffusivity_p">value_p</th>
-            <th></th>
-            <th id="id_parameter_value_diffusivity_n">value_n</th>
-        </tr>
-
-        <tr>
-            <th class="parameter_names">Reaction Rate [<em>m<sup>2.5</sup>mol<sup>-0.5</sup>s<sup>-1</sup></em>]</th>
-            <th id="id_parameter_value_reaction_rate_p">value_p</th>
-            <th></th>
-            <th id="id_parameter_value_reaction_rate_n">value_n</th>
-        </tr>
-
-        <tr>
-            <th class="parameter_names">Particle Radius [<em>m</em>]</th>
-            <th id="id_parameter_value_particle_radius_p">value_p</th>
-            <th></th>
-            <th id="id_parameter_value_particle_radius_n">value_n</th>
-        </tr>
-
-        <tr>
-            <th class="parameter_names">Volume Fraction</th>
-            <th id="id_parameter_value_volume_fraction_p">value_p</th>
-            <th id="id_parameter_value_volume_fraction_sep">value_sep</th>
-            <th id="id_parameter_value_volume_fraction_n">value_n</th>
-        </tr>
-
-        <tr>
-            <th class="parameter_names">Anodic Transfer Co-efficient</th>
-            <th id="id_parameter_value_anodic_transfer_coefficient_p">value_p</th>
-            <th></th>
-            <th id="id_parameter_value_anodic_transfer_coefficient_n">value_n</th>
-        </tr>
-
-        <tr>
-            <th class="parameter_names">Cathodic Transfer Co-efficient</th>
-            <th id="id_parameter_value_cathodic_transfer_coefficient_p">value_p</th>
-            <th></th>
-            <th id="id_parameter_value_cathodic_transfer_coefficient_n">value_n</th>
-        </tr>
-
-        <tr>
-            <th class="parameter_names">Bruggerman Coefficient</th>
-            <th id="id_parameter_value_bruggerman_coefficient_p">value_p</th>
-            <th id="id_parameter_value_bruggerman_coefficient_sep">value_sep</th>
-            <th id="id_parameter_value_bruggerman_coefficient_n">value_n</th>
-        </tr>
-
-        <tr>
-            <th class="parameter_names">Max. Conc. [<em>mol m<sup>-3</sup></em>]</th>
-            <th id="id_parameter_value_max_conc_p">value_p</th>
-            <th></th>
-            <th id="id_parameter_value_max_conc_n">value_n</th>
-        </tr>
-
-        <!--        General Battery Cell Parameters below-->
-        <tr>
-            <th class="parameter_names">Cross-section Area [<em>m<sup>2</sup></em>]</th>
-            <th class="parameter_values" id="id_parameter_values_cross_section_area_bc" colspan="3">1626</th>
-        </tr>
-        <tr>
-            <th class="parameter_names">Density [<em>kg m<sup>-3</sup></em>]</th>
-            <th class="parameter_values" id="id_parameter_values_density_bc" colspan="3">1626</th>
-        </tr>
-        <tr>
-            <th class="parameter_names">Volume [<em>m<sup>3</sup></em>]</th>
-            <th class="parameter_values" id="id_parameter_values_volume_bc" colspan="3">3.38e-5</th>
-        </tr>
-        <tr>
-            <th class="parameter_names">Specific Heat [<em>J K<sup>-1</sup> kg<sup>-1</sup></em>]</th>
-            <th class="parameter_values" id="id_parameter_values_specific_heat_bc" colspan="3">750</th>
-        </tr>
-        <tr>
-            <th class="parameter_names">Heat Transfer Coefficient [<em>J K<sup>-1</sup> s<sup>-1</sup></em>]</th>
-            <th class="parameter_values" id="id_parameter_heat_transfer_coefficient_bc" colspan="3">1</th>
-        </tr>
-        <tr>
-            <th class="parameter_names">Surface Area [<em>m<sup>3</sup></em>]</th>
-            <th class="parameter_values" id="id_parameter_surface_area_bc" colspan="3">0.085</th>
-        </tr>
-        <tr>
-            <th class="parameter_names">Capacity [<em>A hr</em>]</th>
-            <th class="parameter_values" id="id_parameter_value_capacity_bc" colspan="3">1.65</th>
-        </tr>
-        <tr>
-            <th class="parameter_names">Maximum Potential Cut-off [<em>V</em>]</th>
-            <th class="parameter_values" id="id_parameter_max_potential_value_bc" colspan="3">4.2</th>
-        </tr>
-        <tr>
-            <th class="parameter_names">Minimum Potential Cut-off [<em>V</em>]</th>
-            <th class="parameter_values" id="id_parameter_min_potential_value_bc" colspan="3">2.5</th>
-        </tr>
-    </table>
-</div>
-
-<!-- Div containing the t and V plot -->
-<div class="plots">
-    <div id="id_chart_tV"></div>
-    <div id="id_chart_tsoc_p"></div>
-    <div id="id_chart_tsoc_n"></div>
-    <div id="id_chart_ttemp"></div>
-</div>
-</div>
 
 <!--Footer-->
 <footer>
@@ -195,93 +184,74 @@
 <script src="https://cdn.plot.ly/plotly-2.27.0.min.js" charset="utf-8"></script>
 <script src="{% static 'sp.js' %}"></script>
 <script>
-    var tArray = {
-    {
-        t_sim
-    }
-    }
-    ;
-    var vArray = {
-    {
-        v_sim
-    }
-    }
-    ;
-    var socPArray = {
-    {
-        soc_p_sim
-    }
-    }
-    ;
-    var socNArray = {
-    {
-        soc_n_sim
-    }
-    }
-    ;
-    var tempArray = {
-    {
-        temp_sim
-    }
-    }
-    ;
+    var tArray = {{ t_sim }};
+    var vArray = {{ v_sim }};
+    var socPArray = {{ soc_p_sim }};
+    var socNArray = {{ soc_n_sim }};
+    var tempArray = {{ temp_sim }};
     let yaxis_data =
         [[vArray, "id_chart_tV", "Potential [V]"],
             [socPArray, "id_chart_tsoc_p", "SOC_p"],
             [socNArray, "id_chart_tsoc_n", "SOC_n"],
             [tempArray, "id_chart_ttemp", "Temperature [°C]"]]
-    for (let i = 0; i < tArray.length; i++) {
-        var traces = [{
-            type: 'scatter',
-            x: tArray,
-            y: yaxis_data[i][0],
-            mode: 'lines',
-            name: 'Red',
-            line: {
-                color: 'rgb(219, 64, 82)',
-                width: 3
-            },
-        }];
-        var layout = {
-            width: 500,
-            length: 500,
-            plot_bgcolor: 'rgb(0, 0, 0, 0)',
-            paper_bgcolor: 'rgb(0, 0, 0, 0)',
-            margin: {
-                t: 25, //top margin
-                l: 45, //left margin
-                r: 45, //right margin,
-                b: 45 //bottom margin}
-            },
-            yaxis: {
-                autorange: true,
-                showgrid: true,
-                showline: true,
-                mirror: 'ticks',
-                gridwidth: 1,
-                tickfont: {
-                    size: 14
+
+    function plotSimulationResults(tArray, yAxisData) {
+        for (let i = 0; i < tArray.length; i++) {
+            var traces = [{
+                type: 'scatter',
+                x: tArray,
+                y: yaxis_data[i][0],
+                mode: 'lines',
+                name: 'Red',
+                line: {
+                    color: 'rgb(219, 64, 82)',
+                    width: 3
                 },
-                title: {
-                    text: yaxis_data[i][2]
+            }];
+            var layout = {
+                width: 500,
+                length: 500,
+                plot_bgcolor: 'rgb(0, 0, 0, 0)',
+                paper_bgcolor: 'rgb(0, 0, 0, 0)',
+                margin: {
+                    t: 25, //top margin
+                    l: 45, //left margin
+                    r: 45, //right margin,
+                    b: 45 //bottom margin}
                 },
-            },
-            xaxis: {
-                tickfont: {
-                    size: 14
-                },
-                title: {
-                    text: "Time [s]",
-                    font: {
+                yaxis: {
+                    autorange: true,
+                    showgrid: true,
+                    showline: true,
+                    mirror: 'ticks',
+                    gridwidth: 1,
+                    tickfont: {
                         size: 14
-                    }
+                    },
+                    title: {
+                        text: yaxis_data[i][2]
+                    },
                 },
-                showline: true,
-                mirror: 'ticks',
-            }
-        };
-        Plotly.newPlot(yaxis_data[i][1], traces, layout);
+                xaxis: {
+                    tickfont: {
+                        size: 14
+                    },
+                    title: {
+                        text: "Time [s]",
+                        font: {
+                            size: 14
+                        }
+                    },
+                    showline: true,
+                    mirror: 'ticks',
+                }
+            };
+            Plotly.newPlot(yaxis_data[i][1], traces, layout);
+        }
     }
+
+    plotSimulationResults(tArray, yaxis_data);
+
 </script>
 </body>
 </html>
