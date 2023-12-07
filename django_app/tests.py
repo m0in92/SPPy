@@ -26,9 +26,19 @@ class TestSimulatorFromViews(unittest.TestCase):
 class TestIndexPage(TestCase):
     def test_response(self):
         """
-        Checks if the index pages are giving an OK HTTP status code.
+        Tests for an OK HTTP status codes on home and about.
         """
         client: Client = Client()
-        self.assertTrue(client.get('').status_code, 200)
+        self.assertEqual(client.get('').status_code, 200)
+        self.assertEqual(client.get('/').status_code, 200)
 
+
+class TestBatterySimulationPages(TestCase):
+    """
+    Tests for an OK HTTP status codes on pages pertaining to battery cell simulations.
+    """
+    def test_response(self):
+        client: Client = Client()
+        self.assertEqual(client.get('/sp').status_code, 200)  # sp
+        self.assertEqual(client.get('/ecm').status_code, 200)  # ecm
 
