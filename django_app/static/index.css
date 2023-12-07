@@ -55,7 +55,6 @@ img {
 
 section {
     padding: 2rem;
-    /*width: 70%;*/
 }
 
 p {
@@ -97,10 +96,10 @@ h3 {
 }
 
 footer {
-    position: fixed;
-    bottom: 0;
+    position: absolute;
+    padding: 2.5rem;
+    /*bottom: 0;*/
     width: 100%;
-    padding: 10px;
     background: var(--secondary-background-color);
     text-align: center;
 }
@@ -137,6 +136,10 @@ footer {
 
  /* Index Page - Navbar and Section */
 
+.section-description {
+    min-height: 500px;
+}
+
 .nav-sims-options, section-description {
     float: left;
     padding: 20px;
@@ -172,6 +175,7 @@ footer {
     justify-content: center;
     flex-direction: row;
     flex-wrap: wrap;
+    padding-bottom: 2.5rem;
 }
 
 div[id^="id_chart"] {
