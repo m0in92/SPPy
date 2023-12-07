@@ -4,7 +4,7 @@ Contains test associated with the Django App for SPPy.
 
 import unittest
 
-from django.test import TestCase
+from django.test import TestCase, Client
 
 from .views import Simulator
 
@@ -21,5 +21,14 @@ class TestSimulatorFromViews(unittest.TestCase):
 
         with self.assertRaises(ValueError) as e:
             self.instance.check_for_valid_battery_models('non-sense')
+
+
+class TestIndexPage(TestCase):
+    def test_response(self):
+        """
+        Checks if the index pages are giving an OK HTTP status code.
+        """
+        client: Client = Client()
+        self.assertTrue(client.get('').status_code, 200)
 
 
