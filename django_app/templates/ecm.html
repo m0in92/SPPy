@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     {% load static %}
-    <link rel="stylesheet" href="{% static 'style.css' %}">
+    <link rel="stylesheet" href="{% static 'index.css' %}">
     <style>
         header {
             padding: 10px;
@@ -25,8 +25,33 @@
 <body>
 <div>
     <header>
-        <h1>Equivalent Circuit Model</h1>
-    </header>
+    <nav class="navbar container">
+        <!--            logo-->
+        <a href="{% url 'sppy:index' %}">
+            <h2 class="logo"><span class="logo-span">BMS</span>Sim</h2>
+        </a>
+
+        <!--            Webpage Name Title-->
+        <h1>Single Particle Model</h1>
+
+        <!--            Menu-->
+        <div class="menu">
+            <ul class="menu-list">
+                <li class="link-list">
+                    <a href="{% url 'sppy:index' %}">
+                        <span class="menu-texts-span">Home</span>
+                    </a>
+                </li>
+                <li class="link-list">
+                    <a href="">
+                        <span class="menu-texts-span">About</span>
+                    </a>
+                </li>
+            </ul>
+        </div>
+
+    </nav>
+</header>
     <section>
         <div class="container">
             <form action="" method="POST">
