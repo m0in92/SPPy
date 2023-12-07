@@ -2,31 +2,43 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
+    <title>ECM | BMSSim</title>
     {% load static %}
+    <!--    Favicon-->
+    <link rel="shortcut icon" href="{% static 'favicon.png' %}" type="image/x-icon">
+    <!--    Local imports-->
     <link rel="stylesheet" href="{% static 'style.css' %}">
-    <style>
-        header {
-            padding: 10px;
-            background: #2B7A78;
-            width: 100%;
-        }
-        footer {
-            /*position: fixed;*/
-            /*bottom: 0;*/
-            /*left: 0;*/
-            width: 100%;
-            padding: 10px;
-            background: #2B7A78;
-            text-align: center;
-        }
-    </style>
-    <title>Equivalent Circuit Model</title>
 </head>
 <body>
 <div>
     <header>
+    <nav class="navbar container">
+        <!--            logo-->
+        <a href="{% url 'sppy:index' %}">
+            <h2 class="logo"><span class="logo-span">BMS</span>Sim</h2>
+        </a>
+
+        <!--            Webpage Name Title-->
         <h1>Equivalent Circuit Model</h1>
-    </header>
+
+        <!--            Menu-->
+        <div class="menu">
+            <ul class="menu-list">
+                <li class="link-list">
+                    <a href="{% url 'sppy:index' %}">
+                        <span class="menu-texts-span">Home</span>
+                    </a>
+                </li>
+                <li class="link-list">
+                    <a href="">
+                        <span class="menu-texts-span">About</span>
+                    </a>
+                </li>
+            </ul>
+        </div>
+
+    </nav>
+</header>
     <section>
         <div class="container">
             <form action="" method="POST">
@@ -134,7 +146,7 @@
 
     </section>
     <footer>
-        <h3>Copyright SPPy 2023. All Rights Reserved.</h3>
+        <h3>Copyright BMSSim 2023. All Rights Reserved.</h3>
     </footer>
 
     <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js" type="text/javascript"></script>

@@ -6,7 +6,8 @@ parameterName.onclick = () => {
     document.getElementById("table_parameter_values_main_heading").innerHTML = parameterSetName;
     fetch('static/parameter_sets.json')
         .then(response => response.json())
-        .then(data => displayParametersetInformation(data[parameterSetName]));}
+        .then(data => displayParametersetInformation(data[parameterSetName]));
+}
 
 function fetchParametersetJson(parameterSetName) {
     fetch('static/parameter_sets.json')
@@ -51,47 +52,6 @@ function displayParametersetInformation(data) {
     document.getElementById("id_parameter_min_potential_value_bc").innerHTML = data["Minimum Potential Cut-off_bc [V]"];
 }
 
-// displayParametersetInformation()
-
-// function plotTimeVoltage(time, voltage) {
-//     const ctx = document.getElementById('id_chart');
-//
-//     const config = {type: 'line',
-//         data: {
-//         labels: time,
-//             datasets: [{
-//             // label: '# of Votes',
-//                 data: voltage,
-//                 borderWidth: 1,
-//                 backgroundColor: 'black'
-//         }]},
-//         options: {
-//         scales: {
-//             y: {
-//                 beginAtZero: false
-//             }
-//         }
-//     }
-//     }
-//
-//     var chartObj = new Chart(ctx, config);
-//     // chartObj.destroy();
-// }
-//
-//
-// async function createPlot() {
-//     let response = await fetch('', {
-//         method: 'get',
-//         headers: {
-//             'X-Requested-With': 'XMLHttpRequest',
-//             'Content-Type': 'application/json'
-//         },
-//     });
-//
-//     let data = await response.json();
-//     plotTimeVoltage(data['t [s]'], data['V [V]'])
-//     console.log(await data);
-// }
 
 
 

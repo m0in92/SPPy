@@ -1,111 +1,179 @@
-body {
-    background-color: #3AAFA9;
-    /*background-color: #D4FECC;*/
+:root {
+        --primary-background-color: #DEF2F1;
+    --secondary-background-color: #2B7A78;
+    --light-color: #FFDEAD;
+    --font-color: white;
+    --font-size-md: 2rem;
+    --font-size-lsm: 1.7rem;
+    --font-size-sm: 1.6rem;
+    --gap: 2rem
 }
 
-h1 {
-    color: #feffff;
-    text-align: center;
-}
-
-.headingBanner {
-    width: 100%;
-    background-color: #2B7A78;
-}
-
-.flex_container {
-    display: flex;
-    flex-direction: row;
-    flex-wrap: wrap;
-    justify-content: space-between;
-}
+/*Resuable classes*/
 
 .container {
-    width: 100%;
+    align-items: normal;
+}
+
+/* Base Styles */
+* {
     margin: 0;
-    max-width: 616px;
+    padding: 0;
 }
 
-form {
-    display: flex;
-    flex-direction: column;
+html {
+    font-size: 12px;
 }
 
-label {
-    color: #17252A;
-    font-weight: bold;
-
-    margin-bottom: 8px;
-    font-size: 20px;
-    text-align: left;
-    float: left;
+body {
+    font-size: var(--font-size-sm);
+    background-color: var(--primary-background-color);
 }
 
-input {
-    padding: 8px;
-    margin-bottom: 16px;
-    border: 1px solid #ccc;
-    border-radius: 4px;
+a {
+    text-decoration: none;
+    color: inherit;
 }
 
-select {
-    padding: 8px;
-    margin-bottom: 16px;
-    border: 1px solid #ccc;
-    border-radius: 4px;
-    float: left;
+a:hover {
+    color: mintcream;
 }
 
-button {
-    font-size: 16px;
-    font-weight: bold;
-
-    width: 30%;
-    margin: auto;
-    /* text-align: center; */
-    padding: 10px;
-    background-color: #17252A;
-    color: #fff;
-    border: none;
-    border-radius: 20px;
-    cursor: pointer;
-}
-
-.table_parameter_values {
-    margin: auto;
-    /*padding: 100px;*/
+ul {
+    list-style: none;
 }
 
 li {
+    padding-left: 2rem;
     margin: auto;
-    font-size: 20px;
+    font-size: var(--font-size-sm);
 }
 
-.span_param_name {
-    font-weight: bold;
+img {
+    display: none;
+    width: 50%;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+section {
+    padding: 2rem;
+}
+
+p {
+    font-size: var(--font-size-sm);
+    font-family: serif;
+    line-height: 2;
+    white-space: pre;
+    padding: 0;
 }
 
 table {
-    float: left;
+    /*float: left;*/
     margin: 0px;
     padding: 15px;
-}
-
-.table_main_heading {
-    text-align: center;
 }
 
 th, td {
     border: 1px solid black;
 }
 
+button {
+    font-size: var(--font-size-sm);
+    /*font-weight: bold;*/
+
+    /*width: 30%;*/
+    margin: auto;
+    /* text-align: center; */
+    padding: 2rem;
+    background-color: #17252A;
+    color: var(--font-color);
+    border: none;
+    outline: none;
+    border-radius: 20px;
+    cursor: pointer;
+}
+
+h3 {
+    font-size: var(--font-size-lsm);
+}
+
+footer {
+    position: absolute;
+    padding: 2.5rem;
+    color: var(--font-color);
+    width: 100%;
+    background: var(--secondary-background-color);
+    text-align: center;
+}
+
+
+/* Header */
+.navbar {
+    display: flex;
+    align-content: center;
+    justify-content: space-between;
+    padding-block: 1.5rem;
+
+    background-color: var(--secondary-background-color);
+    color: var(--font-color);
+}
+
+.link-list > a:hover {
+    color: black;
+}
+
+.logo {
+    padding-left: 5rem;
+}
+
+.logo-span {
+    color: peru;
+}
+
+.menu {
+    align-items: center;
+    padding-right: 5rem;
+}
+
+.menu-list {
+    display: flex;
+    gap: var(--gap);
+}
+
+ /* Index Page - Navbar and Section */
+
+.section-description {
+    min-height: 500px;
+}
+
+.nav-sims-options, section-description {
+    float: left;
+    padding: 20px;
+    min-height: 500px;
+}
+
+.nav-sims {
+    padding: 2rem;
+    height: 100%;
+}
+
+.main-sim-options-span {
+    font-weight: bold;
+    font-size: var(--font-size-lsm);
+}
+
+/* Battery Cell Simulation Table Pages - Parameter values and Plots */
+
 .parameter_names {
     text-align: left;
 }
 
-.parameter_values {
-    text-align: center;
+.span_param_name {
+    font-weight: bold;
 }
+
+/* Simulation plots related */
 
 .plots {
     max-width: calc(100% - 616px);
@@ -114,6 +182,7 @@ th, td {
     justify-content: center;
     flex-direction: row;
     flex-wrap: wrap;
+    padding-bottom: 2.5rem;
 }
 
 div[id^="id_chart"] {
@@ -133,5 +202,3 @@ div[id^="id_chart"] {
         max-width: 100%;
     }
 }
-
-
