@@ -21,7 +21,8 @@ from SPPy.calc_helpers.constants import Constants
 
 
 def index(request) -> HttpResponse:
-    return render(request=request, template_name='index.html', context={})
+    return render(request=request, template_name='index.html',
+                  context={'context_package': {}})
 
 
 def ecm(request) -> HttpResponse:
@@ -33,11 +34,11 @@ def ecm(request) -> HttpResponse:
     else:
         form = ECMSimulationVariables()
 
-    return render(request=request, template_name='ecm.html', context={'form': form,
-                                                                      't_sim': t_sim,
-                                                                      'v_sim': v_sim,
-                                                                      'soc_lib': soc_lib,
-                                                                      'temp_sim': temp_sim})
+    return render(request=request, template_name='index.html', context={'context_package': {'form': form,
+                                                                                            't_sim': t_sim,
+                                                                                            'v_sim': v_sim,
+                                                                                            'soc_lib': soc_lib,
+                                                                                            'temp_sim': temp_sim}})
 
 
 def sp(request) -> HttpResponse:
@@ -53,18 +54,18 @@ def sp(request) -> HttpResponse:
             sol: SPPy.Solution = perform_simulation(simulation_inputs=simulation_inputs)
             sol.T = sol.T - Constants.T_abs  # Converts the temperature to degrees C
             t_sim, v_sim, soc_p_sim, soc_n_sim, temp_sim = sol.t[::10].tolist(), \
-                                                           sol.V[::10].tolist(), \
-                                                           sol.x_surf_p[::10].tolist(), sol.x_surf_n[::10].tolist(), \
-                                                           sol.T[::10].tolist()
+                sol.V[::10].tolist(), \
+                sol.x_surf_p[::10].tolist(), sol.x_surf_n[::10].tolist(), \
+                sol.T[::10].tolist()
     else:
         form = SPSimulationVariables()
 
-    return render(request=request, template_name='sp.html', context={'form': form,
-                                                                     't_sim': t_sim,
-                                                                     'v_sim': v_sim,
-                                                                     'soc_p_sim': soc_p_sim,
-                                                                     'soc_n_sim': soc_n_sim,
-                                                                     'temp_sim': temp_sim})
+    return render(request=request, template_name='index.html', context={'context_package': {'form': form,
+                                                                                            't_sim': t_sim,
+                                                                                            'v_sim': v_sim,
+                                                                                            'soc_p_sim': soc_p_sim,
+                                                                                            'soc_n_sim': soc_n_sim,
+                                                                                            'temp_sim': temp_sim}})
 
 
 def get_simulation_inputs(request) -> tuple[str, str, float]:
@@ -155,9 +156,9 @@ class Simulator:
         if self.battery_model == 'ECM':
             sol: SPPy.ECMSolution = self._perform_simulation(request=request)
             t_sim, v_sim, soc_lib, temp_sim = sol.array_t[::10].tolist(), \
-                                              sol.array_V[::10].tolist(), \
-                                              sol.array_soc[::10].tolist(), \
-                                              sol.array_temp[::10].tolist()
+                sol.array_V[::10].tolist(), \
+                sol.array_soc[::10].tolist(), \
+                sol.array_temp[::10].tolist()
             return t_sim, v_sim, soc_lib, temp_sim
         else:
             return None

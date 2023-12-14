@@ -1,8 +1,11 @@
 import '../css/App.css';
-import Header from '../componenets/Header'
-import Footer from "../componenets/Footer";
-import NavSimsOptions from "../componenets/NavSimsOptions"
 import { Outlet, Route, Routes } from "react-router-dom";
+
+import Header from "../componenets/Header";
+import Footer from "../componenets/Footer";
+import NavSimsOptions from "./NavSimsOptions";
+import Sp from "./Sp";
+
 
 function App() {
   return (
@@ -17,6 +20,10 @@ function App() {
       <Routes>
           {/* Routes that needs a navbar will need to go as children of this Route component */}
         <Route path="" element={<NavSimsOptions />}>
+
+        </Route>
+        <Route path="/batterysim/sp" element={<Sp />}>
+
         </Route>
 
         {/* Routes without a navbar you can add them here as normal routes */}
