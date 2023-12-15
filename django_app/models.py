@@ -6,3 +6,8 @@ class Simulation(models.Model):
     battery_cell_model = models.CharField(max_length=200)
     solver_type = models.CharField(max_length=200)
     cycler = models.CharField(max_length=200)
+
+
+class SpModel(models.Model):
+    t_sim = models.JSONField(encoder=None)
+    #more to come

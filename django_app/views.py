@@ -19,6 +19,7 @@ from django_app.forms import ECMSimulationVariables, SPSimulationVariables
 import SPPy
 from SPPy.calc_helpers.constants import Constants
 
+from .models import SpModel
 
 def index(request) -> HttpResponse:
     return render(request=request, template_name='index.html',
@@ -66,6 +67,11 @@ def sp(request) -> HttpResponse:
                                                                                             'soc_p_sim': soc_p_sim,
                                                                                             'soc_n_sim': soc_n_sim,
                                                                                             'temp_sim': temp_sim}})
+
+
+def sp_serializer_view_get(request):
+    #load sim params on initialization or param change
+    return 0
 
 
 def get_simulation_inputs(request) -> tuple[str, str, float]:
