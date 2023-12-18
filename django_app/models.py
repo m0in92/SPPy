@@ -10,4 +10,8 @@ class Simulation(models.Model):
 
 class SpModel(models.Model):
     t_sim = models.JSONField(encoder=None)
+    v_sim = models.JSONField(encoder=None)
+    soc_p_sim = models.JSONField(encoder=None)
+    soc_n_sim = models.JSONField(encoder=None)
+    temp_sim = models.JSONField(encoder=None)
     #more to come

@@ -43,6 +43,9 @@ def ecm(request) -> HttpResponse:
 
 
 def sp(request) -> HttpResponse:
+
+    ### split the form creation and calculation into two separate APIs?
+
     t_sim: list = []  # list of floats intended to store the time from the simulation
     v_sim: list = []  # list of floats intended to store the voltage from the simulation
     soc_p_sim: list = []  # list of floats intended to store the soc_p from the simulation
