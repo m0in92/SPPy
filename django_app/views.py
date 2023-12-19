@@ -13,13 +13,18 @@ from typing import Optional, Any
 
 from django.shortcuts import render
 from django.http import HttpResponse
+from rest_framework.views import APIView
+from rest_framework.response import Response
 
 from django_app.forms import ECMSimulationVariables, SPSimulationVariables
+from django_app.serializers import SpModelSerializer, SpSimulationVariablesSerializer
 
+import json
 import SPPy
 from SPPy.calc_helpers.constants import Constants
 
 from .models import SpModel
+
 
 def index(request) -> HttpResponse:
     return render(request=request, template_name='index.html',
@@ -43,7 +48,6 @@ def ecm(request) -> HttpResponse:
 
 
 def sp(request) -> HttpResponse:
-
     ### split the form creation and calculation into two separate APIs?
 
     t_sim: list = []  # list of floats intended to store the time from the simulation
@@ -72,8 +76,42 @@ def sp(request) -> HttpResponse:
                                                                                             'temp_sim': temp_sim}})
 
 
+class SpParamView(APIView):
+    def get(self, request):
+        parameter_name = request.data['parameter_name']
+        # a placeholder solution to make django read SP parameters from a json. said parameters will be served by a DB in the future
+        with open('django_app/static/parameter_sets.json', 'r') as f:
+            parameter_sets = json.load(f)
+        parameter_chosen = parameter_sets[parameter_name]
+        sp_sim_var_serializer = SpSimulationVariablesSerializer(parameter_values=parameter_chosen)
+        return Response(sp_sim_var_serializer.data)
+
+    def post(self, request):
+        serializer = SpModelSerializer(request.POST)
+        if serializer.is_valid():
+            simulation_inputs = get_simulation_inputs(request=request)
+            sol: SPPy.Solution = perform_simulation(simulation_inputs=simulation_inputs)
+            sol.T = sol.T - Constants.T_abs  # Converts the temperature to degrees C
+            t_sim, v_sim, soc_p_sim, soc_n_sim, temp_sim = sol.t[::10].tolist(), \
+                sol.V[::10].tolist(), \
+                sol.x_surf_p[::10].tolist(), sol.x_surf_n[::10].tolist(), \
+                sol.T[::10].tolist()
+            t_sim_json = json.dumps(t_sim)
+            v_sim_json = json.dumps(v_sim)
+            soc_p_sim_json = json.dumps(soc_p_sim)
+            soc_n_sim_json = json.dumps(soc_n_sim)
+            temp_sim_json = json.dumps(temp_sim)
+            sp_model_serializer = SpModelSerializer(t_sim=t_sim_json, v_sim=v_sim_json, soc_p_sim=soc_p_sim_json,
+                                                    soc_n_sim=soc_n_sim_json, temp_sim=temp_sim_json)
+            return Response(sp_model_serializer.data)
+
+
+def sp_simulation_variables_set(request):
+    return 0
+
+
 def sp_serializer_view_get(request):
-    #load sim params on initialization or param change
+    # load sim params on initialization or param change
     return 0
 
 
