@@ -83,8 +83,10 @@ class SpParamView(APIView):
         with open('django_app/static/parameter_sets.json', 'r') as f:
             parameter_sets = json.load(f)
         parameter_chosen = parameter_sets[parameter_name]
-        sp_sim_var_serializer = SpSimulationVariablesSerializer(parameter_values=parameter_chosen)
-        return Response(sp_sim_var_serializer.data)
+        '''FIX THIS. the model version SPSimulationVariables has been made. build on that'''
+        #sp_sim_var_serializer = SpSimulationVariablesSerializer(parameter_values=parameter_chosen)
+        #return Response(sp_sim_var_serializer.data)
+        return 0
 
     def post(self, request):
         serializer = SpModelSerializer(request.POST)

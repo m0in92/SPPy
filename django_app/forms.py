@@ -42,7 +42,6 @@ class SPSimulationVariables(forms.Form):
     parameter_name = forms.ChoiceField(label="Parameter Name", choices=lst_parameter_name)
     cycler = forms.ChoiceField(choices=lst_cyclers)
     soc_lib_init = forms.FloatField(label='Initial LIB SOC', min_value=-0.1, max_value=1.1)
-    parameter_values = forms.JSONField(encoder=None)
 
 
 class SPeSimulationVariables(forms.Form):
