@@ -17,6 +17,7 @@ from rest_framework.views import APIView
 from rest_framework.response import Response
 
 from django_app.forms import ECMSimulationVariables, SPSimulationVariables
+from django_app.models import SpSimulationVariablesModel
 from django_app.serializers import SpModelSerializer, SpSimulationVariablesSerializer
 
 import json
@@ -82,11 +83,12 @@ class SpParamView(APIView):
         # a placeholder solution to make django read SP parameters from a json. said parameters will be served by a DB in the future
         with open('django_app/static/parameter_sets.json', 'r') as f:
             parameter_sets = json.load(f)
-        parameter_chosen = parameter_sets[parameter_name]
+        parameter_chosen = json.dumps(parameter_sets[parameter_name])
         '''FIX THIS. the model version SPSimulationVariables has been made. build on that'''
-        #sp_sim_var_serializer = SpSimulationVariablesSerializer(parameter_values=parameter_chosen)
-        #return Response(sp_sim_var_serializer.data)
-        return 0
+        sp_sim_var_proto = SpSimulationVariablesModel.objects.create_sp_sim_var_model(
+            parameter_values_arg=parameter_chosen)
+        sp_sim_var_serializer = SpSimulationVariablesSerializer(sp_sim_var_proto)
+        return Response(sp_sim_var_serializer.data)
 
     def post(self, request):
         serializer = SpModelSerializer(request.POST)
