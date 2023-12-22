@@ -18,13 +18,13 @@ from rest_framework.response import Response
 
 from django_app.forms import ECMSimulationVariables, SPSimulationVariables
 from django_app.models import SpSimulationVariablesModel
-from django_app.serializers import SpModelSerializer, SpSimulationVariablesSerializer
+from django_app.serializers import SpSolvedModelSerializer, SPSimulationVariablesModelSerializer
 
 import json
 import SPPy
 from SPPy.calc_helpers.constants import Constants
 
-from .models import SpModel
+from .models import SpSolvedModel
 
 
 def index(request) -> HttpResponse:
@@ -79,19 +79,18 @@ def sp(request) -> HttpResponse:
 
 class SpParamView(APIView):
     def get(self, request):
-        parameter_name = request.data['parameter_name']
+        parameter_name = request.data['parameter_name'] if bool(request.data) else 'test'
         # a placeholder solution to make django read SP parameters from a json. said parameters will be served by a DB in the future
         with open('django_app/static/parameter_sets.json', 'r') as f:
             parameter_sets = json.load(f)
         parameter_chosen = json.dumps(parameter_sets[parameter_name])
-        '''FIX THIS. the model version SPSimulationVariables has been made. build on that'''
         sp_sim_var_proto = SpSimulationVariablesModel.objects.create_sp_sim_var_model(
             parameter_values_arg=parameter_chosen)
-        sp_sim_var_serializer = SpSimulationVariablesSerializer(sp_sim_var_proto)
+        sp_sim_var_serializer = SPSimulationVariablesModelSerializer(sp_sim_var_proto)
         return Response(sp_sim_var_serializer.data)
 
     def post(self, request):
-        serializer = SpModelSerializer(request.POST)
+        serializer = SpSolvedModelSerializer(request.POST)
         if serializer.is_valid():
             simulation_inputs = get_simulation_inputs(request=request)
             sol: SPPy.Solution = perform_simulation(simulation_inputs=simulation_inputs)
@@ -105,8 +104,12 @@ class SpParamView(APIView):
             soc_p_sim_json = json.dumps(soc_p_sim)
             soc_n_sim_json = json.dumps(soc_n_sim)
             temp_sim_json = json.dumps(temp_sim)
-            sp_model_serializer = SpModelSerializer(t_sim=t_sim_json, v_sim=v_sim_json, soc_p_sim=soc_p_sim_json,
-                                                    soc_n_sim=soc_n_sim_json, temp_sim=temp_sim_json)
+            sp_solved_proto = SpSolvedModel.objects.create_sp_solved_model(t_sim=t_sim_json,
+                                                                           v_sim=v_sim_json,
+                                                                           soc_p_sim=soc_p_sim_json,
+                                                                           soc_n_sim=soc_n_sim_json,
+                                                                           temp_sim=temp_sim_json)
+            sp_model_serializer = SpSolvedModelSerializer(sp_solved_proto)
             return Response(sp_model_serializer.data)
 
 

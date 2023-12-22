@@ -35,6 +35,7 @@ class SPSimulationVariables(forms.Form):
     """
     Contains the relevant fields required from the user to perform the single particle model simulations.
     """
+    # Legacy class, await removal. Superseded by SpSimulationVariablesModel
     lst_parameter_name: list = [(param_set_name, param_set_name)
                                 for param_set_name in ParameterSets.list_parameters_sets()]
     lst_cyclers: list = [('discharge', 'discharge')]
