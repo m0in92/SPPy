@@ -79,12 +79,14 @@ def sp(request) -> HttpResponse:
 
 class SpParamView(APIView):
     def get(self, request):
-        parameter_name = request.data['parameter_name'] if bool(request.data) else 'test'
+        # the query_params field is the backend contact point for Axios's GET method's param field
+        parameter_name = request.query_params['parameter_name'] if bool(request.query_params) else 'test'
         # a placeholder solution to make django read SP parameters from a json. said parameters will be served by a DB in the future
         with open('django_app/static/parameter_sets.json', 'r') as f:
             parameter_sets = json.load(f)
         parameter_chosen = json.dumps(parameter_sets[parameter_name])
         sp_sim_var_proto = SpSimulationVariablesModel.objects.create_sp_sim_var_model(
+            parameter_name_arg=parameter_name,
             parameter_values_arg=parameter_chosen)
         sp_sim_var_serializer = SPSimulationVariablesModelSerializer(sp_sim_var_proto)
         return Response(sp_sim_var_serializer.data)
