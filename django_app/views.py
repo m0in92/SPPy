@@ -78,6 +78,13 @@ def sp(request) -> HttpResponse:
 
 
 class SpParamView(APIView):
+    def options(self, request, *args, **kwargs):
+        parameter_name_list: list = [name[1] for name in SpSimulationVariablesModel.lst_parameter_name]
+        cycler_list: list = [name[1] for name in SpSimulationVariablesModel.lst_cyclers]
+        return Response({'sp_options': {'parameter_name_list': parameter_name_list,
+                                        'cycler_list': cycler_list,
+                                        'soc_lib_init': 0}})
+
     def get(self, request):
         # the query_params field is the backend contact point for Axios's GET method's param field
         parameter_name = request.query_params['parameter_name'] if bool(request.query_params) else 'test'
