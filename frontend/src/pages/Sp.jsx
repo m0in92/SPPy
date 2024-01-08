@@ -5,19 +5,13 @@ import {API_BASE_URL} from "../constants/constants";
 function Sp(){
     const [paramNameList, setParamNameList] = useState([]);
     const [cyclerList, setCyclerList] = useState([]);
-    const [socLibInit, setSocLibInit] = useState(0);
+    const [socLibInit, setSocLibInit] = useState(0.0);
 
-    const [paramName, setParamName] = useState('');
+    const [paramName, setParamName] = useState("Calce_NMC_18650");
     const [cycler, setCycler] = useState('discharge');
     const [simParams, setSimParams] = useState({});
 
-    function handleParamNameUpdate(){
-        axios.get(`${API_BASE_URL}/batterysim/sp`, { params: {'parameter_name': paramName}})
-            .then((rspn) => {
-                setSimParams(JSON.parse(rspn.data["parameter_values"]));
-            }).catch((err) => {console.error(err);
-      });
-    }
+    const [socValidity, setSocValidity] = useState(true)
 
     useEffect(() => {
         axios.options(`${API_BASE_URL}/batterysim/sp`)
@@ -25,37 +19,92 @@ function Sp(){
                 setParamNameList(rspn.data["sp_options"]["parameter_name_list"]);
                 setCyclerList(rspn.data["sp_options"]["cycler_list"]);
                 setSocLibInit(rspn.data["sp_options"]["soc_lib_init"]);
-                setParamName(rspn.data["sp_options"]["parameter_name_list"][0]);
-                setCycler(rspn.data["sp_options"]["cycler_list"][0]);
+                // setParamName(rspn.data["sp_options"]["parameter_name_list"][0]);
+                // setCycler(rspn.data["sp_options"]["cycler_list"][0]);
             })
-            .catch((err) => {console.error(err);
+            .catch((err) => {
+                console.error(err);
             });
     }, []);
 
+    // GET the sim variables based on the parameter name. Updates everytime the user switches the param name
+    useEffect(() => {
+        axios.get(`${API_BASE_URL}/batterysim/sp`, { params: {'parameter_name': paramName}})
+            .then((rspn) => {
+                setSimParams(JSON.parse(rspn.data["parameter_values"]));
+            }).catch((err) => {
+                console.error(err);
+      });
+    }, [paramName]);
+
     console.log(paramNameList)
 
+    // WORK ON POST HANDLING NEXT!!!!!!!!!!!!!!!!!!!!!!!1!!!!!!!!1!
     function HandlePOST(e){
 
     }
+    //////////////////////////////////////////////////////////////
 
-    var renderedParamNameList = paramNameList.map(item => <option key={item} value={item}> {item} </option>)
+    const renderedParamNameList = paramNameList.map(item => <option key={item} value={item}>{item}</option>)
+    const renderedCyclerList = cyclerList.map(item => <option key={item} value={item}>{item}</option>)
+
+    const verifySOC = (e) => {
+        // There's a concern that if the input isn't a number the number range check will crash
+        // Ugly, potential room for improvement
+        if (!isNaN(e.target.valueAsNumber)){
+            if (e.target.valueAsNumber <= 1.0 && e.target.valueAsNumber >= 0.0){
+                setSocValidity(true)
+                setSocLibInit(e.target.valueAsNumber)
+            }
+        } else {
+            setSocValidity(false)
+        }
+    }
     return(
 
         <div className="container">
             I H8 REACT!!1!
             <form method="post" onSubmit={HandlePOST}>
+                {/* see how forms are done: https://react.dev/reference/react-dom/components/select#reading-the-select-box-value-when-submitting-a-form
+                     */}
                 <table>
                 <tbody>
                     <tr>
                         <td>Parameter Name:</td>
                         <td>
-                            <select value={paramName}
-                                    onChange={e => {setParamName(e.target.value); handleParamNameUpdate()}}>
-                                {renderedParamNameList}
-                            </select>
+                            <label>
+                                <select value={paramName}
+                                    onChange={e => setParamName(e.target.value)}>
+                                    {renderedParamNameList}
+                                </select>
+                            </label>
                         </td>
-
                     </tr>
+                    <tr>
+                        <td>Cycler:</td>
+                        <td>
+                            <label>
+                                <select value={cycler}
+                                    onChange={e => setCycler(e.target.value)}>
+                                    {renderedCyclerList}
+                                </select>
+                            </label>
+                        </td>
+                    </tr>
+                <tr>
+                    <td>Initial LIB SOC:</td>
+                    <td>
+                        <label>
+                            <input type="number"
+                                   defaultValue={0.0}
+                                   inputMode="numeric"
+                                   pattern="[0-9]*"
+                                   required={true}
+                                   onChange={e => verifySOC(e)}/>
+                        </label>
+                        {socValidity && <span>Input must be a number between 0.0 and 1.0</span>}
+                    </td>
+                </tr>
                 </tbody>
             </table>
             </form>
