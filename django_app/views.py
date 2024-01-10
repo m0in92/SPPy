@@ -99,36 +99,27 @@ class SpParamView(APIView):
         return Response(sp_sim_var_serializer.data)
 
     def post(self, request):
-        serializer = SpSolvedModelSerializer(request.POST)
-        if serializer.is_valid():
-            simulation_inputs = get_simulation_inputs(request=request)
-            sol: SPPy.Solution = perform_simulation(simulation_inputs=simulation_inputs)
-            sol.T = sol.T - Constants.T_abs  # Converts the temperature to degrees C
-            t_sim, v_sim, soc_p_sim, soc_n_sim, temp_sim = sol.t[::10].tolist(), \
-                sol.V[::10].tolist(), \
-                sol.x_surf_p[::10].tolist(), sol.x_surf_n[::10].tolist(), \
-                sol.T[::10].tolist()
-            t_sim_json = json.dumps(t_sim)
-            v_sim_json = json.dumps(v_sim)
-            soc_p_sim_json = json.dumps(soc_p_sim)
-            soc_n_sim_json = json.dumps(soc_n_sim)
-            temp_sim_json = json.dumps(temp_sim)
-            sp_solved_proto = SpSolvedModel.objects.create_sp_solved_model(t_sim=t_sim_json,
-                                                                           v_sim=v_sim_json,
-                                                                           soc_p_sim=soc_p_sim_json,
-                                                                           soc_n_sim=soc_n_sim_json,
-                                                                           temp_sim=temp_sim_json)
-            sp_model_serializer = SpSolvedModelSerializer(sp_solved_proto)
-            return Response(sp_model_serializer.data)
-
-
-def sp_simulation_variables_set(request):
-    return 0
-
-
-def sp_serializer_view_get(request):
-    # load sim params on initialization or param change
-    return 0
+        parameter_name = request.data.get("parameter_name")
+        cycler = request.data.get("cycler")
+        soc_lib_init = float(request.data.get("soc_lib_init"))
+        sol: SPPy.Solution = perform_simulation(simulation_inputs=(parameter_name,cycler,soc_lib_init))
+        sol.T = sol.T - Constants.T_abs  # Converts the temperature to degrees C
+        t_sim, v_sim, soc_p_sim, soc_n_sim, temp_sim = sol.t[::10].tolist(), \
+            sol.V[::10].tolist(), \
+            sol.x_surf_p[::10].tolist(), sol.x_surf_n[::10].tolist(), \
+            sol.T[::10].tolist()
+        t_sim_json = json.dumps(t_sim)
+        v_sim_json = json.dumps(v_sim)
+        soc_p_sim_json = json.dumps(soc_p_sim)
+        soc_n_sim_json = json.dumps(soc_n_sim)
+        temp_sim_json = json.dumps(temp_sim)
+        sp_solved_proto = SpSolvedModel.objects.create_sp_solved_model(t_sim=t_sim_json,
+                                                                       v_sim=v_sim_json,
+                                                                       soc_p_sim=soc_p_sim_json,
+                                                                       soc_n_sim=soc_n_sim_json,
+                                                                       temp_sim=temp_sim_json)
+        sp_model_serializer = SpSolvedModelSerializer(sp_solved_proto)
+        return Response(sp_model_serializer.data)
 
 
 def get_simulation_inputs(request) -> tuple[str, str, float]:
