@@ -5,6 +5,7 @@ import Header from "../componenets/Header";
 import Footer from "../componenets/Footer";
 import NavSimsOptions from "./NavSimsOptions";
 import Sp from "./Sp";
+import Ecm from "./Ecm";
 
 
 function App() {
@@ -23,6 +24,9 @@ function App() {
 
         </Route>
         <Route path="/batterysim/sp" element={<Sp />}>
+
+        </Route>
+        <Route path="/batterysim/sp" element={<Ecm />}>
 
         </Route>
 
