@@ -17,14 +17,13 @@ from rest_framework.views import APIView
 from rest_framework.response import Response
 
 from django_app.forms import ECMSimulationVariables, SPSimulationVariables
-from django_app.models import SpSimulationVariablesModel
-from django_app.serializers import SpSolvedModelSerializer, SPSimulationVariablesModelSerializer
+from django_app.models import EcmSimulationVariablesModel, SpSimulationVariablesModel, EcmSolvedModel, SpSolvedModel
+from django_app.serializers import EcmSimulationVariablesModelSerializer, EcmSolvedModelSerializer,\
+    SpSolvedModelSerializer, SpSimulationVariablesModelSerializer
 
 import json
 import SPPy
 from SPPy.calc_helpers.constants import Constants
-
-from .models import SpSolvedModel
 
 
 def index(request) -> HttpResponse:
@@ -77,6 +76,43 @@ def sp(request) -> HttpResponse:
                                                                                             'temp_sim': temp_sim}})
 
 
+class EcmParamView(APIView):
+    def options(self, request, *args, **kwargs):
+        parameter_name_list: list = [name[1] for name in EcmSimulationVariablesModel.lst_parameter_name]
+        cycler_list: list = [name[1] for name in EcmSimulationVariablesModel.lst_cycler]
+        return Response({'ecm_options': {'parameter_name_list': parameter_name_list,
+                                         'cycler_list': cycler_list,
+                                         'soc_lib_init': 0,
+                                         'temp_amb': 298.0}})
+
+    def get(self, request):
+        parameter_name = request.query_params['parameter_name'] if bool(request.query_params) else 'test'
+        # a placeholder solution to make django read ECM parameters from a json. said parameters will be served by a DB in the future
+        with open('django_app/static/parameter_sets_ecm.json', 'r') as f:
+            parameter_sets = json.load(f)
+        parameter_chosen = json.dumps(parameter_sets[parameter_name])
+        ecm_sim_var_proto = EcmSimulationVariablesModel.objects.create_ecm_sim_var_model(
+            parameter_name_arg=parameter_name,
+            parameter_values_arg=parameter_chosen)
+        ecm_sim_var_serializer = EcmSimulationVariablesModelSerializer(ecm_sim_var_proto)
+        return Response(ecm_sim_var_serializer.data)
+
+    def post(self, request):
+        t_sim, v_sim, soc_lib, temp_sim = [], [], [], []
+
+        t_sim, v_sim, soc_lib, temp_sim = Simulator(battery_model='ECM').get_simulation_results(request=request)
+        t_sim_json = json.dumps(t_sim)
+        v_sim_json = json.dumps(v_sim)
+        soc_lib_json = json.dumps(soc_lib)
+        temp_sim_json = json.dumps(temp_sim)
+        ecm_solved_proto = EcmSolvedModel.objects.create_ecm_solved_model(t_sim=t_sim_json,
+                                                                          v_sim=v_sim_json,
+                                                                          soc_lib=soc_lib_json,
+                                                                          temp_sim=temp_sim_json)
+        ecm_model_serializer = EcmSolvedModelSerializer(ecm_solved_proto)
+        return Response(ecm_model_serializer.data)
+
+
 class SpParamView(APIView):
     def options(self, request, *args, **kwargs):
         parameter_name_list: list = [name[1] for name in SpSimulationVariablesModel.lst_parameter_name]
@@ -95,14 +131,14 @@ class SpParamView(APIView):
         sp_sim_var_proto = SpSimulationVariablesModel.objects.create_sp_sim_var_model(
             parameter_name_arg=parameter_name,
             parameter_values_arg=parameter_chosen)
-        sp_sim_var_serializer = SPSimulationVariablesModelSerializer(sp_sim_var_proto)
+        sp_sim_var_serializer = SpSimulationVariablesModelSerializer(sp_sim_var_proto)
         return Response(sp_sim_var_serializer.data)
 
     def post(self, request):
         parameter_name = request.data.get("parameter_name")
         cycler = request.data.get("cycler")
         soc_lib_init = float(request.data.get("soc_lib_init"))
-        sol: SPPy.Solution = perform_simulation(simulation_inputs=(parameter_name,cycler,soc_lib_init))
+        sol: SPPy.Solution = perform_simulation(simulation_inputs=(parameter_name, cycler, soc_lib_init))
         sol.T = sol.T - Constants.T_abs  # Converts the temperature to degrees C
         t_sim, v_sim, soc_p_sim, soc_n_sim, temp_sim = sol.t[::10].tolist(), \
             sol.V[::10].tolist(), \
@@ -180,11 +216,12 @@ class Simulator:
             return True
 
     def _get_simulation_inputs(self, request) -> Optional[tuple[str, str, float, float]]:
+        # 15-01-2024: modified `request.POST.get()` into `request.data.get()`. check for crashing other functions...
         if self.battery_model == 'ECM':
-            parameter_name: str = request.POST.get('parameter_name')
-            cycler: str = request.POST.get('cycler')
-            soc_lib_init: float = float(request.POST.get('soc_lib_init'))
-            temp_amb: float = float(request.POST.get('temp_amb'))
+            parameter_name: str = request.data.get('parameter_name')
+            cycler: str = request.data.get('cycler')
+            soc_lib_init: float = float(request.data.get('soc_lib_init'))
+            temp_amb: float = float(request.data.get('temp_amb'))
             return parameter_name, cycler, soc_lib_init, temp_amb
         else:
             return None

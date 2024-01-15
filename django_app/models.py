@@ -11,6 +11,32 @@ class Simulation(models.Model):
     cycler = models.CharField(max_length=200)
 
 
+class EcmSolvedModel(models.Model):
+    # EcmSolvedModel could be inherited by some common base model with SpSolvedModel in the future
+    t_sim = models.JSONField(encoder=None, null=True, blank=True)
+    v_sim = models.JSONField(encoder=None, null=True, blank=True)
+    soc_lib = models.JSONField(encoder=None, null=True, blank=True)
+    temp_sim = models.JSONField(encoder=None, null=True, blank=True)
+
+    objects = EcmSolvedModelManager()
+
+
+class EcmSimulationVariablesModel(models.Model):
+    """
+    Contains the field ECM simulation's user inputs.
+    """
+    lst_parameter_name: list = [(param_set_name, param_set_name)
+                                for param_set_name in ECMParameterSets.lst_parameter_names()]
+    lst_cycler: list = [('discharge', 'discharge')]
+    parameter_name = models.CharField(max_length=16, choices=lst_parameter_name, default='test')
+    cycler = models.CharField(max_length=9, choices=lst_cycler, default='discharge')
+    soc_lib_init = models.FloatField(validators=[MinValueValidator(0.0), MaxValueValidator(1.0)], default=0.0)
+    temp_amb = models.FloatField(validators=[MinValueValidator(0.0)], default=298.0)
+    parameter_values = models.JSONField(encoder=None)
+
+    objects = EcmSimulationVariablesModelManager()
+
+
 class SpSolvedModel(models.Model):
     t_sim = models.JSONField(encoder=None, null=True, blank=True)
     v_sim = models.JSONField(encoder=None, null=True, blank=True)
