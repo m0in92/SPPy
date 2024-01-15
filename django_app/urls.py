@@ -7,6 +7,7 @@ urlpatterns: list = [
     path(route='', view=views.index, name='index'),
     path(route="batterysim/sp", view=views.sp, name='sp'),
     path(route="batterysim/ecm", view=views.ecm, name='ecm'),
-    re_path(route=r"^api/batterysim/sp$", view=views.SpParamView.as_view(), name='sp_sv_set')
+    re_path(route=r"^api/batterysim/sp$", view=views.SpParamView.as_view(), name='sp_sv_set'),
+    re_path(route=r"^api/batterysim/ecm$", view=views.EcmParamView.as_view(), name='ecm_sv_set')
 
 ]

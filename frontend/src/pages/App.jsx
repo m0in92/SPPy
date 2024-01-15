@@ -26,7 +26,7 @@ function App() {
         <Route path="/batterysim/sp" element={<Sp />}>
 
         </Route>
-        <Route path="/batterysim/sp" element={<Ecm />}>
+        <Route path="/batterysim/ecm" element={<Ecm />}>
 
         </Route>
 
