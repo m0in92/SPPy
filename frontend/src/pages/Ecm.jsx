@@ -57,7 +57,6 @@ function Ecm(){
 
     const verifySOC = (e) => {
         let nmbr = e.target.value.trim();
-        console.log(paramNameList)
         if (baseVerifyFloatInput(nmbr) && Number(nmbr) <= 1.0) {
             setSocValidity(true);
             setSocLibInit(Number(nmbr));
@@ -87,7 +86,6 @@ function Ecm(){
             formData.append("temp_amb", tempInit);
             axios.post(`${API_BASE_URL}/batterysim/ecm`, formData)
                 .then((rspn) => {
-                    console.log(rspn.data);
                     setSocLibSim(JSON.parse(rspn.data["soc_lib"]));
                     setTSim(JSON.parse(rspn.data["t_sim"]));
                     setTempSim(JSON.parse(rspn.data["temp_sim"]));
@@ -163,9 +161,89 @@ function Ecm(){
                     </table>
                     <button type="submit">Submit</button>
                 </form>
+                <table className="table_parameter_values">
+                    <tbody>
+                    <tr>
+                        <th colSpan="2"><h3 className="table_main_heading" id="table_parameter_values_main_heading"></h3></th>
+                    </tr>
+                    <tr>
+                        <th>Parameter Name</th>
+                        <th>Parameter Value</th>
+                    </tr>
+                    <tr>
+                        <th >Reference R0</th>
+                        <th>{Number(simParams["R0 ref_bc [ohm]"]).toString()}</th>
+                    </tr>
+                    <tr>
+                        <th >Reference R1</th>
+                        <th>{Number(simParams["R1_ref_bc [ohm]"]).toString()}</th>
+                    </tr>
+                    <tr>
+                        <th >C1 [F]</th>
+                        <th>{Number(simParams["C1_bc [F]"]).toString()}</th>
+                    </tr>
+                    <tr>
+                        <th >Reference Temperature [K]</th>
+                        <th>{Number(simParams["temp_ref_bc [K]"]).toString()}</th>
+                    </tr>
+                    <tr>
+                        <th>R0 Activation Energy [J/mol]</th>
+                        <th>{Number(simParams["Ea_R0_bc [J/mol]"]).toString()}</th>
+                    </tr>
+                    <tr>
+                        <th>R1 Activation Energy [J/mol]</th>
+                        <th>{Number(simParams["Ea_R1_bc [J/mol]"]).toString()}</th>
+                    </tr>
+                    <tr>
+                        <th>Instantaneous hysteresis co-efficient [V]</th>
+                        <th>{Number(simParams["M_bc [V]"]).toString()}</th>
+                    </tr>
+                    <tr>
+                        {/*not sure if data matches title*/}
+                        <th>SOC-dependent hysteresis co-efficient [V]</th>
+                        <th>{Number(simParams["M_0_bc [V]"]).toString()}</th>
+                    </tr>
+                    <tr>
+                        {/*not sure if data matches title*/}
+                        <th>Hysteresis time-constant</th>
+                        <th>{Number(simParams["gamma_bc"]).toString()}</th>
+                    </tr>
+                    <tr>
+                        <th>Density [<em>kg m<sup>-3</sup></em>]</th>
+                        <th>{Number(simParams["rho_bc [kg/m3]"]).toString()}</th>
+                    </tr>
+                    <tr>
+                        <th>Volume [<em>m<sup>3</sup></em>]</th>
+                        <th>{Number(simParams["vol_bc [m3]"]).toString()}</th>
+                    </tr>
+                    <tr>
+                        <th>Specific Heat [<em>J K<sup>-1</sup> kg<sup>-1</sup></em>]</th>
+                        <th>{Number(simParams["C_p_bc [J/(Kkg)]"]).toString()}</th>
+                    </tr>
+                    <tr>
+                        <th>Heat Transfer Coefficient [<em>J K<sup>-1</sup> s<sup>-1</sup></em>]</th>
+                        <th>{Number(simParams["h_bc [J/(SK)]"]).toString()}</th>
+                    </tr>
+                    <tr>
+                        {/*not sure if data matches title*/}
+                        <th>Surface Area [<em>m<sup>2</sup></em>]</th>
+                        <th>{Number(simParams["area_bc [m2]"]).toString()}</th>
+                    </tr>
+                    <tr>
+                        <th>Capacity [<em>A hr</em>]</th>
+                        <th>{Number(simParams["cap_bc [Ahr]"]).toString()}</th>
+                    </tr>
+                    <tr>
+                        <th>Maximum Potential Cut-off [<em>V</em>]</th>
+                        <th>{Number(simParams["V_max_bc [V]"]).toString()}</th>
+                    </tr>
+                    <tr>
+                        <th>Minimum Potential Cut-off [<em>V</em>]</th>
+                        <th>{Number(simParams["V_min_bc [V]"]).toString()}</th>
+                    </tr>
+                    </tbody>
 
-            </div>
-            <div>
+                </table>
 
             </div>
             <div>
