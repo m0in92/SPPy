@@ -1,0 +1,31 @@
+.header {
+    display: flex;
+    align-content: center;
+    justify-content: space-between;
+    padding-block: 1.5rem;
+
+    background-color: var(--secondary-background-color);
+    color: var(--font-color);
+}
+
+.link-list > a:hover {
+    color: black;
+}
+
+.logo {
+    padding-left: 5rem;
+}
+
+.logo-span {
+    color: peru;
+}
+
+.menu {
+    align-items: center;
+    padding-right: 5rem;
+}
+
+.menu-list {
+    display: flex;
+    gap: var(--gap);
+}

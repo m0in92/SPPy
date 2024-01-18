@@ -1,5 +1,7 @@
 import React, {useState} from 'react';
 import { NavLink, Routes, Route } from 'react-router-dom';
+import "../css/NavSimsOptions.css";
+
 const imgDir = require.context('../img/', true);
 function NavSimsOptions() {
     let titleDefault = "Welcome to the simulation portal.";
@@ -101,19 +103,19 @@ function NavSimsOptions() {
     }
 
     return(
-        <div>
-        <nav className={"nav-sims-options"}>
-            <ul className={"ul-sims-options"}>
-                <li><span className="main-sim-options-span">Application Dynamics Simulation</span></li>
-                <CreateNavList arg_list={"ADS_list"} />
-                <li><span className="main-sim-options-span">Battery Cell Simulations</span></li>
-                <CreateNavList arg_list={"BCS_list"} />
-                <li><span className="main-sim-options-span">Insights</span></li>
-                <CreateNavList arg_list={"insights_list"} />
-                <li><span className="main-sim-options-span">Battery Management System Monitoring</span></li>
-                <CreateNavList arg_list={"BMSM_list"} />
-            </ul>
-        </nav>
+        <div className={"nav-sims"}>
+            <nav className={"nav-sims-options"}>
+                <ul className={"ul-sims-options"}>
+                    <li><span className="main-sim-options-span">Application Dynamics Simulation</span></li>
+                    <CreateNavList arg_list={"ADS_list"} />
+                    <li><span className="main-sim-options-span">Battery Cell Simulations</span></li>
+                    <CreateNavList arg_list={"BCS_list"} />
+                    <li><span className="main-sim-options-span">Insights</span></li>
+                    <CreateNavList arg_list={"insights_list"} />
+                    <li><span className="main-sim-options-span">Battery Management System Monitoring</span></li>
+                    <CreateNavList arg_list={"BMSM_list"} />
+                </ul>
+            </nav>
             <div className={'section-description'}>
                 <CreateDescription/>
             </div>

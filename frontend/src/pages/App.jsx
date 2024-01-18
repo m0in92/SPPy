@@ -12,9 +12,6 @@ function App() {
   return (
     <div className="App">
       <Header/>
-        <div>
-          I HATE REACT!!11!1!! Zucc plz dont kill me
-        </div>
         {/*https://stackoverflow.com/questions/34607841/react-router-nav-bar-example
         https://ui.dev/react-router-custom-link
         https://ui.dev/react-router-tutorial*/}

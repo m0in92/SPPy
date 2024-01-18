@@ -1,0 +1,23 @@
+.nav-sims {
+  flex-grow: 1;
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+
+}
+
+.nav-sims-options{
+  width: fit-content;
+  float: left;
+  padding: 20px;
+  min-height: 500px;
+
+}
+.section-description{
+  width: 70%;
+  padding-left: 24px;
+}
+
+img{
+  width: 100%;
+}
