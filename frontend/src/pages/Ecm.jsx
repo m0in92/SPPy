@@ -2,6 +2,7 @@ import React, {useEffect, useLayoutEffect, useRef, useState} from 'react';
 import axios from 'axios';
 import {API_BASE_URL} from "../constants/constants";
 import RenderDataPoints from "../componenets/battery_cell_simualtions/RenderDataPoints";
+import '../css/Ecm.css';
 
 function Ecm(){
     const [paramNameList, setParamNameList] = useState([]);
@@ -51,6 +52,7 @@ function Ecm(){
             return false;
         } else {
             // number must be non-negative at most 4 sigfigs
+            // KNOWN BUG: adding dash in between digits or inputting 2 dashes circumvents the check
             return num.match(/^\d*(\.\d{0,4})?$/);
         }
     }
@@ -139,7 +141,7 @@ function Ecm(){
                                            required={true}
                                            onChange={e => verifySOC(e)}/>
                                 </label>
-                                {(!socValidity) && <span>Input must be a number between 0.0 and 1.0</span>}
+                                {(!socValidity) && <span className='input_error_warning'>&nbsp;&nbsp;Input must be a number between 0.0 and 1.0&nbsp;&nbsp;</span>}
                             </td>
                         </tr>
                         <tr>
@@ -154,7 +156,7 @@ function Ecm(){
                                            required={true}
                                            onChange={e => verifyTemp(e)}/>
                                 </label>
-                                {(!tempValidity) && <span>Input must be a number greater than 0.0</span>}
+                                {(!tempValidity) && <span className='input_error_warning'>&nbsp;&nbsp;Input must be a number greater than 0.0&nbsp;&nbsp;</span>}
                             </td>
                         </tr>
                     </tbody>
@@ -163,9 +165,6 @@ function Ecm(){
                 </form>
                 <table className="table_parameter_values">
                     <tbody>
-                    <tr>
-                        <th colSpan="2"><h3 className="table_main_heading" id="table_parameter_values_main_heading"></h3></th>
-                    </tr>
                     <tr>
                         <th>Parameter Name</th>
                         <th>Parameter Value</th>

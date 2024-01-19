@@ -2,6 +2,7 @@ import React, {useEffect, useLayoutEffect, useRef, useState} from 'react';
 import axios from 'axios';
 import {API_BASE_URL} from "../constants/constants";
 import RenderDataPoints from "../componenets/battery_cell_simualtions/RenderDataPoints";
+import '../css/Sp.css';
 
 function Sp(){
     const [paramNameList, setParamNameList] = useState([]);
@@ -96,6 +97,7 @@ function Sp(){
             setSocValidity(false);
         } else if (e.target.valueAsNumber > 1.0 || !(e.target.value.match(/^[0-1](\.\d{0,4})?$/))){
             // number must be at most 4 sigfigs
+            // KNOWN BUG: adding dash in between digits or inputting 2 dashes circumvents the check
             setSocValidity(false);
         } else {
             setSocValidity(true);
@@ -111,7 +113,7 @@ function Sp(){
                     <table>
                     <tbody>
                         <tr>
-                            <td>Parameter Name:</td>
+                            <td className="parameter_names">Parameter Name:</td>
                             <td>
                                 <label>
                                     <select value={paramName}
@@ -122,7 +124,7 @@ function Sp(){
                             </td>
                         </tr>
                         <tr>
-                            <td>Cycler:</td>
+                            <td className="parameter_names">Cycler:</td>
                             <td>
                                 <label>
                                     <select value={cycler}
@@ -133,7 +135,7 @@ function Sp(){
                             </td>
                         </tr>
                         <tr>
-                            <td>Initial LIB SOC:</td>
+                            <td className="parameter_names">Initial LIB SOC:</td>
                             <td>
                                 <label>
                                     <input type="number"
@@ -145,7 +147,7 @@ function Sp(){
                                            required={true}
                                            onChange={e => verifySOC(e)}/>
                                 </label>
-                                {(!socValidity) && <span>Input must be a number between 0.0 and 1.0</span>}
+                                {(!socValidity) && <span className='input_error_warning'>&nbsp;&nbsp;Input must be at most 4 decimal places between 0.0 and 1.0. &nbsp;&nbsp;</span>}
                             </td>
                         </tr>
                     </tbody>

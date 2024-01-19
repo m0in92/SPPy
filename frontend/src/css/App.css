@@ -68,7 +68,7 @@ table {
     padding: 15px;
 }
 
-th, td {
+th {
     border: 1px solid black;
 }
 
@@ -77,7 +77,7 @@ button {
     /*font-weight: bold;*/
 
     /*width: 30%;*/
-    margin: auto;
+    margin-left: 15px;
     /* text-align: center; */
     padding: 2rem;
     background-color: #17252A;
@@ -90,4 +90,17 @@ button {
 
 h3 {
     font-size: var(--font-size-lsm);
+}
+
+.parameter_names {
+    text-align: left;
+}
+
+select, input {
+    border: 0 !important;
+    width: 150px;
+}
+
+.input_error_warning {
+    color: red;
 }

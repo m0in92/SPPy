@@ -79,7 +79,7 @@ function NavSimsOptions() {
                     onMouseLeave={handleCursorLeave}
                 >
                     <NavLink to={selected.link}>
-                        {selected.title}
+                        &nbsp;&nbsp;&nbsp;&nbsp;{selected.title}
                     </NavLink>
                 </li>
             )
@@ -94,7 +94,7 @@ function NavSimsOptions() {
                 <h3 id="id_h3_description">
                     {selectedDescription[cursorLastOptionArrId].desc !== '' ? selectedDescription[cursorLastOptionArrId].title : underConstructionTitle}
                 </h3>
-                <p id="id_p_description">{selectedDescription[cursorLastOptionArrId].desc}</p>
+                <span id="id_p_description">{selectedDescription[cursorLastOptionArrId].desc}</span>
                 {selectedDescription[cursorLastOptionArrId].imgId !== '' ?
                     <img id="id_img" src={imgDir(`./${selectedDescription[cursorLastOptionArrId].imgId}`)} alt=""/> : null
                 }
@@ -106,13 +106,13 @@ function NavSimsOptions() {
         <div className={"nav-sims"}>
             <nav className={"nav-sims-options"}>
                 <ul className={"ul-sims-options"}>
-                    <li><span className="main-sim-options-span">Application Dynamics Simulation</span></li>
+                    <li><h4 className="main-sim-options-span">Application Dynamics Simulation</h4></li>
                     <CreateNavList arg_list={"ADS_list"} />
-                    <li><span className="main-sim-options-span">Battery Cell Simulations</span></li>
+                    <li><h4 className="main-sim-options-span">Battery Cell Simulations</h4></li>
                     <CreateNavList arg_list={"BCS_list"} />
-                    <li><span className="main-sim-options-span">Insights</span></li>
+                    <li><h4 className="main-sim-options-span">Insights</h4></li>
                     <CreateNavList arg_list={"insights_list"} />
-                    <li><span className="main-sim-options-span">Battery Management System Monitoring</span></li>
+                    <li><h4 className="main-sim-options-span">Battery Management System Monitoring</h4></li>
                     <CreateNavList arg_list={"BMSM_list"} />
                 </ul>
             </nav>

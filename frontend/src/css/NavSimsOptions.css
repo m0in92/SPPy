@@ -2,20 +2,21 @@
   flex-grow: 1;
   display: flex;
   flex-direction: row;
-  flex-wrap: wrap;
+  flex-wrap: nowrap;
 
 }
 
 .nav-sims-options{
-  width: fit-content;
+  width: 370px;
   float: left;
   padding: 20px;
   min-height: 500px;
 
 }
 .section-description{
-  width: 70%;
+  width: calc(100% - 370px);
   padding-left: 24px;
+  float: right;
 }
 
 img{
