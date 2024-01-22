@@ -104,3 +104,29 @@ select, input {
 .input_error_warning {
     color: red;
 }
+
+.sim_parent {
+    display: flex;
+    flex-direction: row;
+}
+
+.plots {
+    max-width: calc(100% - 616px);
+    flex-grow: 1;
+    display: flex;
+    justify-content: center;
+    flex-direction: row;
+    flex-wrap: wrap;
+    padding-bottom: 2.5rem;
+}
+
+@media (max-width: 1100px){
+    .sim_parent {
+        flex-direction: column;
+        align-items: center;
+    }
+    .plots {
+        flex-direction: column;
+        max-width: 100%;
+    }
+}

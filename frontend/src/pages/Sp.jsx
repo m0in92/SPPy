@@ -1,4 +1,4 @@
-import React, {useEffect, useLayoutEffect, useRef, useState} from 'react';
+import React, {useEffect, useState} from 'react';
 import axios from 'axios';
 import {API_BASE_URL} from "../constants/constants";
 import RenderDataPoints from "../componenets/battery_cell_simualtions/RenderDataPoints";
@@ -43,26 +43,6 @@ function Sp(){
       });
     }, [paramName]);
 
-    /*const usePlotUpdater = () => {
-        const didMount = useRef(false);
-        useEffect(() => {
-            if (didMount.current) {
-                let dataPoints =
-                    {"x_val" : {"Time [s]": tSim}, "y_val" :
-                        {"SOC_n": socNSim,
-                        "SOC_p": socPSim,
-                        "Temperature [C]": tSim,
-                        "Potential [V]" : vSim}
-                    };
-                for (let y_element in dataPoints["y_val"]){
-                    for (let x_element in dataPoints["x_val"]){
-                        RenderDataPoints(x_element, y_element);
-                    }
-                }
-            } else didMount.current = true;
-        }, [socNSim, socPSim, tSim, tempSim, vSim]);
-    }*/
-
 
     function HandleSubmit(e){
         e.preventDefault() // stops browser from reloading the page
@@ -90,22 +70,18 @@ function Sp(){
     const renderedCyclerList = cyclerList.map(item => <option key={item} value={item}>{item}</option>);
 
     const verifySOC = (e) => {
-        console.log(paramNameList)
         // There's a concern that if the input isn't a number the number range check will crash
+        let nmbr = e.target.value.trim();
         // Ugly, potential room for improvement
-        if (isNaN(e.target.valueAsNumber)){
-            setSocValidity(false);
-        } else if (e.target.valueAsNumber > 1.0 || !(e.target.value.match(/^[0-1](\.\d{0,4})?$/))){
-            // number must be at most 4 sigfigs
-            // KNOWN BUG: adding dash in between digits or inputting 2 dashes circumvents the check
-            setSocValidity(false);
-        } else {
+        if (Number(nmbr) <= 1.0 && !!(nmbr.match(/^[0-1](\.\d{0,4})?$/))){
             setSocValidity(true);
-            setSocLibInit(e.target.valueAsNumber)
+            setSocLibInit(e.target.valueAsNumber);
+        } else {
+            setSocValidity(false);
         }
     }
     return(
-        <div>
+        <div className="sim_parent">
             <div className="container">
                 <form method="post" onSubmit={HandleSubmit}>
                     {/* see how forms are done: https://react.dev/reference/react-dom/components/select#reading-the-select-box-value-when-submitting-a-form
@@ -263,7 +239,7 @@ function Sp(){
                     </tbody>
                 </table>
             </div>
-            <div>
+            <div className='plots'>
                 {RenderDataPoints({"Time [s]": tSim}, {"SOC_n": socNSim})}
                 {RenderDataPoints({"Time [s]": tSim}, {"SOC_p": socPSim})}
                 {RenderDataPoints({"Time [s]": tSim}, {"Potential [V]": vSim})}

@@ -1,4 +1,4 @@
-import React, {useEffect, useLayoutEffect, useRef, useState} from 'react';
+import React, {useEffect, useState} from 'react';
 import axios from 'axios';
 import {API_BASE_URL} from "../constants/constants";
 import RenderDataPoints from "../componenets/battery_cell_simualtions/RenderDataPoints";
@@ -48,12 +48,12 @@ function Ecm(){
     }, [paramName]);
 
     const baseVerifyFloatInput = (num) => {
-        if (isNaN(num)) {
+        if (isNaN(num) || num.length <= 0) {
+            // Catch empty strings
             return false;
         } else {
             // number must be non-negative at most 4 sigfigs
-            // KNOWN BUG: adding dash in between digits or inputting 2 dashes circumvents the check
-            return num.match(/^\d*(\.\d{0,4})?$/);
+            return !!(num.match(/^\d*(\.\d{0,4})?$/));
         }
     }
 
@@ -99,7 +99,7 @@ function Ecm(){
         }
     }
     return(
-        <div>
+        <div className="sim_parent">
             <div className="container">
                 <form method="post" onSubmit={HandleSubmit}>
                     {/* see how forms are done: https://react.dev/reference/react-dom/components/select#reading-the-select-box-value-when-submitting-a-form
@@ -141,7 +141,8 @@ function Ecm(){
                                            required={true}
                                            onChange={e => verifySOC(e)}/>
                                 </label>
-                                {(!socValidity) && <span className='input_error_warning'>&nbsp;&nbsp;Input must be a number between 0.0 and 1.0&nbsp;&nbsp;</span>}
+                                {(!socValidity) && <span className='input_error_warning'>&nbsp;&nbsp;Input must be at most 4 decimal places between 0.0 and 1.0&nbsp;&nbsp;</span>}
+                                <div>{socValidity.toString()}</div>
                             </td>
                         </tr>
                         <tr>
@@ -156,7 +157,8 @@ function Ecm(){
                                            required={true}
                                            onChange={e => verifyTemp(e)}/>
                                 </label>
-                                {(!tempValidity) && <span className='input_error_warning'>&nbsp;&nbsp;Input must be a number greater than 0.0&nbsp;&nbsp;</span>}
+                                {(!tempValidity) && <span className='input_error_warning'>&nbsp;&nbsp;Input must be at most 4 decimal places greater than 0.0&nbsp;&nbsp;</span>}
+                                <div>{tempValidity.toString()}</div>
                             </td>
                         </tr>
                     </tbody>
@@ -245,7 +247,7 @@ function Ecm(){
                 </table>
 
             </div>
-            <div>
+            <div className='plots'>
                 {RenderDataPoints({"Time [s]": tSim}, {"SOC LIB": socLibSim})}
                 {RenderDataPoints({"Time [s]": tSim}, {"Potential [V]": vSim})}
                 {RenderDataPoints({"Time [s]": tSim}, {"Temperature [C]": tempSim})}
