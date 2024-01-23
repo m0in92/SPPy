@@ -142,7 +142,6 @@ function Ecm(){
                                            onChange={e => verifySOC(e)}/>
                                 </label>
                                 {(!socValidity) && <span className='input_error_warning'>&nbsp;&nbsp;Input must be at most 4 decimal places between 0.0 and 1.0&nbsp;&nbsp;</span>}
-                                <div>{socValidity.toString()}</div>
                             </td>
                         </tr>
                         <tr>
@@ -158,7 +157,6 @@ function Ecm(){
                                            onChange={e => verifyTemp(e)}/>
                                 </label>
                                 {(!tempValidity) && <span className='input_error_warning'>&nbsp;&nbsp;Input must be at most 4 decimal places greater than 0.0&nbsp;&nbsp;</span>}
-                                <div>{tempValidity.toString()}</div>
                             </td>
                         </tr>
                     </tbody>

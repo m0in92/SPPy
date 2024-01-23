@@ -1,7 +1,5 @@
 from rest_framework import serializers
-from drf_braces.serializers.form_serializer import FormSerializer
 from .models import EcmSimulationVariablesModel, EcmSolvedModel, SpSolvedModel, SpSimulationVariablesModel
-from .forms import SPSimulationVariables
 
 
 class EcmSimulationVariablesModelSerializer(serializers.ModelSerializer):

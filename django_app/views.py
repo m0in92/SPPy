@@ -16,7 +16,6 @@ from django.http import HttpResponse
 from rest_framework.views import APIView
 from rest_framework.response import Response
 
-from django_app.forms import ECMSimulationVariables, SPSimulationVariables
 from django_app.models import EcmSimulationVariablesModel, SpSimulationVariablesModel, EcmSolvedModel, SpSolvedModel
 from django_app.serializers import EcmSimulationVariablesModelSerializer, EcmSolvedModelSerializer,\
     SpSolvedModelSerializer, SpSimulationVariablesModelSerializer
@@ -29,51 +28,6 @@ from SPPy.calc_helpers.constants import Constants
 def index(request) -> HttpResponse:
     return render(request=request, template_name='index.html',
                   context={'context_package': {}})
-
-
-def ecm(request) -> HttpResponse:
-    t_sim, v_sim, soc_lib, temp_sim = [], [], [], []
-    if request.method == "POST":
-        form = ECMSimulationVariables(request.POST)
-        if form.is_valid():
-            t_sim, v_sim, soc_lib, temp_sim = Simulator(battery_model='ECM').get_simulation_results(request=request)
-    else:
-        form = ECMSimulationVariables()
-
-    return render(request=request, template_name='index.html', context={'context_package': {'form': form,
-                                                                                            't_sim': t_sim,
-                                                                                            'v_sim': v_sim,
-                                                                                            'soc_lib': soc_lib,
-                                                                                            'temp_sim': temp_sim}})
-
-
-def sp(request) -> HttpResponse:
-    ### split the form creation and calculation into two separate APIs?
-
-    t_sim: list = []  # list of floats intended to store the time from the simulation
-    v_sim: list = []  # list of floats intended to store the voltage from the simulation
-    soc_p_sim: list = []  # list of floats intended to store the soc_p from the simulation
-    soc_n_sim: list = []  # list of floats intended to store the soc_p from the simulation
-    temp_sim: list = []  # list of floats intended to store the soc_p from the simulation
-    if request.method == "POST":
-        form = SPSimulationVariables(request.POST)
-        if form.is_valid():
-            simulation_inputs = get_simulation_inputs(request=request)
-            sol: SPPy.Solution = perform_simulation(simulation_inputs=simulation_inputs)
-            sol.T = sol.T - Constants.T_abs  # Converts the temperature to degrees C
-            t_sim, v_sim, soc_p_sim, soc_n_sim, temp_sim = sol.t[::10].tolist(), \
-                sol.V[::10].tolist(), \
-                sol.x_surf_p[::10].tolist(), sol.x_surf_n[::10].tolist(), \
-                sol.T[::10].tolist()
-    else:
-        form = SPSimulationVariables()
-
-    return render(request=request, template_name='index.html', context={'context_package': {'form': form,
-                                                                                            't_sim': t_sim,
-                                                                                            'v_sim': v_sim,
-                                                                                            'soc_p_sim': soc_p_sim,
-                                                                                            'soc_n_sim': soc_n_sim,
-                                                                                            'temp_sim': temp_sim}})
 
 
 class EcmParamView(APIView):
