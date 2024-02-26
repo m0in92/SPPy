@@ -28,5 +28,9 @@ for i in range(t_end):
     conc_solver.solve_ce(j=j, dt=dt, solver_method='TDMA')
 
 print(conc_solver.array_c_e)
+
+plt.xlabel("Battery Cell Thickness [m]")
+plt.ylabel("Electrolyte Conc. [mol/m3]")
+plt.title(f"Electrolyte Conc. [mol/m3] after {t_end} s of discharge")
 plt.plot(co_ords.array_x, conc_solver.array_c_e)
 plt.show()
