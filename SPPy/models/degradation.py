@@ -30,19 +30,19 @@ class ROMSEI:
         return k_n * c_nmax * (c_e ** 0.5) * ((1-SOC_surf_n) ** 0.5) * (SOC_surf_n) ** 0.5
 
     def calc_j_tot(self, I: float, S: float):
-        return SPModel.molar_flux_electrode(I=I, S=S, electrode_type='n')
+        return SPM.molar_flux_electrode(I=I, S=S, electrode_type='n')
 
-    def calc_j_i(self, j_tot, j_s):
+    def calc_j_i(self, j_tot: float, j_s: float):
         return j_tot - j_s
 
     def calc_eta_n(self, temp: float, j_i: float, c_n: float):
         return (2 * Constants.R * temp / Constants.F) * (np.arcsinh(j_i /(2 * c_n)))
 
     def calc_eta_s(self, eta_n: float, OCP_n: float, OCP_s: float):
-        return eta_n + OCP_n + OCP_s
+        return eta_n + OCP_n + OCP_s  # TODO: this expression is incorrent. Needs another view
 
     def calc_j_s(self, temp: float, i_s: float, eta_s: float):
-        return -(i_s / Constants.F) * np.exp(-Constants.F * eta_s / (2 * Constants.R * temp))
+        return -i_s * np.exp(-Constants.F * eta_s / (2 * Constants.R * temp))
 
     def flux_to_current(self, molar_flux: float, S: float):
         """
@@ -51,4 +51,4 @@ class ROMSEI:
         :param S: (float) electrode electrochemically active area [m2]
         :return: current [A]
         """
-        return SPModel.flux_to_current(molar_flux=molar_flux, S=S, electrode_type='n')
+        return SPM.flux_to_current(molar_flux=molar_flux, S=S, electrode_type='n')

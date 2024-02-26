@@ -32,7 +32,7 @@ class ROMSEISolver(ROMSEI):
         self.cumulative_J_s = 0  # cumulative SEI side reaction flux [mol/m2], initialized to zero.
 
     def solve_current(self, SOC_n: float, OCP_n: float, temp: float, I: float, rel_tol: float = 1e-6,
-                      max_iter_no: int = 10):
+                      max_iter_no: int = 10) -> tuple[float, float]:
         """
         Returns the currents consumed for intercalation and side reactions.
         :param SOC_n:
@@ -43,7 +43,7 @@ class ROMSEISolver(ROMSEI):
         :return: tuple containing the intercalation current [A] and side-reaction current [A]
         """
         J_s = self.J_s = 0
-        J_tot = self.J_tot = self.J_i =self.calc_j_tot(I=I, S=self.S_n)
+        J_tot = self.J_tot = self.J_i = self.calc_j_tot(I=I, S=self.S_n)
         if I > 0:
             c_n = self.calc_c_n(k_n=self.k_n, c_nmax=self.c_nmax, c_e=self.c_e, SOC_surf_n=SOC_n)
             rel_error = 1
@@ -54,6 +54,7 @@ class ROMSEISolver(ROMSEI):
                 eta_s = self.calc_eta_s(eta_n=eta_n, OCP_n=OCP_n, OCP_s=self.U_s)
                 J_s_prev = J_s
                 J_s = self.calc_j_s(temp=temp, i_s=self.i_s, eta_s=eta_s)
+                print(eta_s)
 
                 rel_error = np.abs((J_s - J_s_prev)/J_s)
                 iter += 1

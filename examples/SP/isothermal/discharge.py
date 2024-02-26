@@ -9,18 +9,18 @@ __status__ = 'deployed'
 import SPPy
 
 # Operating parameters
-I = 1.656
-temp = 298.15
-V_min = 3
-SOC_min = 0.1
-soc_lib_init = 1.0
+I: float = 1.656
+temp: float = 298.15
+V_min: float = 3
+SOC_min: float = 0.1
+soc_lib_init: float = 1.0
 
 # Modelling parameters
 SOC_init_p, SOC_init_n = 0.4956, 0.7568  # conditions in the literature source. Guo et al
 
 # Setup battery components
-cell = SPPy.BatteryCell.read_from_parametersets(parameter_set_name='test', soc_lib_init=soc_lib_init,
-                                                # SOC_init_p=SOC_init_p, SOC_init_n=SOC_init_n,
+cell = SPPy.BatteryCell.read_from_parametersets(parameter_set_name='test',
+                                                soc_init_p=SOC_init_p, soc_init_n=SOC_init_n,
                                                 temp_init=temp)
 
 # set-up cycler and solver

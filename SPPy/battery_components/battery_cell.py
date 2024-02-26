@@ -73,8 +73,8 @@ class BatteryCell:
         return self.T_amb_
 
     @classmethod
-    def read_from_parametersets(cls, parameter_set_name: str, soc_lib_init: float,
-                                # SOC_init_p: float, SOC_init_n: float,
+    def read_from_parametersets(cls, parameter_set_name: str,
+                                soc_init_p: float, soc_init_n: float,
                                 temp_init: float) -> Self:
         param_set = ParameterSets(name=parameter_set_name)
         rho = param_set.rho
@@ -86,11 +86,11 @@ class BatteryCell:
         V_max = param_set.V_max
         V_min = param_set.V_min
         # initialize electrodes and electrolyte
-        soc_init_p, soc_init_n = BatteryCell._get_electrode_soc_from_lib_soc(soc_lib=soc_lib_init,
-                                                                             soc_p_min=param_set.soc_min_p,
-                                                                             soc_p_max=param_set.soc_max_p,
-                                                                             soc_n_min=param_set.soc_min_n,
-                                                                             soc_n_max=param_set.soc_max_n)
+        # soc_init_p, soc_init_n = BatteryCell._get_electrode_soc_from_lib_soc(soc_lib=soc_lib_init,
+        #                                                                      soc_p_min=param_set.soc_min_p,
+        #                                                                      soc_p_max=param_set.soc_max_p,
+        #                                                                      soc_n_min=param_set.soc_min_n,
+        #                                                                      soc_n_max=param_set.soc_max_n)
         obj_elec_p = electrode.PElectrode(L=param_set.L_p, A=param_set.A_p, kappa=param_set.kappa_p,
                                           epsilon=param_set.epsilon_p, S=param_set.S_p, max_conc=param_set.max_conc_p,
                                           R=param_set.R_p, k_ref=param_set.k_ref_p, D_ref=param_set.D_ref_p,
