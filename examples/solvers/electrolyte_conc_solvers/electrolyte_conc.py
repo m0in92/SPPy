@@ -27,7 +27,6 @@ j = np.append(np.append(j_n, j_sep), j_p)
 for i in range(t_end):
     conc_solver.solve_ce(j=j, dt=dt, solver_method='TDMA')
 
-print(conc_solver.array_c_e)
 
 plt.xlabel("Battery Cell Thickness [m]")
 plt.ylabel("Electrolyte Conc. [mol/m3]")

@@ -1,5 +1,13 @@
+"""
+Contains the example implementation of SPPy using custom cycler under isothermal conditions.
+"""
+
+__author__ = 'Moin Ahmed'
+__copyright__ = 'Copyright 2023 by SPPy. All rights reserved.'
+__status__ = 'deployed'
+
+
 import pandas as pd
-import matplotlib.pyplot as plt
 
 import SPPy
 
@@ -19,7 +27,7 @@ SOC_init_p, SOC_init_n = 0.4956, 0.7568  # conditions in the literature source. 
 
 # Setup battery components
 cell = SPPy.BatteryCell.read_from_parametersets(parameter_set_name='test',
-                                                SOC_init_p=SOC_init_p, SOC_init_n=SOC_init_n,
+                                                soc_init_p=SOC_init_p, soc_init_n=SOC_init_n,
                                                 temp_init=T)
 
 # set-up cycler and solver. Also plot the cycler time [s] and current [A]. For this example the data is extracted from

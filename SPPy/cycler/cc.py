@@ -5,7 +5,9 @@ class CC(BaseCycler):
     # class variables
     cycle_steps = ["rest", "charge", "rest", "discharge"]
 
-    def __init__(self, num_cycles, charge_current, discharge_current, rest_time, V_max, V_min):
+    def __init__(self, num_cycles: int,
+                 charge_current: float, discharge_current: float, rest_time: float,
+                 V_max: float, V_min: float):
         super().__init__()
         self.num_cycles = num_cycles
         self.charge_current = charge_current

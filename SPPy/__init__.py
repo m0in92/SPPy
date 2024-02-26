@@ -20,7 +20,7 @@ from SPPy.solvers.ECM_solvers import DTSolver, ESCDTSolver
 from SPPy.cycler.cc import CC, CCCV, CCNoFirstRest, DischargeRestCharge, DischargeRestChargeRest
 from SPPy.cycler.charge import Charge, ChargeRest
 from SPPy.cycler.discharge import Discharge, DischargeRest, CustomDischarge
-from SPPy.cycler.custom import CustomCycler
+from SPPy.cycler.custom import CustomCycler, HPPCCycler
 
 from SPPy.sol_and_visualization.solution import Solution, ECMSolution
 from SPPy.sol_and_visualization.plots import Plots

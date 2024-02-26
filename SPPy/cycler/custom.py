@@ -67,4 +67,67 @@ class CustomCycler(BaseCycler):
         plt.show()
 
 
+class HPPCCycler(CustomCycler):
+    def __init__(self, t1: float, t2: float, i_app: float, charge_or_discharge: str,
+                 V_min: float, V_max: float,
+                 soc_lib_min: float, soc_lib_max: float, soc_lib: float,
+                 hppc_steps: int = 10) -> None:
+        """intended to be the cycler class for HPPC experiments. HPPC defined here has the following profile
+                1. Rest for t1
+                2. Current pulse, with the amplitude of i_app, for a time period of t2. THh current is negative if
+                    the battery cell is discharging and positive if is charging.
+                3. Repeat steps 1 and 2 until the desired terminal voltage is attained
+
+        Args:
+            t1 (float): time period [s] for the initial rest and between the current pulse
+            t2 (float): time period [s] of the current pulse
+            current (float): current value [A] during the pulse
+            charge_or_discharge (str): options are 'charge' or 'discharge'
+            V_min (float): minimum terminal voltage [V]
+            V_max (float): maximum terminal voltage [V]
+            soc_lib_min (float): minimum LIB SOC
+            soc_lib_max (float): max. LIB SOC
+            soc_lib (float): SOC LIB at the start of the HPPC cycling step.
+            hppc_steps (int): number of HPPC repetitions. DEfault is 10.
+        """
+        dt: float = 0.1  # the time difference between the time steps
+        if charge_or_discharge == 'discharge':
+            i_app_actual: float = -i_app
+        elif charge_or_discharge == 'charge':
+            i_app_actual: float = i_app
+        else:
+            raise ValueError(
+                f"input for charge_discharge parameter, {charge_or_discharge}, cannot be reconigized.")
+
+        # This is the first iteration of the HPPC cycler
+        t1_array: np.ndarray = np.arange(0, t1, dt)
+        i_app1_array: np.ndarray = np.zeros(len(t1_array))
+        t2_array: np.ndarray = np.arange(t1, t1+t2+dt, dt)
+        i_app2_array: np.ndarray = i_app_actual * np.ones(len(t2_array))
+
+        t_array: np.ndarray = np.append(t1_array, t2_array)
+        current_array: np.ndarray = np.append(i_app1_array, i_app2_array)
+
+        # This is the successive iteration of the HPPC cycler. Alternatively, the first and successive iterations
+        # could have been coded into one iteration by introducing an empty t_array and current_array. However,
+        # this lead to unpredictable behaviour in numpy arrays.
+        for i in range(hppc_steps-1):
+            t1_array: np.ndarray = np.arange(
+                t_array[-1] + dt, t_array[-1] + t1, dt)
+            i_app1_array: np.ndarray = np.zeros(len(t1_array))
+            t2_array: np.ndarray = np.arange(
+                t_array[-1] + t1, t_array[-1] + t1 + t2 + dt, dt)
+            i_app2_array: np.ndarray = i_app_actual * np.ones(len(t2_array))
+
+            t_array: np.ndarray = np.append(t_array, t1_array)
+            t_array: np.ndarray = np.append(t_array, t2_array)
+            current_array: np.ndarray = np.append(current_array, i_app1_array)
+            current_array: np.ndarray = np.append(current_array, i_app2_array)
+
+        super().__init__(array_t=t_array, array_I=current_array,
+                         V_min=V_min, V_max=V_max,
+                         SOC_LIB_min=soc_lib_min, SOC_LIB_max=soc_lib_max, SOC_LIB=soc_lib)
+
+
+
 

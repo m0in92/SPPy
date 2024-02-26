@@ -1,7 +1,5 @@
-import matplotlib.pyplot as plt
-
 from neg_electrode import *
-from pos_electrode import *
+from examples.solvers.electrode_conc_solvers.pos_electrode_single_particle import *
 
 
 fig = plt.figure(figsize=(7.5, 3), dpi=300)
