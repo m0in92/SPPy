@@ -27,10 +27,11 @@ j_s: np.ndarray = np.array([solver.solve_current(SOC_n=soc_, OCP_n=ocp_,
 j_i: np.ndarray = np.array([solver.solve_current(SOC_n=soc_, OCP_n=ocp_,
                            temp=temp, I=1.656)[0] for soc_, ocp_ in zip(soc_n, ocp_n)])
 
+# plots
 fig, ax1 = plt.subplots()
-ax1.plot(soc_n, j_i)
-
+ax1.plot(soc_n, j_i, label="J_i")
 ax2 = ax1.twinx()
-ax2.plot(soc_n, j_s, color="red")
+ax2.plot(soc_n, j_s, color="red", label="J_s")
 
+plt.legend()
 plt.show()
