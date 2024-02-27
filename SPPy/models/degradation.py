@@ -39,7 +39,7 @@ class ROMSEI:
         return (2 * Constants.R * temp / Constants.F) * (np.arcsinh(j_i /(2 * c_n)))
 
     def calc_eta_s(self, eta_n: float, OCP_n: float, OCP_s: float):
-        return eta_n + OCP_n + OCP_s  # TODO: this expression is incorrent. Needs another view
+        return eta_n + OCP_n - OCP_s  # TODO: this expression is incorrent. Needs another view
 
     def calc_j_s(self, temp: float, i_s: float, eta_s: float):
         return -i_s * np.exp(-Constants.F * eta_s / (2 * Constants.R * temp))

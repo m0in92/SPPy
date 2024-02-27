@@ -54,7 +54,6 @@ class ROMSEISolver(ROMSEI):
                 eta_s = self.calc_eta_s(eta_n=eta_n, OCP_n=OCP_n, OCP_s=self.U_s)
                 J_s_prev = J_s
                 J_s = self.calc_j_s(temp=temp, i_s=self.i_s, eta_s=eta_s)
-                print(eta_s)
 
                 rel_error = np.abs((J_s - J_s_prev)/J_s)
                 iter += 1
