@@ -11,6 +11,12 @@ from SPPy.models.degradation import ROMSEI
 
 class ROMSEISolver(ROMSEI):
     def __init__(self, b_cell: BatteryCell, thickness_SEI_init: float = 0.0):
+        """
+        This class stores and solves for parameters related to the SEI degradation. The degradations are calculated
+        ONLY during charge cycles, i.e. when the applied current > 0.
+        :param b_cell: BatteryCell instance
+        :param thickness_SEI_init: initial SEI thickness
+        """
         if not isinstance(b_cell, BatteryCell):
             raise TypeError("b_cell needs to be BatteryCell Type.")
         self.k_n = b_cell.elec_n.k  # rate of reaction at the negative electrode [m2.5/mol0.5/s]
@@ -18,7 +24,7 @@ class ROMSEISolver(ROMSEI):
         self.S_n = b_cell.elec_n.S  # electrode electrochemical area [mol/m2]
         self.c_nmax = b_cell.elec_n.max_conc  # electrode max. Li. conc. [mol/m3]
         self.U_s = b_cell.elec_n.U_s  # SEI reference potential [V]
-        self.i_s = b_cell.elec_n.i_s  # SEI exchange current density [A/m2]
+        self.i_s = b_cell.elec_n.i_s  # SEI exchange current density [mol/m2/s]
         self.A = b_cell.elec_n.A  # electrode area [m2]
 
         self.MW_SEI = b_cell.elec_n.MW_SEI  # SEI molar weight [kg/m3]

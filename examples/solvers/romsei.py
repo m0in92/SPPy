@@ -19,6 +19,18 @@ soc_n: np.ndarray = np.linspace(0.01, 0.7568)
 ocp_n: np.ndarray = cell.elec_n.func_OCP(soc_n)
 
 solver: ROMSEISolver = ROMSEISolver(b_cell=cell)
+
+# print some class attributes and properties
+print("k_n: ", solver.k_n)
+print("c_e: ", solver.c_e)
+print("S: ", solver.S_n)
+print("c_s_max: ", solver.c_nmax)
+print("U_s: ", solver.U_s)
+print("i_s: ", solver.i_s)
+print("A: ", solver.A)
+print("MW_SEI", solver.MW_SEI)
+print("rho_SEI: ", solver.rho)
+print("kappa_SEI", solver.kappa)
 print(solver.solve_current(SOC_n=0.7522, OCP_n=cell.elec_n.func_OCP(0.7522),
                            temp=temp, I=1.656, rel_tol=1e-12))
 

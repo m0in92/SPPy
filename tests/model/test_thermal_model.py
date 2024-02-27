@@ -8,9 +8,9 @@ class TestLumped(unittest.TestCase):
     T = 298.15
     SOC_init_p = 0.4956
     SOC_init_n = 0.7568
-    test_cell = SPPy.BatteryCell.read_from_parametersets(parameter_set_name='test', soc_lib_init=1.0,
-                                                         # SOC_init_p=SOC_init_p,
-                                                         # SOC_init_n=SOC_init_n,
+    test_cell = SPPy.BatteryCell.read_from_parametersets(parameter_set_name='test',
+                                                         soc_init_p=SOC_init_p,
+                                                         soc_init_n=SOC_init_n,
                                                          temp_init=T)
     t_model = Lumped(b_cell=test_cell)
 

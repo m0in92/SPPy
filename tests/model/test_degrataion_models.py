@@ -42,7 +42,7 @@ class TESTROMSEI(unittest.TestCase):
         j_i: float = solver.calc_j_i(j_tot = j_tot, j_s=j_s)
 
         eta_n: float = (2 * 8.314 * temp / 96487) * np.arcsinh(j_i/(2*j_0_i))
-        calculated_eta_s: float = solver.calc_eta_s(eta_n=eta_n, ocp=0.081566, ocp_s=0.4)
+        calculated_eta_s: float = solver.calc_eta_s(eta_n=eta_n, ocp_n=0.081566, ocp_s=0.4)
         self.assertAlmostEqual(-0.377814, calculated_eta_s, places=5)
 
     def test_method_calc_j_s(self) -> None:

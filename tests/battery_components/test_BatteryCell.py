@@ -8,8 +8,8 @@ class TestBatteryCell(unittest.TestCase):
     T = 298.15
     SOC_init_p = 0.4956
     SOC_init_n = 0.7568
-    test_cell = SPPy.BatteryCell.read_from_parametersets(parameter_set_name='test', soc_lib_init=1.0,
-                                                         # SOC_init_p=SOC_init_p, SOC_init_n=SOC_init_n,
+    test_cell = SPPy.BatteryCell.read_from_parametersets(parameter_set_name='test',
+                                                         soc_init_p=SOC_init_p, soc_init_n=SOC_init_n,
                                                          temp_init=T)
 
     def test_negative_electrode_parameters(self):
@@ -88,9 +88,9 @@ class TestBatteryCell(unittest.TestCase):
         T = 298.15
         SOC_init_p = 0.4956
         SOC_init_n = 0.7568
-        test_cell = SPPy.BatteryCell.read_from_parametersets(parameter_set_name='test', soc_lib_init=1.0,
-                                                             # SOC_init_p=SOC_init_p,
-                                                             # SOC_init_n=SOC_init_n,
+        test_cell = SPPy.BatteryCell.read_from_parametersets(parameter_set_name='test',
+                                                             soc_init_p=SOC_init_p,
+                                                             soc_init_n=SOC_init_n,
                                                              temp_init=T)
 
         self.assertEqual(test_cell.T, T)
@@ -110,9 +110,9 @@ class TestBatteryCell(unittest.TestCase):
         orig_T = 298.15
         SOC_init_p = 0.4956
         SOC_init_n = 0.7568
-        test_cell = SPPy.BatteryCell.read_from_parametersets(parameter_set_name='test', soc_lib_init=1.0,
-                                                             # SOC_init_p=SOC_init_p,
-                                                             # SOC_init_n=SOC_init_n,
+        test_cell = SPPy.BatteryCell.read_from_parametersets(parameter_set_name='test',
+                                                             soc_init_p=SOC_init_p,
+                                                             soc_init_n=SOC_init_n,
                                                              temp_init=orig_T)
 
         self.assertEqual(test_cell.T_amb, orig_T)

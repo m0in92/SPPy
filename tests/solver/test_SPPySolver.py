@@ -14,8 +14,8 @@ class TestSPPySolverBasic(unittest.TestCase):
     SOC_init_n = 0.7568
     t = np.arange(0, 4000, 0.1)
     I = -1.656 * np.ones(len(t))
-    test_cell = SPPy.BatteryCell.read_from_parametersets(parameter_set_name='test', soc_lib_init=1.0,
-                                                         # SOC_init_p=SOC_init_p, SOC_init_n=SOC_init_n,
+    test_cell = SPPy.BatteryCell.read_from_parametersets(parameter_set_name='test',
+                                                         soc_init_p=SOC_init_p, soc_init_n=SOC_init_n,
                                                          temp_init=T)
     test_solver = SPPy.SPPySolver(b_cell=test_cell, N=N, isothermal=True, degradation=False)
     def test_constructor(self):
@@ -40,8 +40,8 @@ class TestSPPySolverMethods(unittest.TestCase):
     V_min = 4.0
     SOC_min = 0.1
     SOC_LIB = 0.9
-    test_cell = SPPy.BatteryCell.read_from_parametersets(parameter_set_name='test', soc_lib_init=1.0,
-                                                         # SOC_init_p=SOC_init_p, SOC_init_n=SOC_init_n,
+    test_cell = SPPy.BatteryCell.read_from_parametersets(parameter_set_name='test',
+                                                         soc_init_p=SOC_init_p, soc_init_n=SOC_init_n,
                                                          temp_init=T)
 
     def test_solve(self):
@@ -65,9 +65,9 @@ class TestSPPySolverIsothermal(unittest.TestCase):
     V_min = 4.0
     SOC_min = 0.1
     SOC_LIB = 0.9
-    test_cell = SPPy.BatteryCell.read_from_parametersets(parameter_set_name='test', soc_lib_init=1.0,
-                                                         # SOC_init_p=SOC_init_p,
-                                                         # SOC_init_n=SOC_init_n,
+    test_cell = SPPy.BatteryCell.read_from_parametersets(parameter_set_name='test',
+                                                         soc_init_p=SOC_init_p,
+                                                         soc_init_n=SOC_init_n,
                                                          temp_init=T)
     test_solver = SPPy.SPPySolver(b_cell=test_cell, N=N, isothermal=True, degradation=False)
     dc = SPPy.Discharge(discharge_current=I, v_min=V_min, SOC_LIB_min=SOC_min, SOC_LIB=SOC_LIB)
@@ -101,9 +101,9 @@ class TestSPPySolverIsothermal(unittest.TestCase):
         SOC_min = 0.1
         SOC_LIB = 0.9
         T = 298.15
-        test_cell = SPPy.BatteryCell.read_from_parametersets(parameter_set_name='test', soc_lib_init=1.0,
-                                                             # SOC_init_p=SOC_init_p,
-                                                             # SOC_init_n=SOC_init_n,
+        test_cell = SPPy.BatteryCell.read_from_parametersets(parameter_set_name='test',
+                                                             soc_init_p=SOC_init_p,
+                                                             soc_init_n=SOC_init_n,
                                                              temp_init=T)
         dc = SPPy.Discharge(discharge_current=I, v_min=V_min, SOC_LIB_min=SOC_min, SOC_LIB=SOC_LIB)
         test_solver = SPPy.SPPySolver(b_cell=self.test_cell, N=self.N, isothermal=True, degradation=False,
@@ -126,9 +126,9 @@ class TestSppySolverNonIsothermal(unittest.TestCase):
     V_min = 4.0
     SOC_min = 0.1
     SOC_LIB = 0.9
-    test_cell = SPPy.BatteryCell.read_from_parametersets(parameter_set_name='test', soc_lib_init=1.0,
-                                                         # SOC_init_p=SOC_init_p,
-                                                         # SOC_init_n=SOC_init_n,
+    test_cell = SPPy.BatteryCell.read_from_parametersets(parameter_set_name='test',
+                                                         soc_init_p=SOC_init_p,
+                                                         soc_init_n=SOC_init_n,
                                                          temp_init=T)
     test_solver = SPPy.SPPySolver(b_cell=test_cell, N=N, isothermal=False, degradation=False)
     dc = SPPy.Discharge(discharge_current=I, v_min=V_min, SOC_LIB_min=SOC_min, SOC_LIB=SOC_LIB)

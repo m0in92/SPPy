@@ -16,8 +16,8 @@ class TestESPSolver(unittest.TestCase):
     SOC_init_n = 0.7568
     t = np.arange(0, 4000, 0.1)
     I = -1.656 * np.ones(len(t))
-    test_cell = SPPy.BatteryCell.read_from_parametersets(parameter_set_name='test', soc_lib_init=1.0,
-                                                         # SOC_init_p=SOC_init_p, SOC_init_n=SOC_init_n,
+    test_cell = SPPy.BatteryCell.read_from_parametersets(parameter_set_name='test',
+                                                         soc_init_p=SOC_init_p, soc_init_n=SOC_init_n,
                                                          temp_init=T)
 
     def test_constructor(self):

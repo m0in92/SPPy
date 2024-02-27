@@ -71,7 +71,7 @@ class ParameterSets:
         self.soc_max_n = df['soc_max']
         # SEI parameters for the negative electrode are extracted below
         self.U_s = df['SEI Reference Overpotential [V]']
-        self.i_s = df['SEI Exchange Current Density [A m^-1]']
+        self.i_s = df['SEI Exchange Current Density [mol m^-2 s^-1]']
         self.MW_SEI = df['SEI Molar Weight [kg mol^-1]']
         self.rho_SEI = df['SEI Density [kg m^-3]']
         self.kappa_SEI = df['SEI Conductivity [S m^-1]']  # SEI conductivity [S/m]
