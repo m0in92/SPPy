@@ -17,8 +17,8 @@ from SPPy.cycler.custom import CustomCycler
 from SPPy.solvers.thermal_solvers import calc_cell_temp
 from SPPy.sol_and_visualization.solution import ECMSolution
 
-from SPPy.calc_helpers.random_vectors import NormalRandomVector
-from SPPy.calc_helpers.kalman_filter import SPKF
+# from SPPy.calc_helpers.random_vectors import NormalRandomVector
+from SPPy.calc_helpers.kalman_filter import NormalRandomVector, SigmaPointKalmanFilter
 
 
 class BaseSolver:
@@ -60,7 +60,7 @@ class DTSolver(BaseSolver):
         :param v_exp: (Numpy array) array of experimental battery terminal voltage data.
         """
         super().__init__(battery_cell_instance=battery_cell_instance, isothermal=isothermal)
-        self.__dt = 0.0  # delta_t is required for SPKF solver.
+        self.__dt = 0.0  # delta_t is required for sigma point kalman filter solver.
 
     def __calc_v(self, dt: float, i_app: float, i_r1_prev: float) -> tuple[float, float]:
         """
@@ -237,15 +237,17 @@ class DTSolver(BaseSolver):
         w = NormalRandomVector(vector_init=vector_w, cov_init=cov_w)
         v = NormalRandomVector(vector_init=vector_v, cov_init=cov_v)
 
-        # Create SPKF variable below
-        instance_spkf = SPKF(x=x, w=w, v=v, y_dim=1, func_f=self.__func_f, func_h=self.__func_h)
+        # Create sigma-point kalman filter below
+        instance_spkf: SigmaPointKalmanFilter = SigmaPointKalmanFilter(x=x, w=w, v=v, y_dim=1,
+                                                                       state_equation=self.__func_f,
+                                                                       output_equation=self.__func_h)
 
         # The solution loop is run below
-        t_prev = 0.0  # [s]
-        step_completed = False
+        t_prev: float = 0.0  # [s]
+        step_completed: bool = False
         # cap_discharge = 0.0  # [A hr]
 
-        i = 1
+        i: int = 1
         while not step_completed:
             t_curr = cycling_step.array_t[i]
             if dt is None:
@@ -256,7 +258,7 @@ class DTSolver(BaseSolver):
             instance_spkf.solve(u=i_app_prev, y_true=array_y_true[i])
 
             self.b_cell.soc = instance_spkf.x.get_vector()[0, 0]
-            i_r1 = instance_spkf.x.get_vector()[1, 0]
+            i_r1: float = instance_spkf.x.get_vector()[1, 0]
             v = self.__calc_v(dt=self.__dt, i_app=i_app_curr, i_r1_prev=i_r1)[1]
 
             # loop termination criteria

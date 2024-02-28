@@ -6,7 +6,7 @@ import unittest
 
 import numpy as np
 
-from SPPy import NormalRandomVector, SPKF
+from SPPy.calc_helpers.kalman_filter import NormalRandomVector, SigmaPointKalmanFilter
 
 
 class TestSPKFProperties(unittest.TestCase):
@@ -18,7 +18,7 @@ class TestSPKFProperties(unittest.TestCase):
     vector_w2 = np.array([0]).reshape(-1, 1)
     vector_v2 = np.array([0]).reshape(-1, 1)
 
-    cov_x = np.array([[2, 0],[0, 2]])
+    cov_x = np.array([[2, 0], [0, 2]])
     cov_w = np.array([[1]])
     cov_v = np.array([[2]])
 
@@ -44,11 +44,12 @@ class TestSPKFProperties(unittest.TestCase):
     def func_h(x_k, u_k, v_k):
         return x_k ** 3 + v_k
 
-    spkf_instance = SPKF(x=x, w=w, v=v, y_dim=y_dim, func_f=func_f, func_h=func_h)
-    spkf_instance2 = SPKF(x=x2, w=w2, v=v2, y_dim=y_dim, func_f=func_f, func_h=func_h)
+    spkf_instance: SigmaPointKalmanFilter = SigmaPointKalmanFilter(x=x, w=w, v=v, y_dim=y_dim,
+                                                                   state_equation=func_f, output_equation=func_h)
+    spkf_instance2: SigmaPointKalmanFilter = SigmaPointKalmanFilter(x=x2, w=w2, v=v2, y_dim=y_dim,
+                                                                    state_equation=func_f, output_equation=func_h)
 
     def test_constructor(self):
-
         self.assertTrue(np.array_equal(self.vector_x, self.spkf_instance.x.get_vector()))
         self.assertTrue(np.array_equal(self.vector_w, self.spkf_instance.w.get_vector()))
         self.assertTrue(np.array_equal(self.vector_v, self.spkf_instance.v.get_vector()))
@@ -84,17 +85,17 @@ class TestSPKFProperties(unittest.TestCase):
         self.assertAlmostEqual(0.0, self.spkf_instance2.alpha_m_0)
 
     def test_alpha_mk(self):
-        self.assertAlmostEqual(1/6, self.spkf_instance2.alpha_m)
+        self.assertAlmostEqual(1 / 6, self.spkf_instance2.alpha_m)
 
     def test_alpha_m_vec(self):
-        self.assertTrue(np.all(np.isclose(np.array([[0], [1/6], [1/6], [1/6], [1/6], [1/6], [1/6]]),
+        self.assertTrue(np.all(np.isclose(np.array([[0], [1 / 6], [1 / 6], [1 / 6], [1 / 6], [1 / 6], [1 / 6]]),
                                           self.spkf_instance2.array_alpha_m)))
 
     def test_alpha_c0(self):
         self.assertAlmostEqual(0.0, self.spkf_instance2.alpha_c_0)
 
     def test_alpha_ck(self):
-        self.assertAlmostEqual(1/6, self.spkf_instance2.alpha_c)
+        self.assertAlmostEqual(1 / 6, self.spkf_instance2.alpha_c)
 
     def test_xsp(self):
         result = np.array([[2, 3.73205081, 2, 2, 0.26794919, 2, 2],
@@ -127,13 +128,12 @@ class TestSPKFSolve(unittest.TestCase):
         def func_h(x_k, u_k, v_k):
             return x_k ** 3 + v_k
 
-        spkf_instance = SPKF(x=x, w=w, v=v, y_dim=y_dim, func_f=func_f, func_h=func_h)
+        spkf_instance = SigmaPointKalmanFilter(x=x, w=w, v=v, y_dim=y_dim, func_f=func_f, func_h=func_h)
 
         x_cov_actual = 1.0363730825455537
         x_estimate_actual = 2.638868491883301
         Y_actual = np.array([18.52025918, 25.80324827, 83.90124036, 20.96974892, 12.09100405, 0.7628016, 16.07076943])
         output_pred_actual = 26.5998021
-
 
         Xx = spkf_instance._SPKF__state_prediction(u=0)
         self.assertEqual(x_estimate_actual, spkf_instance.x.get_vector()[0, 0])
@@ -187,4 +187,3 @@ class TestSPKFSolve(unittest.TestCase):
         # Step 2c
         SigmaX = spkf_instance1._SPKF__cov_measurement_update(Lx, SigmaY=SigmaY)
         self.assertAlmostEqual(cov_update_actual, spkf_instance1.x.get_cov()[0, 0])
-
