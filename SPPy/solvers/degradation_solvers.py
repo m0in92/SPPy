@@ -40,11 +40,11 @@ class ROMSEISolver(ROMSEI):
                       max_iter_no: int = 10) -> tuple[float, float]:
         """
         Returns the currents consumed for intercalation and side reactions.
-        :param SOC_n:
-        :param OCP_n:
-        :param temp:
-        :param I:
-        :param iter_no:
+        :param soc: electrode soc
+        :param ocp: electrode ocp [V]
+        :param temp: electrode temp. [K]
+        :param I: applied current [A]
+        :param max_iter_no: max. iteration
         :return: tuple containing the intercalation current [A] and side-reaction current [A]
         """
         J_s = self.J_s = 0
