@@ -6,7 +6,7 @@ import unittest
 
 import numpy as np
 
-from SPPy import NormalRandomVector
+from SPPy.calc_helpers.kalman_filter import NormalRandomVector
 
 
 class TestNormalRandomVector(unittest.TestCase):

@@ -128,18 +128,18 @@ class TestSPKFSolve(unittest.TestCase):
         def func_h(x_k, u_k, v_k):
             return x_k ** 3 + v_k
 
-        spkf_instance = SigmaPointKalmanFilter(x=x, w=w, v=v, y_dim=y_dim, func_f=func_f, func_h=func_h)
+        spkf_instance = SigmaPointKalmanFilter(x=x, w=w, v=v, y_dim=y_dim, state_equation=func_f, output_equation=func_h)
 
         x_cov_actual = 1.0363730825455537
         x_estimate_actual = 2.638868491883301
         Y_actual = np.array([18.52025918, 25.80324827, 83.90124036, 20.96974892, 12.09100405, 0.7628016, 16.07076943])
         output_pred_actual = 26.5998021
 
-        Xx = spkf_instance._SPKF__state_prediction(u=0)
+        Xx = spkf_instance._SigmaPointKalmanFilter__state_prediction(u=0)
         self.assertEqual(x_estimate_actual, spkf_instance.x.get_vector()[0, 0])
-        Xs = spkf_instance._SPKF__cov_prediction(Xx=Xx)
+        Xs = spkf_instance._SigmaPointKalmanFilter__cov_prediction(Xx=Xx)
         self.assertAlmostEqual(x_cov_actual, spkf_instance.x.get_cov()[0, 0])
-        y, y_hat = spkf_instance._SPKF__output_estimate(Xx=Xx, u=0)
+        y, y_hat = spkf_instance._SigmaPointKalmanFilter__output_estimate(Xx=Xx, u=0)
         self.assertTrue(np.all(np.isclose(Y_actual, y)))
         self.assertAlmostEqual(output_pred_actual, y_hat[0, 0])
 
@@ -166,24 +166,25 @@ class TestSPKFSolve(unittest.TestCase):
         def func_h(x_k, u_k, v_k):
             return x_k ** 3 + v_k
 
-        spkf_instance1 = SPKF(x=x, w=w, v=v, y_dim=y_dim, func_f=func_f, func_h=func_h)
+        spkf_instance1 = SigmaPointKalmanFilter(x=x, w=w, v=v, y_dim=y_dim,
+                                                state_equation=func_f, output_equation=func_h)
 
         gain_actual = 0.03457607
         xhat_update_actual = 1.8966845497917038
         cov_update_actual = 0.17865761849939343
 
-        Xx = spkf_instance1._SPKF__state_prediction(u=0)
-        Xs = spkf_instance1._SPKF__cov_prediction(Xx=Xx)
-        y, y_hat = spkf_instance1._SPKF__output_estimate(Xx=Xx, u=0)
+        Xx = spkf_instance1._SigmaPointKalmanFilter__state_prediction(u=0)
+        Xs = spkf_instance1._SigmaPointKalmanFilter__cov_prediction(Xx=Xx)
+        y, y_hat = spkf_instance1._SigmaPointKalmanFilter__output_estimate(Xx=Xx, u=0)
 
         # Step 2a
-        SigmaY, Lx = spkf_instance1._SPKF__estimator_gain_matrix(y=y, yhat=y_hat, xs=Xs)
+        SigmaY, Lx = spkf_instance1._SigmaPointKalmanFilter__estimator_gain_matrix(y=y, yhat=y_hat, xs=Xs)
         self.assertAlmostEqual(gain_actual, Lx[0, 0])
 
         # Step 2b
-        xhat_update = spkf_instance1._SPKF__state_update(L=Lx, ytrue=5.134553960326726, yhat=y_hat)
+        xhat_update = spkf_instance1._SigmaPointKalmanFilter__state_update(L=Lx, ytrue=5.134553960326726, yhat=y_hat)
         self.assertAlmostEqual(xhat_update_actual, spkf_instance1.x.get_vector()[0, 0])
 
         # Step 2c
-        SigmaX = spkf_instance1._SPKF__cov_measurement_update(Lx, SigmaY=SigmaY)
+        SigmaX = spkf_instance1._SigmaPointKalmanFilter__cov_measurement_update(Lx, SigmaY=SigmaY)
         self.assertAlmostEqual(cov_update_actual, spkf_instance1.x.get_cov()[0, 0])
