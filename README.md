@@ -1,5 +1,17 @@
-# Lithium-Ion Cell Terminal Voltage Models coupled with Thermal and Degradation Models
-#### Copyright© 2023 by Moin Ahmed. All rights reserved.
+Shield: [![CC BY 4.0][cc-by-shield]][cc-by]
+
+This work is licensed under a
+[Creative Commons Attribution 4.0 International License][cc-by].
+
+[![CC BY 4.0][cc-by-image]][cc-by]
+
+[cc-by]: https://creativecommons.org/licenses/by-nc/4.0/
+[cc-by-image]: https://i.creativecommons.org/l/by/4.0/88x31.png
+[cc-by-shield]: https://img.shields.io/badge/License-CC%20BY%204.0-lightgrey.svg
+
+# SPPy
+#### SPPy © 2023 by Moin Ahmed is licensed under Attribution-NonCommercial 4.0 International. 
+#### To view a copy of this license, visit http://creativecommons.org/licenses/by-nc/4.0
 
 ## Description
 
