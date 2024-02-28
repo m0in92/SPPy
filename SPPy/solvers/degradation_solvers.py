@@ -74,23 +74,23 @@ class ROMSEISolver(ROMSEI):
         else:
             return I, 0  # in case of discharge, there is no side reaction current.
 
-    def solve_delta_L(self, J_s, dt):
-        return -(self.MW_SEI * J_s / self.rho) * dt
+    def solve_delta_L(self, j_s: float, dt: float) -> float:
+        return -(self.MW_SEI * j_s / self.rho) * dt
 
-    def update_L(self, J_s, dt):
-        self.L += self.solve_delta_L(J_s=J_s, dt=dt)
+    def update_L(self, j_s: float, dt: float) -> None:
+        self.L += self.solve_delta_L(j_s=j_s, dt=dt)
 
-    def solve_delta_R_SEI_(self, J_s, dt):
+    def solve_delta_R_SEI_(self, j_s: float, dt: float) -> float:
         """
-        Calculates the change in the SEI resistance [ohm m2]
-        :param J_s:
+        Calculates the change in the SEI resistance [ohm]
+        :param j_s:
         :param dt:
         :return:
         """
-        return self.solve_delta_L(J_s=J_s, dt=dt) / self.kappa
+        return self.solve_delta_L(j_s=j_s, dt=dt) / self.kappa
 
-    def solve_delta_R_SEI(self, J_s, dt):
-        return self.solve_delta_R_SEI_(J_s=J_s, dt=dt) / self.A
+    def solve_delta_R_SEI(self, j_s: float, dt: float) -> float:
+        return self.solve_delta_R_SEI_(j_s=j_s, dt=dt) / self.A
 
     @property
     def R_SEI_(self):
@@ -108,11 +108,22 @@ class ROMSEISolver(ROMSEI):
         """
         return self.R_SEI_ / self.A
 
-    def __call__(self, SOC_n: float, OCP_n: float, temp: float, I: float, dt: float,
-                 rel_tol: float = 1e-6, max_iter_no: int = 10):
-        I_i, I_s = self.solve_current(SOC_n=SOC_n, OCP_n=OCP_n, temp=temp, I=I, rel_tol=rel_tol)
-        delta_R_SEI = self.solve_delta_R_SEI(J_s=self.J_s, dt=dt)
-        self.update_L(J_s=self.J_s, dt=dt)
+    def __call__(self, soc: float, ocp: float, temp: float, i_app: float, dt: float,
+                 rel_tol: float = 1e-12, max_iter_no: int = 10) -> tuple[float, float, float]:
+        """
+        Peforms the relevant SEI degradation related calculations for a specific time step.
+        :param soc: electrode SOC
+        :param ocp: electrode OCP [V]
+        :param temp: electrode temperature [K]
+        :param i_app: applied battery cell current [A]
+        :param dt: time difference of the current time step [s]
+        :param rel_tol: relative tolerance for the side reaction flux (j_s) calculations.
+        :param max_iter_no: Max. ROM iterations for the side reaction flux (j_s) calculations.
+        :return:
+        """
+        I_i, I_s = self.solve_current(soc=soc, ocp=ocp, temp=temp, I=i_app, rel_tol=rel_tol)
+        delta_R_SEI: float = self.solve_delta_R_SEI(j_s=self.J_s, dt=dt)
+        self.update_L(j_s=self.J_s, dt=dt)
         return I_i, I_s, delta_R_SEI
 
     def __repr__(self):

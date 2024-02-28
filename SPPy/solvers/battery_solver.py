@@ -129,10 +129,10 @@ class SPPySolver(BaseSolver):
     def solve_iteration_one_step(self, t_prev: float, dt: float, I: float) -> float:
         # Account for SEI growth
         if self.bool_degradation:
-            I_i, I_s, delta_R_SEI = self.SEI_model(SOC_n=self.b_cell.elec_n.SOC, OCP_n=self.b_cell.elec_n.OCP,
+            I_i, I_s, delta_R_SEI = self.SEI_model(soc=self.b_cell.elec_n.SOC, ocp=self.b_cell.elec_n.OCP,
                                                    dt=dt,
                                                    temp=self.b_cell.elec_n.T,
-                                                   I=I)  # update the intercalation current (negative electrode
+                                                   i_app=I)  # update the intercalation current (negative electrode
             # only)
             self.b_cell.R_cell += delta_R_SEI  # update the cell resistance
             self.b_cell.electrolyte.conc -= -self.SEI_model.J_s * dt  # update the electrolyte conc. to account
@@ -153,7 +153,7 @@ class SPPySolver(BaseSolver):
                                                    D_s=self.b_cell.elec_n.D,
                                                    c_smax=self.b_cell.elec_n.max_conc)  # calc n surf SOC
 
-        V = self.calc_terminal_potential(I_p_i=I, I_n_i=I_i)  # calc battery cell terminal voltage
+        V: float = self.calc_terminal_potential(I_p_i=I, I_n_i=I_i)  # calc battery cell terminal voltage
 
         # Calc temp below and update the battery cell's temperature attribute.
         if not self.bool_isothermal:

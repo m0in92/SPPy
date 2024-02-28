@@ -1,14 +1,15 @@
 """
-This script contains the example usage of the single particle model in the charge operation.
+This script contains the example usage of the single particle model in the charge operation. The degradation mode used
+if the reduced-order SEI model.
 """
 
 __author__ = 'Moin Ahmed'
-__copywrite__ = 'Copywrite 2023 by Moin Ahmed. All rights reserved.'
+__copywrite__ = 'Copywrite 2024 by Moin Ahmed. All rights reserved.'
 __status__ = 'deployed'
 
+import matplotlib.pyplot as plt
 
 import SPPy
-
 
 # Operating parameters
 I: float = 1.656
@@ -28,11 +29,12 @@ cell: SPPy.BatteryCell = SPPy.BatteryCell.read_from_parametersets(parameter_set_
 
 # set-up cycler and solver
 dc: SPPy.Charge = SPPy.Charge(charge_current=I, V_max=V_max, SOC_LIB_max=SOC_max, SOC_LIB=SOC_LIB)
-solver: SPPy.SPPySolver = SPPy.SPPySolver(b_cell=cell, N=5, isothermal=True, degradation=False,
+solver: SPPy.SPPySolver = SPPy.SPPySolver(b_cell=cell, N=5, isothermal=True, degradation=True,
                                           electrode_SOC_solver='poly')
 
 # simulate
 sol: SPPy.Solution = solver.solve(cycler_instance=dc)
 
 # Plot
-sol.comprehensive_isothermal_plot()
+sol.plot_degradation()
+

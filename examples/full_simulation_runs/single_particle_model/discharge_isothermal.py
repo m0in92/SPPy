@@ -16,21 +16,22 @@ SOC_min: float = 0.1
 soc_lib_init: float = 1.0
 
 # Modelling parameters
-SOC_init_p, SOC_init_n = 0.4956, 0.7568  # conditions in the literature source. Guo et al
+SOC_init_p: float = 0.4956  # from Guo et. al.
+SOC_init_n: float = 0.7568  # from Guo et. al.
 
 # Setup battery components
-cell = SPPy.BatteryCell.read_from_parametersets(parameter_set_name='test',
-                                                soc_init_p=SOC_init_p, soc_init_n=SOC_init_n,
-                                                temp_init=temp)
+cell: SPPy.BatteryCell = SPPy.BatteryCell.read_from_parametersets(parameter_set_name='test',
+                                                                  soc_init_p=SOC_init_p, soc_init_n=SOC_init_n,
+                                                                  temp_init=temp)
 
 # set-up cycler and solver
-dc = SPPy.Discharge(discharge_current=I, v_min=V_min, SOC_LIB_min=SOC_min, SOC_LIB=soc_lib_init)
-solver = SPPy.SPPySolver(b_cell=cell, N=5, isothermal=True, degradation=False, electrode_SOC_solver='poly')
+dc: SPPy.Discharge = SPPy.Discharge(discharge_current=I, v_min=V_min,
+                                    SOC_LIB_min=SOC_min, SOC_LIB=soc_lib_init)
+solver: SPPy.SPPySolver = SPPy.SPPySolver(b_cell=cell, N=5,
+                                          isothermal=True, degradation=False, electrode_SOC_solver='poly')
 
 # simulate
-sol = solver.solve(cycler_instance=dc)
-
-print(sol.cycle_summary)
+sol: SPPy.SPPySolver = solver.solve(cycler_instance=dc)
 
 # Plot
 sol.comprehensive_isothermal_plot()

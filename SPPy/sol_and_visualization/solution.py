@@ -523,12 +523,12 @@ class Solution:
 
         plt.show()
 
-    def plot_SEI(self):
+    def plot_degradation(self):
         fig = plt.figure(figsize=(6.4 * 2, 5.4))
         ax1 = fig.add_subplot(121)
         ax1.plot(self.t, self.R_cell)
         ax1.set_xlabel('Time [s]')
-        ax1.set_ylabel('R_cell [ohms]')
+        ax1.set_ylabel('$R_{cell}$ $[\Omega]$')
 
         ax2 = fig.add_subplot(122)
         ax2.plot(self.x_surf_n, self.js)
@@ -541,6 +541,7 @@ class Solution:
         ax3.tick_params(axis='y', labelcolor=color)
         ax3.set_ylabel('intercalation flux [mol/m2/s]')
 
+        ax1.ticklabel_format(axis="y", scilimits=[-1, 1])
         plt.tight_layout()
         plt.show()
 
