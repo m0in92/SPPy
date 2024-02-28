@@ -27,16 +27,19 @@ print("A: ", solver.A)
 print("MW_SEI", solver.MW_SEI)
 print("rho_SEI: ", solver.rho)
 print("kappa_SEI", solver.kappa)
-print(solver.solve_current(SOC_n=0.7522, OCP_n=cell.elec_n.func_OCP(0.7522),
-                           temp=temp, I=1.656, rel_tol=1e-12))
+print(solver.solve_current(soc=0.7522, ocp=cell.elec_n.func_OCP(0.7522),
+                           temp=temp, I=1.656))
 
+I_i: list = []
+I_s: list = []
 soc_n: np.ndarray = np.linspace(0.01, 0.7568)
-ocp_n: np.ndarray = cell.elec_n.func_OCP(soc_n)
-I_s: np.ndarray = np.array([solver.solve_current(SOC_n=soc_, OCP_n=ocp_,
-                           temp=temp, I=1.656)[1] for soc_, ocp_ in zip(soc_n, ocp_n)])
-I_i: np.ndarray = np.array([solver.solve_current(SOC_n=soc_, OCP_n=ocp_,
-                           temp=temp, I=1.656)[0] for soc_, ocp_ in zip(soc_n, ocp_n)])
-print(I_i)
+for i, soc_ in enumerate(soc_n):
+    cell.elec_n.SOC = soc_
+    ocp_: float = cell.elec_n.OCP
+    solver: ROMSEISolver = ROMSEISolver(b_cell=cell)
+    I_i_, I_s_ = solver.solve_current(soc=soc_, ocp=ocp_, temp=temp, I=1.656)
+    I_i.append(I_i_)
+    I_s.append(I_s_)
 
 # plots
 fig, ax1 = plt.subplots()

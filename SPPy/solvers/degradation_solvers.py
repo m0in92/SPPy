@@ -2,7 +2,6 @@ __author__ = 'Moin Ahmed'
 __copywrite__ = 'Copywrite 2023 by Moin Ahmed. All rights are reserved.'
 __status__ = 'deployed'
 
-
 import numpy as np
 
 from SPPy.battery_components.battery_cell import BatteryCell
@@ -37,7 +36,7 @@ class ROMSEISolver(ROMSEI):
         self.J_s = 0  # SEI side reaction flux [mol/m2/s], initialized to zero
         self.cumulative_J_s = 0  # cumulative SEI side reaction flux [mol/m2], initialized to zero.
 
-    def solve_current(self, SOC_n: float, OCP_n: float, temp: float, I: float, rel_tol: float = 1e-6,
+    def solve_current(self, soc: float, ocp: float, temp: float, I: float, rel_tol: float = 1e-12,
                       max_iter_no: int = 10) -> tuple[float, float]:
         """
         Returns the currents consumed for intercalation and side reactions.
@@ -51,18 +50,18 @@ class ROMSEISolver(ROMSEI):
         J_s = self.J_s = 0
         J_tot = self.J_tot = self.J_i = self.calc_j_tot(I=I, S=self.S_n)
         if I > 0:
-            c_n = self.calc_j_0_i(k=self.k_n, c_s_max=self.c_nmax,
-                                  c_e=self.c_e, soc=SOC_n)
+            j_0_i: float = self.calc_j_0_i(k=self.k_n, c_s_max=self.c_nmax,
+                                           c_e=self.c_e, soc=soc)
             rel_error = 1
             iter = 0
             while rel_error > rel_tol:
                 J_i: float = self.calc_j_i(j_tot=J_tot, j_s=J_s)
-                eta_n: float = self.calc_eta_n(temp=temp, j_i=J_i, j_0_i=c_n)
-                eta_s: float = self.calc_eta_s(eta_n=eta_n, ocp_n=OCP_n, ocp_s=self.U_s)
+                eta_n: float = self.calc_eta_n(temp=temp, j_i=J_i, j_0_i=j_0_i)
+                eta_s: float = self.calc_eta_s(eta_n=eta_n, ocp_n=ocp, ocp_s=self.U_s)
                 J_s_prev: float = J_s
                 J_s: float = self.calc_j_s(temp=temp, j_0_s=self.i_s, eta_s=eta_s)
 
-                rel_error = np.abs((J_s - J_s_prev)/J_s)
+                rel_error = np.abs((J_s - J_s_prev) / J_s)
                 iter += 1
                 if iter > max_iter_no:
                     break
@@ -118,8 +117,3 @@ class ROMSEISolver(ROMSEI):
 
     def __repr__(self):
         return f"SEI with resistance {self.R_SEI}"
-
-
-
-
-
