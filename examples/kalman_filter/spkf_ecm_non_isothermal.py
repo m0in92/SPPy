@@ -1,17 +1,21 @@
 """
-This example script conducts the Thevenin ECM simulation (with 1 RC pair) using custom cycler.
+This example script performs the ECM cycling on a custom cycling step using sigma-point kalman filter.
 """
+
 __author__ = 'Moin Ahmed'
 __copywrite__ = 'Copywrite 2023 by Moin Ahmed. All rights reserved.'
 __status__ = 'developement'
 
 import pickle
-
-import SPPy
 import scipy
 
+import matplotlib.pyplot as plt
+
+import SPPy
+
 # Read experimental data below
-sol_exp = SPPy.ECMSolution().read_from_csv_file(filepath='A1-A123-Dynamics.csv')
+sol_exp: SPPy.ECMSolution = SPPy.ECMSolution().read_from_csv_file(
+    filepath='../full_simulation_runs/ECM/A1-A123-Dynamics.csv')
 
 # Simulation Parameters
 R0: float = 0.225
@@ -33,10 +37,10 @@ def func_ocv(soc):
            j * soc ** 3 + k * soc ** 2 + l * soc + m
 
 
-with open("SOC_dOCVdT", "rb") as f_SOC:
+with open("../full_simulation_runs/ECM/SOC_dOCVdT", "rb") as f_SOC:
     SOC_dOCVdT = pickle.load(f_SOC)
 
-with open("dOCVdT", "rb") as f_OCV:
+with open("../full_simulation_runs/ECM/dOCVdT", "rb") as f_OCV:
     dOCVdT = pickle.load(f_OCV)
 
 func_dOCVdT = scipy.interpolate.interp1d(SOC_dOCVdT, dOCVdT, fill_value='extrapolate')
@@ -46,22 +50,30 @@ def func_eta(i_app: float, temp: float) -> float:
     return 1 if i_app <= 0 else 0.9995
 
 
-v_min = 1.0
-v_max = 4.5
+# simulation parameters are below
+soc_init = 0.0
+V_min = 0.0
+V_max = 5.0
 soc_min = 0.0
-soc_LIB = 1
+soc_max = 1.0
 
-# setup the battery cell
+# set-up the battery cell
 cell = SPPy.ECMBatteryCell(R0_ref=R0, R1_ref=R1, C1=C1, temp_ref=298.15, Ea_R0=4000, Ea_R1=4000,
                            rho=1626, vol=3.38e-5, c_p=750, h=1, area=0.085, cap=Q, v_max=4.2, v_min=2.5,
-                           soc_init=soc_min, temp_init=298.15,
+                           soc_init=soc_init, temp_init=298.15,
                            func_eta=func_eta, func_ocv=func_ocv, func_docvdtemp=func_dOCVdT)
-# set-up cycler and solver
-custom_step = SPPy.CustomCycler(array_t=sol_exp.array_t, array_I=sol_exp.array_I, V_min=v_min, V_max=v_max,
-                                SOC_LIB=0.0, SOC_LIB_min=0.0, SOC_LIB_max=1.0)
-solver = SPPy.DTSolver(battery_cell_instance=cell, isothermal=True)
-# solve
-sol = solver.solve(cycling_step=custom_step, dt=10)
 
-# Plots
-sol.comprehensive_plot()
+# setup solver and solve
+solver: SPPy.DTSolver = SPPy.DTSolver(battery_cell_instance=cell, isothermal=True)
+sol: SPPy.ECMSolution = solver.solveSPKF(sol_exp=sol_exp, cov_soc=1e-3, cov_current=1e-3, cov_sensor=1e-3,
+                                         cov_process=1e-3,
+                                         v_min=V_min, v_max=V_max, soc_min=soc_min, soc_max=soc_max, soc_init=soc_init)
+
+plt.plot(sol.array_t, sol.array_V)
+plt.plot(sol_exp.array_t, sol_exp.array_V)
+plt.show()
+
+# sol.comprehensive_plot(sol_exp=sol_exp)
+# sol_exp.plot_tiv()
+#
+# print(sol_exp.array_t)

@@ -5,16 +5,16 @@ import scipy
 import SPPy
 
 
-with open("saved_results/SOC", "rb") as f_SOC:
+with open("../saved_results/SOC", "rb") as f_SOC:
     SOC = pickle.load(f_SOC)
 
-with open("saved_results/OCV", "rb") as f_OCV:
+with open("../saved_results/OCV", "rb") as f_OCV:
     OCV = pickle.load(f_OCV)
 
-with open("saved_results/SOC_dOCVdT", "rb") as f_SOC:
+with open("../saved_results/SOC_dOCVdT", "rb") as f_SOC:
     SOC_dOCVdT = pickle.load(f_SOC)
 
-with open("saved_results/dOCVdT", "rb") as f_OCV:
+with open("../saved_results/dOCVdT", "rb") as f_OCV:
     dOCVdT = pickle.load(f_OCV)
 
 

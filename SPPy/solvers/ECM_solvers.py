@@ -80,9 +80,9 @@ class DTSolver(BaseSolver):
         sol = ECMSolution()  # initialize the solution object
         sol.update(t=0.0, i_app=0.0, v=self.b_cell.ocv, temp=self.b_cell.temp, soc=self.b_cell.soc, i_r1=0.0)
 
-        t_prev = 0.0  # [s]
-        i_r1_prev = 0.0  # [A]
-        step_completed = False
+        t_prev: float = 0.0  # [s]
+        i_r1_prev: float = 0.0  # [A]
+        step_completed: bool = False
 
         while not step_completed:
             t_curr = t_prev + dt

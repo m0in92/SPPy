@@ -7,16 +7,16 @@ import SPPy
 from parameter_sets.test.funcs import OCP_ref_p, OCP_ref_n, dOCPdT_p, dOCPdT_n
 
 
-with open("SOC", "rb") as f_SOC:
+with open("../SOC", "rb") as f_SOC:
     SOC = pickle.load(f_SOC)
 
-with open("OCV", "rb") as f_OCV:
+with open("../OCV", "rb") as f_OCV:
     OCV = pickle.load(f_OCV)
 
-with open("SOC_dOCVdT", "rb") as f_SOC:
+with open("../SOC_dOCVdT", "rb") as f_SOC:
     SOC_dOCVdT = pickle.load(f_SOC)
 
-with open("dOCVdT", "rb") as f_OCV:
+with open("../dOCVdT", "rb") as f_OCV:
     dOCVdT = pickle.load(f_OCV)
 
 
@@ -45,4 +45,4 @@ solver = SPPy.DTSolver(battery_cell_instance=cell, isothermal=True)
 sol = solver.solve(cycler=dc)
 
 # Plots
-sol.comprehensive_plot(save_dir='../../../docs/source/Assests/example_ECM_isothermal.png')
+sol.comprehensive_plot(save_dir='../../../../docs/source/Assests/example_ECM_isothermal.png')

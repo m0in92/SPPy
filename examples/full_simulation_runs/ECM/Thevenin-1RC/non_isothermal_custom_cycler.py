@@ -11,7 +11,7 @@ import SPPy
 import scipy
 
 # Read experimental data below
-sol_exp = SPPy.ECMSolution().read_from_csv_file(filepath='A1-A123-Dynamics.csv')
+sol_exp = SPPy.ECMSolution().read_from_csv_file(filepath='../A1-A123-Dynamics.csv')
 
 # Simulation Parameters
 R0: float = 0.225
@@ -33,10 +33,10 @@ def func_ocv(soc):
            j * soc ** 3 + k * soc ** 2 + l * soc + m
 
 
-with open("SOC_dOCVdT", "rb") as f_SOC:
+with open("../SOC_dOCVdT", "rb") as f_SOC:
     SOC_dOCVdT = pickle.load(f_SOC)
 
-with open("dOCVdT", "rb") as f_OCV:
+with open("../dOCVdT", "rb") as f_OCV:
     dOCVdT = pickle.load(f_OCV)
 
 func_dOCVdT = scipy.interpolate.interp1d(SOC_dOCVdT, dOCVdT, fill_value='extrapolate')
