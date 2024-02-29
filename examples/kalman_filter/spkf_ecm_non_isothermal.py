@@ -51,11 +51,11 @@ def func_eta(i_app: float, temp: float) -> float:
 
 
 # simulation parameters are below
-soc_init = 0.0
-V_min = 0.0
-V_max = 5.0
-soc_min = 0.0
-soc_max = 1.0
+soc_init: float = 0.0
+V_min: float = 0.0
+V_max: float = 5.0
+soc_min: float = 0.0
+soc_max: float = 1.0
 
 # set-up the battery cell
 cell = SPPy.ECMBatteryCell(R0_ref=R0, R1_ref=R1, C1=C1, temp_ref=298.15, Ea_R0=4000, Ea_R1=4000,
@@ -64,10 +64,10 @@ cell = SPPy.ECMBatteryCell(R0_ref=R0, R1_ref=R1, C1=C1, temp_ref=298.15, Ea_R0=4
                            func_eta=func_eta, func_ocv=func_ocv, func_docvdtemp=func_dOCVdT)
 
 # setup solver and solve
-solver: SPPy.DTSolver = SPPy.DTSolver(battery_cell_instance=cell, isothermal=True)
-sol: SPPy.ECMSolution = solver.solveSPKF(sol_exp=sol_exp, cov_soc=1e-3, cov_current=1e-3, cov_sensor=1e-3,
-                                         cov_process=1e-3,
-                                         v_min=V_min, v_max=V_max, soc_min=soc_min, soc_max=soc_max, soc_init=soc_init)
+solver: SPPy.KFDTSolver = SPPy.KFDTSolver(battery_cell_instance=cell, isothermal=True)
+sol: SPPy.ECMSolution = solver.solve(sol_exp=sol_exp, cov_soc=1e-3, cov_current=1e-3, cov_sensor=1e-3,
+                                     cov_process=1e-3,
+                                     v_min=V_min, v_max=V_max, soc_min=soc_min, soc_max=soc_max, soc_init=soc_init)
 
 plt.plot(sol.array_t, sol.array_V)
 plt.plot(sol_exp.array_t, sol_exp.array_V)

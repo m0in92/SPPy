@@ -15,7 +15,7 @@ from SPPy.battery_components.electrolyte import Electrolyte
 from SPPy.battery_components.battery_cell import BatteryCell, ECMBatteryCell
 
 from SPPy.solvers.battery_solver import SPPySolver
-from SPPy.solvers.ECM_solvers import DTSolver, ESCDTSolver
+from SPPy.solvers.ecm_solvers import DTSolver, ESCDTSolver, KFDTSolver
 
 from SPPy.cycler.cc import CC, CCCV, CCNoFirstRest, DischargeRestCharge, DischargeRestChargeRest
 from SPPy.cycler.charge import Charge, ChargeRest

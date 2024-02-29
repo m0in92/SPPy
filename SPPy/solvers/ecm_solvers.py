@@ -5,6 +5,7 @@ __copywrite__ = 'Copywrite 2023 by Moin Ahmed. All rights are reserved.'
 __status__ = 'deployed'
 
 from typing import Optional
+from overrides import override
 
 import tqdm
 import numpy as np
@@ -173,7 +174,121 @@ class DTSolver(BaseSolver):
         else:
             return self.__solve_standard_cycling_step(cycler=cycling_step, dt=dt)
 
-    def __func_f(self, x_k, u_k, w_k):
+    # def __func_f(self, x_k, u_k, w_k):
+    #     """
+    #     State Equation.
+    #     :param x_k:
+    #     :param u_k:
+    #     :param w_k:
+    #     :param delta_t:
+    #     :return:
+    #     """
+    #     R1 = self.b_cell.R1
+    #     C1 = self.b_cell.C1
+    #     Q = self.b_cell.cap
+    #     m1 = np.array([[1, 0], [0, np.exp(-self.__dt / (R1 * C1))]])
+    #     m2 = np.array([[-self.__dt / (3600 * Q)], [1 - np.exp(-self.__dt / (R1 * C1))]])
+    #     return m1 @ x_k + m2 * (u_k + w_k)
+    #
+    # def __func_h(self, x_k, u_k, v_k):
+    #     """
+    #     Output Equation.
+    #     :param x_k:
+    #     :param u_k:
+    #     :param v_k:
+    #     :return:
+    #     """
+    #     return self.b_cell.func_ocv(x_k[0, :]) - self.b_cell.R1 * x_k[1, :] - self.b_cell.R0 * u_k + v_k
+    #
+    # def solveSPKF(self, sol_exp: ECMSolution, cov_soc: float, cov_current: float, cov_process: float, cov_sensor: float,
+    #               v_min: float, v_max: float, soc_min: float, soc_max: float, soc_init: float,
+    #               dt: Optional[float] = None):
+    #     """
+    #     Performs the Thevenin equivalent circuit model using the sigma point kalman filter
+    #     :param sol_exp: Solution object from the experimental data.
+    #     :param cov_soc: covariance of the soc
+    #     :param cov_current: covariance of i_r1
+    #     :param cov_process: covariance of the system process
+    #     :param cov_sensor: covariance of the voltage sensor
+    #     :param v_min: threshold cell terminal voltage [V]
+    #     :param v_max: threshold cell terminal voltage [V]
+    #     :param soc_min: minimum LIB SOC
+    #     :param soc_max: maximum LIB SOC
+    #     :param soc_init: LIB SOC
+    #     :param dt: time difference between calculation time step. If set to None, then the time difference
+    #     from the experimental is used for each time step.
+    #     :return: (Solution) Solution object containing the results from the simulations.
+    #     """
+    #     sol = ECMSolution()
+    #
+    #     cycling_step = CustomCycler(array_t=sol_exp.array_t, array_I=sol_exp.array_I, V_min=v_min, V_max=v_max,
+    #                                 SOC_LIB=soc_init, SOC_LIB_min=soc_min, SOC_LIB_max=soc_max)
+    #     array_y_true = sol_exp.array_V  # y_true is extracted from the solution object
+    #
+    #     # create Normal Random Variables below
+    #     i_r1_init = 0.0  # [A]
+    #     vector_x = np.array([[self.b_cell.soc], [i_r1_init]])
+    #     cov_x = np.array([[cov_soc, 0], [0, cov_current]])
+    #     vector_w = np.array([[0]])
+    #     cov_w = np.array([[cov_process]])
+    #     vector_v = np.array([[0]])
+    #     cov_v = np.array([[cov_sensor]])
+    #
+    #     x = NormalRandomVector(vector_init=vector_x, cov_init=cov_x)
+    #     w = NormalRandomVector(vector_init=vector_w, cov_init=cov_w)
+    #     v = NormalRandomVector(vector_init=vector_v, cov_init=cov_v)
+    #
+    #     # Create sigma-point kalman filter below
+    #     instance_spkf: SigmaPointKalmanFilter = SigmaPointKalmanFilter(x=x, w=w, v=v, y_dim=1,
+    #                                                                    state_equation=self.__func_f,
+    #                                                                    output_equation=self.__func_h)
+    #
+    #     # The solution loop is run below
+    #     t_prev: float = 0.0  # [s]
+    #     step_completed: bool = False
+    #     # cap_discharge = 0.0  # [A hr]
+    #
+    #     i: int = 1
+    #     while not step_completed:
+    #         t_curr = cycling_step.array_t[i]
+    #         if dt is None:
+    #             self.__dt = t_curr - t_prev
+    #         i_app_prev = cycling_step.array_I[i - 1]
+    #         i_app_curr = cycling_step.array_I[i]
+    #
+    #         instance_spkf.solve(u=i_app_prev, y_true=array_y_true[i])
+    #
+    #         self.b_cell.soc = instance_spkf.x.get_vector()[0, 0]
+    #         i_r1: float = instance_spkf.x.get_vector()[1, 0]
+    #         v = self.__calc_v(dt=self.__dt, i_app=i_app_curr, i_r1_prev=i_r1)[1]
+    #
+    #         # loop termination criteria
+    #         if v > cycling_step.V_max:
+    #             step_completed = True
+    #         if v < cycling_step.V_min:
+    #             step_completed = True
+    #         if t_curr > cycling_step.array_t[-1]:
+    #             step_completed = True
+    #         if i >= len(cycling_step.array_t) - 1:
+    #             step_completed = True
+    #
+    #         # update sol attributes
+    #         sol.update(t=t_curr, i_app=i_app_curr, v=v, temp=self.b_cell.temp, soc=self.b_cell.soc, i_r1=i_r1)
+    #
+    #         # update simulation parameters
+    #         t_prev = t_curr
+    #         i += 1
+    #
+    #     return sol
+
+
+class KFDTSolver(DTSolver):
+    def __init__(self, battery_cell_instance: ECMBatteryCell, isothermal: bool) -> None:
+        super().__init__(battery_cell_instance=battery_cell_instance,
+                         isothermal=isothermal)
+        self.__dt = 0.0  # delta_t is required for sigma point kalman filter solver.
+
+    def __state_equation(self, x_k, u_k, w_k):
         """
         State Equation.
         :param x_k:
@@ -189,7 +304,7 @@ class DTSolver(BaseSolver):
         m2 = np.array([[-self.__dt / (3600 * Q)], [1 - np.exp(-self.__dt / (R1 * C1))]])
         return m1 @ x_k + m2 * (u_k + w_k)
 
-    def __func_h(self, x_k, u_k, v_k):
+    def __output_equation(self, x_k, u_k, v_k):
         """
         Output Equation.
         :param x_k:
@@ -199,9 +314,10 @@ class DTSolver(BaseSolver):
         """
         return self.b_cell.func_ocv(x_k[0, :]) - self.b_cell.R1 * x_k[1, :] - self.b_cell.R0 * u_k + v_k
 
-    def solveSPKF(self, sol_exp: ECMSolution, cov_soc: float, cov_current: float, cov_process: float, cov_sensor: float,
-                  v_min: float, v_max: float, soc_min: float, soc_max: float, soc_init: float,
-                  dt: Optional[float] = None):
+    @timer
+    def solve(self, sol_exp: ECMSolution, cov_soc: float, cov_current: float, cov_process: float, cov_sensor: float,
+              v_min: float, v_max: float, soc_min: float, soc_max: float, soc_init: float,
+              dt: Optional[float] = None):
         """
         Performs the Thevenin equivalent circuit model using the sigma point kalman filter
         :param sol_exp: Solution object from the experimental data.
@@ -239,8 +355,8 @@ class DTSolver(BaseSolver):
 
         # Create sigma-point kalman filter below
         instance_spkf: SigmaPointKalmanFilter = SigmaPointKalmanFilter(x=x, w=w, v=v, y_dim=1,
-                                                                       state_equation=self.__func_f,
-                                                                       output_equation=self.__func_h)
+                                                                       state_equation=self.__state_equation,
+                                                                       output_equation=self.__output_equation)
 
         # The solution loop is run below
         t_prev: float = 0.0  # [s]
@@ -259,7 +375,7 @@ class DTSolver(BaseSolver):
 
             self.b_cell.soc = instance_spkf.x.get_vector()[0, 0]
             i_r1: float = instance_spkf.x.get_vector()[1, 0]
-            v = self.__calc_v(dt=self.__dt, i_app=i_app_curr, i_r1_prev=i_r1)[1]
+            v = self._DTSolver__calc_v(dt=self.__dt, i_app=i_app_curr, i_r1_prev=i_r1)[1]
 
             # loop termination criteria
             if v > cycling_step.V_max:
