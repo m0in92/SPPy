@@ -55,16 +55,21 @@ class ECMSolution:
         return cls(array_t=array_t, array_I=array_I, array_V=array_V)
 
     @classmethod
-    def read_from_arrays(cls, array_t: npt.ArrayLike, array_i: npt.ArrayLike, array_v: npt.ArrayLike,
-                         array_temp: npt.ArrayLike, array_soc: Optional[npt.ArrayLike]):
+    def read_from_arrays(cls, array_t: np.ndarray, array_i: np.ndarray, array_v: np.ndarray,
+                         array_temp: np.ndarray, array_soc: Optional[np.ndarray]):
         """
-        Initiates a Solution instance from the numpy arrays
-        :param array_t:
-        :param array_i:
-        :param array_v:
-        :param array_temp:
-        :param array_soc:
-        :return:
+        Initiates a Solution instance from the numpy arrays. This method is useful for conducting Kalman filter - based
+        simulation from the experimental data.
+
+        For instance, for pre-existing numpy arrays representing time, current, voltage, temperature, the class instance
+        can be instantiated using:
+                            sol_exp: ECMSolution = ECMSolution().read_from_arrays(...).
+        :param array_t: array containing time values at each time-step [s]
+        :param array_i: array containing current values at each time-step [A]
+        :param array_v: array containing voltage at each time-step [V]
+        :param array_temp: array containing temperature values at each time-step [K]
+        :param array_soc: array containing battery cell SOC at each time-step
+        :return: ECMSolution instance
         """
         return cls(array_t=array_t, array_I=array_i, array_V=array_v, array_temp=array_temp, array_soc=array_soc)
 
@@ -164,10 +169,11 @@ class SolutionInitializer:
     lst_j_i: list = field(default_factory=lambda: [])  # total intercalation flux at the negative electrode [mol/m2/s]
     lst_j_s: list = field(default_factory=lambda: [])  # side reaction molar flux at the negative electrode [mol/m2/s]
 
-    def update(self, cycle_num=0, cycle_step=0, t=0, I=0, V=0, OCV=0, x_surf_p=0, x_surf_n=0,
-               cap=0, cap_charge=0, cap_discharge=0, SOC_LIB=0,
-               battery_cap=0,
-               temp=0, R_cell=0):
+    def update(self, cycle_num: float=0, cycle_step: float=0, t: float=0, I: float=0, V: float=0,
+               OCV: float=0, x_surf_p: float=0, x_surf_n: float=0,
+               cap: float=0, cap_charge: float=0, cap_discharge: float=0, SOC_LIB: float=0,
+               battery_cap: float=0,
+               temp: float=0, R_cell: float=0):
         self.lst_cycle_num.append(cycle_num)
         self.lst_cycle_step.append(cycle_step)
         self.lst_t.append(t)
@@ -235,8 +241,25 @@ class Solution:
         return {'cycle_no': total_cycles}
 
     @classmethod
+    def read_from_arrays(cls, t: np.ndarray, i_app: np.ndarray, v: np.ndarray,
+                         temp: np.ndarray,
+                         soc_n: Optional[np.ndarray] = None, soc_p: Optional[np.ndarray] = None) -> Self:
+        sol_instance: SolutionInitializer = SolutionInitializer()
+
+        sol_instance.lst_t = t.tolist()
+        sol_instance.lst_I = i_app.tolist()
+        sol_instance.lst_V = v.tolist()
+        sol_instance.lst_temp = temp.tolist()
+        if soc_p is not None:
+            sol_instance.lst_x_surf_p = soc_p
+        if soc_n is not None:
+            sol_instance.lst_x_surf_n = soc_n
+
+        return cls(base_solution_instance=sol_instance)
+
+    @classmethod
     def upload_exp_data(cls, filename: str, cycle_num: int | npt.ArrayLike = None,
-                        step_num: int | str = None, cell_cap: float = None):
+                        step_num: int | str = None, cell_cap: float = None) -> Self:
         sol_init = SolutionInitializer()
         df = pd.read_csv(filename)
         if cycle_num is not None:

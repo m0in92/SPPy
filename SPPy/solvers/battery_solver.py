@@ -408,6 +408,20 @@ class SPPySolver(BaseSolver):
         return Solution(base_solution_instance=self.sol_init, name=sol_name, save_csv_dir=save_csv_dir)
 
 
+class KFSPSolver(SPPySolver):
+    """
+    This class is intended to perform single particle model simulations using Kalman filter (specifically,
+    sigma point Kalman filter). It is a derived class of the class for single particle model.
+    """
+    def __init__(self, b_cell, isothermal: bool = True, degradation: bool = False, N: int = 5,
+                 electrode_SOC_solver: str = 'eigen', **electrode_SOC_solver_params):
+        super().__init__(b_cell=b_cell, isothermal=isothermal, degradation=degradation, N=N,
+                         electrode_SOC_solver=electrode_SOC_solver, **electrode_SOC_solver_params)
+
+    def solve(self, sol_exp: Solution):
+        pass
+
+
 class eSPSolver(BaseSolver):
     """
     Solver for performing simulations using single-particle model with electrolyte dynamics.
