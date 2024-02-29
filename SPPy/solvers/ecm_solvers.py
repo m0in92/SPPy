@@ -10,7 +10,7 @@ from overrides import override
 import tqdm
 import numpy as np
 
-from SPPy.solvers.base import timer
+from SPPy.solvers.battery_solver import timer
 from SPPy.battery_components.battery_cell import ECMBatteryCell
 from SPPy.models.ECM import Thevenin1RC, ESC
 from SPPy.cycler.base import BaseCycler

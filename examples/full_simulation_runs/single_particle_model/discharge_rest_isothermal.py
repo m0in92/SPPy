@@ -33,7 +33,7 @@ cell = SPPy.BatteryCell.read_from_parametersets(parameter_set_name='test',
 dc = SPPy.DischargeRest(discharge_current=I, V_min=V_min, SOC_LIB=SOC_LIB, SOC_LIB_min=SOC_min, SOC_LIB_max=1,
                         rest_time=500)
 solver_poly = SPPy.SPPySolver(b_cell=cell, N=5, isothermal=True, degradation=False,
-                              electrode_SOC_solver='CN')
+                              electrode_SOC_solver='eigen')
 
 
 # simulate

@@ -2,7 +2,6 @@ import unittest
 import numpy as np
 
 import SPPy
-from SPPy.solvers.base import BaseSolver
 
 
 class TestBaseSolver(unittest.TestCase):
