@@ -267,3 +267,4 @@ docs/make.bat
 # Example folders that are to be released in the future
 examples/SP/degradation
 examples/SP/multiple_conditions
+examples/parameter_estimations
