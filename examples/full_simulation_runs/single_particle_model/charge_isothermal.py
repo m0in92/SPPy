@@ -3,7 +3,7 @@ This script contains the example usage of the single particle model in the charg
 """
 
 __author__ = 'Moin Ahmed'
-__copywrite__ = 'Copywrite 2023 by Moin Ahmed. All rights reserved.'
+__copywrite__ = 'Copyright 2023 by Moin Ahmed. All rights reserved.'
 __status__ = 'deployed'
 
 
@@ -22,7 +22,7 @@ SOC_init_p: float = 0.989011
 SOC_init_n: float = 0.01890232
 
 # Setup battery components
-cell: SPPy.BatteryCell = SPPy.BatteryCell.read_from_parametersets(parameter_set_name='test',
+cell: SPPy.BatteryCell = SPPy.BatteryCell.read_from_parametersets(parameter_set_name='Gao-Randall',
                                                                   soc_init_p=SOC_init_p, soc_init_n=SOC_init_n,
                                                                   temp_init=T)
 
