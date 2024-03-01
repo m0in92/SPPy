@@ -7,6 +7,7 @@ __copyright__ = 'Copyright 2023 by Moin Ahmed. All rights are reserved.'
 __status__ = 'deployed'
 
 import time
+from typing import Union
 
 import numpy as np
 import numpy.typing as npt
@@ -39,6 +40,7 @@ def timer(solver_func):
         sol = solver_func(*args, **kwargs)
         print(f"Solver execution time: {time.time() - start_time}s")
         return sol
+
     return wrapper
 
 
@@ -59,7 +61,7 @@ class BaseSolver:
             self.bool_isothermal = isothermal
             self.bool_degradation = degradation
 
-        if (electrode_SOC_solver=='eigen') or ((electrode_SOC_solver == 'cn') or (electrode_SOC_solver == 'poly')):
+        if (electrode_SOC_solver == 'eigen') or ((electrode_SOC_solver == 'cn') or (electrode_SOC_solver == 'poly')):
             self.electrode_SOC_solver = electrode_SOC_solver
         else:
             raise ValueError('''Electrode SOC solver supports Eigen expansion method ('eigen) 
@@ -127,14 +129,15 @@ class SPPySolver(BaseSolver):
             self.SOC_solver_p = PolynomialApproximation(
                 c_init=self.b_cell.elec_p.max_conc * self.b_cell.elec_p.SOC_init,
                 electrode_type='p', type=type)
-            self.SOC_solver_n = PolynomialApproximation(c_init=self.b_cell.elec_n.max_conc * self.b_cell.elec_n.SOC_init,
-                                                        electrode_type='n', type=type)
+            self.SOC_solver_n = PolynomialApproximation(
+                c_init=self.b_cell.elec_n.max_conc * self.b_cell.elec_n.SOC_init,
+                electrode_type='n', type=type)
 
         self.t_model = Lumped(b_cell=self.b_cell)  # thermal model object
 
         self.SEI_model = ROMSEISolver(b_cell=self.b_cell)  # ROM SEI solver object
 
-    def calc_terminal_potential(self, I_p_i, I_n_i):
+    def calc_terminal_potential(self, I_p_i: float, I_n_i: float) -> float:
         """
         Returns the terminal potential [V]
         :param I_p_i: positive electrode intercalation current [A]
@@ -413,16 +416,124 @@ class KFSPSolver(SPPySolver):
     This class is intended to perform single particle model simulations using Kalman filter (specifically,
     sigma point Kalman filter). It is a derived class of the class for single particle model.
     """
+
     def __init__(self, b_cell, isothermal: bool = True, degradation: bool = False, N: int = 5,
                  electrode_SOC_solver: str = 'eigen', **electrode_SOC_solver_params):
         super().__init__(b_cell=b_cell, isothermal=isothermal, degradation=degradation, N=N,
                          electrode_SOC_solver=electrode_SOC_solver, **electrode_SOC_solver_params)
+        self.__dt: float = 0.0  # See comments below for self.__t_prev
+        self.__t_prev: float = 0.0  # The instance variables __dt and __t_prev are needed for the state equation.
+        # The input parameters of the state equation are so that it represents the text book definition of the
+        # state equation.
 
-    def solve(self, sol_exp: Solution):
-        pass
+    def __state_equation_next(self, x_k: Union[float, np.ndarray],
+                              u_k: Union[float, np.ndarray],
+                              w_k: Union[float, np.ndarray]) -> None:
+        self.b_cell.elec_p.SOC = self.SOC_solver_p(dt=self.__dt, t_prev=self.__t_prev, i_app=u_k + w_k,
+                                                   R=self.b_cell.elec_p.R,
+                                                   S=self.b_cell.elec_p.S,
+                                                   D_s=self.b_cell.elec_p.D,
+                                                   c_smax=self.b_cell.elec_p.max_conc)  # calc p surf SOC
+        self.b_cell.elec_n.SOC = self.SOC_solver_n(dt=self.__dt, t_prev=self.__t_prev, i_app=u_k + w_k,
+                                                   R=self.b_cell.elec_n.R,
+                                                   S=self.b_cell.elec_n.S,
+                                                   D_s=self.b_cell.elec_n.D,
+                                                   c_smax=self.b_cell.elec_n.max_conc)  # calc n surf SOC
+
+    def __output_equation(self, x_k: Union[float, np.ndarray],
+                          u_k: Union[float, np.ndarray],
+                          v_k: Union[float, np.ndarray]) -> float:
+        """
+        The output equation for the sigma-point Kalman filter for non-isothermal single particle model. Here the sensor
+        noise is simply added to the cell terminal voltage equation.
+        :param x_k: state
+        :param u_k: input
+        :param v_k: sensor noise
+        :return: cell terminal voltage
+        """
+        return self.b_model(OCP_p=self.b_cell.elec_p.OCP, OCP_n=self.b_cell.elec_n.OCP, R_cell=self.b_cell.R_cell,
+                            k_p=self.b_cell.elec_p.k, S_p=self.b_cell.elec_p.S, c_smax_p=self.b_cell.elec_p.max_conc,
+                            SOC_p=x_k[0, :],
+                            k_n=self.b_cell.elec_n.k, S_n=self.b_cell.elec_n.S, c_smax_n=self.b_cell.elec_n.max_conc,
+                            SOC_n=x_k[1, :],
+                            c_e=self.b_cell.electrolyte.conc, T=self.b_cell.T, I_p_i=u_k, I_n_i=u_k) + v_k
+
+    def solve(self, sol_exp: Solution, cov_soc_p: float, cov_soc_n: float, cov_process: float, cov_sensor: float,
+              v_min: float, v_max: float, soc_min: float, soc_max: float, soc_init: float) -> Solution:
+        cycling_step = CustomCycler(array_t=sol_exp.t, array_I=sol_exp.I, V_min=v_min, V_max=v_max,
+                                    SOC_LIB=soc_init, SOC_LIB_min=soc_min, SOC_LIB_max=soc_max)
+        array_y_true = sol_exp.V  # array containing y_true is extracted from the solution object
+
+        # create Normal Random Variables below
+        vector_x: np.ndarray = np.array([[self.b_cell.elec_p.SOC], [self.b_cell.elec_n.SOC]])
+        cov_x: np.ndarray = np.array([[cov_soc_p, 0], [0, cov_soc_n]])
+        vector_w: np.ndarray = np.array([[0]])
+        cov_w: np.ndarray = np.array([[cov_process]])
+        vector_v: np.ndarray = np.array([[0]])
+        cov_v: np.ndarray = np.array([[cov_sensor]])
+
+        x: NormalRandomVector = NormalRandomVector(vector_init=vector_x, cov_init=cov_x)
+        w: NormalRandomVector = NormalRandomVector(vector_init=vector_w, cov_init=cov_w)
+        v: NormalRandomVector = NormalRandomVector(vector_init=vector_v, cov_init=cov_v)
+
+        y_dim: int = 1
+
+        # Create sigma-point kalman filter below
+        spkf: SigmaPointKalmanFilter = SigmaPointKalmanFilter(x=x, w=w, v=v, y_dim=y_dim,
+                                                              state_equation=self.__state_equation_next,
+                                                              output_equation=self.__output_equation)
+
+        # The solution loop is run below
+        step_completed: bool = False
+
+        i_sim: int = 1  # simulation index.
+        while not step_completed:
+            t_curr = cycling_step.array_t[i_sim]
+            self.__dt = t_curr - self.__t_prev
+            i_app_prev = cycling_step.array_I[i_sim - 1]
+            i_app_curr = cycling_step.array_I[i_sim]
+
+            spkf.solve(u=i_app_prev, y_true=array_y_true[i_sim])
+
+            self.b_cell.elec_p.SOC = spkf.x.get_vector()[0, 0]
+            self.b_cell.elec_n.SOC = spkf.x.get_vector()[1, 0]
+            v: float = self.calc_terminal_potential(I_n_i=i_app_prev, I_p_i=i_app_prev)
+
+            # loop termination criteria
+            if v > cycling_step.V_max:
+                step_completed = True
+            if v < cycling_step.V_min:
+                step_completed = True
+            if t_curr > cycling_step.array_t[-1]:
+                step_completed = True
+            if i >= len(cycling_step.array_t) - 1:
+                step_completed = True
+
+            # update sol attributes
+            self.sol_init.update(cycle_num=1,
+                                 cycle_step='custom',
+                                 t=cycling_step.time_elapsed,
+                                 I=t_curr,
+                                 V=v,
+                                 OCV=self.b_cell.elec_p.OCP - self.b_cell.elec_n.OCP,
+                                 x_surf_p=self.b_cell.elec_p.SOC,
+                                 x_surf_n=self.b_cell.elec_n.SOC,
+                                 cap=0.0,
+                                 cap_charge=0.0,
+                                 cap_discharge=0.0,
+                                 SOC_LIB=cycling_step.SOC_LIB,
+                                 battery_cap=self.b_cell.cap,
+                                 temp=self.b_cell.T,
+                                 R_cell=self.b_cell.R_cell)
+
+            # update simulation parameters
+            t_prev = t_curr
+            i_sim += 1
+
+        return Solution(base_solution_instance=self.sol_init)
 
 
-class eSPSolver(BaseSolver):
+class EnhancedSPSolver(BaseSolver):
     """
     Solver for performing simulations using single-particle model with electrolyte dynamics.
     """
@@ -468,4 +579,3 @@ class eSPSolver(BaseSolver):
 
                     # Solve for the electrolyte conc. below
                     # electrolyte_co_ord = ElectrolyteFVMCoordinates(D_e=self.b_cell.electrolyte.D)
-

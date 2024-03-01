@@ -4,8 +4,7 @@ __author__ = 'Moin Ahmed'
 __copywrite__ = 'Copywrite 2023 by Moin Ahmed. All rights are reserved.'
 __status__ = 'deployed'
 
-from typing import Optional
-from overrides import override
+from typing import Optional, Union
 
 import tqdm
 import numpy as np
@@ -179,15 +178,21 @@ class KFDTSolver(DTSolver):
     def __init__(self, battery_cell_instance: ECMBatteryCell, isothermal: bool) -> None:
         super().__init__(battery_cell_instance=battery_cell_instance,
                          isothermal=isothermal)
-        self.__dt = 0.0  # delta_t is required for sigma point kalman filter solver.
+        self.__dt = 0.0  # delta_t is required for sigma point kalman filter solver. Specifically, it is used in the
+        # state equation.
+        # Since the __state_equation is formulated have parameters pertaining to states, inputs, and the process noise,
+        # and since there dt in the state equation, dt is defined as the instance variable. Its value is changed
+        # during the simulation run.
+        #
 
-    def __state_equation(self, x_k, u_k, w_k):
+    def __state_equation(self, x_k: Union[float, np.ndarray],
+                         u_k: [float, np.ndarray],
+                         w_k: [float, np.ndarray]) -> [float, np.ndarray]:
         """
         State Equation.
         :param x_k:
         :param u_k:
         :param w_k:
-        :param delta_t:
         :return:
         """
         R1 = self.b_cell.R1

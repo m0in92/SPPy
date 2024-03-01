@@ -100,7 +100,7 @@ class ECMSolution:
         self.array_soc = np.append(self.array_soc, soc)
         self.array_I_R1 = np.append(self.array_I_R1, i_r1)
 
-    def comprehensive_plot(self, sol_exp: Optional[Self] = None, save_dir: Optional[str]=None):
+    def comprehensive_plot(self, sol_exp: Optional[Self] = None, save_dir: Optional[str] = None):
         fig = plt.figure(figsize=(6.4, 6), dpi=300)
 
         x_axis = self.array_t
@@ -142,7 +142,7 @@ class ECMSolution:
         plt.show()
 
 
-@ dataclass
+@dataclass
 class SolutionInitializer:
     """
     Initializes the relevant data to be stored during a simulation by creating empty lists. Furthermore, it is intended
@@ -156,7 +156,7 @@ class SolutionInitializer:
     lst_OCV_LIB: list = field(default_factory=lambda: [])  # OCV of the LIB [V]
     lst_x_surf_p: list = field(default_factory=lambda: [])  # positive electrode surface SOC
     lst_x_surf_n: list = field(default_factory=lambda: [])  # negative electrode surface SOC
-    lst_cap: list = field(default_factory=lambda: [])   # total capacity spent over cycling [Ahr]
+    lst_cap: list = field(default_factory=lambda: [])  # total capacity spent over cycling [Ahr]
     lst_cap_charge: list = field(default_factory=lambda: [])  # charge capacity [A hr]
     lst_cap_discharge: list = field(default_factory=lambda: [])  # discharge capacity [A hr]
     lst_SOC_LIB: list = field(default_factory=lambda: [])  # SOC of the LIB battery cell [unitless]
@@ -169,11 +169,11 @@ class SolutionInitializer:
     lst_j_i: list = field(default_factory=lambda: [])  # total intercalation flux at the negative electrode [mol/m2/s]
     lst_j_s: list = field(default_factory=lambda: [])  # side reaction molar flux at the negative electrode [mol/m2/s]
 
-    def update(self, cycle_num: float=0, cycle_step: float=0, t: float=0, I: float=0, V: float=0,
-               OCV: float=0, x_surf_p: float=0, x_surf_n: float=0,
-               cap: float=0, cap_charge: float=0, cap_discharge: float=0, SOC_LIB: float=0,
-               battery_cap: float=0,
-               temp: float=0, R_cell: float=0):
+    def update(self, cycle_num: float = 0, cycle_step: str = 'rest', t: float = 0, I: float = 0, V: float = 0,
+               OCV: float = 0, x_surf_p: float = 0, x_surf_n: float = 0,
+               cap: float = 0, cap_charge: float = 0, cap_discharge: float = 0, SOC_LIB: float = 0,
+               battery_cap: float = 0,
+               temp: float = 0, R_cell: float = 0):
         self.lst_cycle_num.append(cycle_num)
         self.lst_cycle_step.append(cycle_step)
         self.lst_t.append(t)
@@ -288,9 +288,8 @@ class Solution:
                 cap = 1 + np.cumsum(dcap)
                 sol_init.lst_cap = cap.tolist()
         else:
-            sol_init.lst_cap = ((cell_cap - df['cap [Ahr]'])/cell_cap).tolist()
+            sol_init.lst_cap = ((cell_cap - df['cap [Ahr]']) / cell_cap).tolist()
         return cls(base_solution_instance=sol_init)
-
 
     def create_df(self):
         df = pd.DataFrame({
@@ -326,7 +325,7 @@ class Solution:
     def single_plot(self, x_var, y_var, x_label, y_label):
         ax = self.initiate_single_plot()
         ax.plot(x_var, y_var)
-        ax.set_xlabel(xlabel= x_label)
+        ax.set_xlabel(xlabel=x_label)
         ax.set_ylabel(ylabel=y_label)
         plt.show()
 
@@ -349,7 +348,7 @@ class Solution:
         :return: returns the discharge capacity of specified cycle no
         """
         return [cap_ for i, cap_ in enumerate(self.cap) if ((self.cycle_num[i] == cycle_no) and
-                                                                         (self.cycle_step[i] == 'charge'))]
+                                                            (self.cycle_step[i] == 'charge'))]
 
     def filter_battery_cap(self, cycle_no):
         """
@@ -367,7 +366,7 @@ class Solution:
         :return: returns the discharge capacity of specified cycle no
         """
         return [V_ for i, V_ in enumerate(self.V) if ((self.cycle_num[i] == cycle_no) and
-                                                                 (self.cycle_step[i] == 'discharge'))]
+                                                      (self.cycle_step[i] == 'discharge'))]
 
     def filter_T(self, cycle_no):
         """
@@ -399,7 +398,7 @@ class Solution:
         self.single_plot(self.t, self.V, x_label='t [s]', y_label='V [V]')
 
     def plot_capV(self):
-        self.single_plot(self.cap, self.V, x_label= 'capacity [Ahr]', y_label='V [V]')
+        self.single_plot(self.cap, self.V, x_label='capacity [Ahr]', y_label='V [V]')
 
     def dis_cap_array(self):
         return np.array([self.calc_discharge_cap(cycle_no_) for cycle_no_ in np.unique(self.cycle_num)])
@@ -415,7 +414,7 @@ class Solution:
 
         num_rows = 2
         num_cols = 2
-        fig = plt.figure(figsize=(6.4*2, 4.8*2), dpi=300)
+        fig = plt.figure(figsize=(6.4 * 2, 4.8 * 2), dpi=300)
 
         ax1 = fig.add_subplot(num_rows, num_cols, 1)
         ax1.plot(self.t, self.V)
@@ -434,8 +433,8 @@ class Solution:
             cap_list_last = self.filter_cap(last_cycle_no)
             V_list_first = self.filter_V(first_cycle_no)
             V_list_last = self.filter_V(last_cycle_no)
-            ax2.plot(cap_list_first, V_list_first, label = f"cycle {first_cycle_no}")
-            ax2.plot(cap_list_last, V_list_last, label = f"cycle {last_cycle_no}")
+            ax2.plot(cap_list_first, V_list_first, label=f"cycle {first_cycle_no}")
+            ax2.plot(cap_list_last, V_list_last, label=f"cycle {last_cycle_no}")
         ax2.set_xlabel('Capacity [Ahr]')
         ax2.set_ylabel('V [V]')
         ax2.set_title('V vs. Capacity')
@@ -465,7 +464,7 @@ class Solution:
 
         num_rows = 3
         num_cols = 2
-        fig = plt.figure(figsize=(6.4*2, 4.8*3), dpi=300)
+        fig = plt.figure(figsize=(6.4 * 2, 4.8 * 3), dpi=300)
 
         ax1 = fig.add_subplot(num_rows, num_cols, 1)
         ax1.plot(self.t, self.V)
@@ -484,8 +483,8 @@ class Solution:
             cap_list_last = self.filter_cap(last_cycle_no)
             V_list_first = self.filter_V(first_cycle_no)
             V_list_last = self.filter_V(last_cycle_no)
-            ax2.plot(cap_list_first, V_list_first, label = f"cycle {first_cycle_no}")
-            ax2.plot(cap_list_last, V_list_last, label = f"cycle {last_cycle_no}")
+            ax2.plot(cap_list_first, V_list_first, label=f"cycle {first_cycle_no}")
+            ax2.plot(cap_list_last, V_list_last, label=f"cycle {last_cycle_no}")
         ax2.set_xlabel('Capacity [Ahr]')
         ax2.set_ylabel('V [V]')
         ax2.set_title('V vs. Capacity')
