@@ -268,3 +268,6 @@ docs/make.bat
 examples/SP/degradation
 examples/SP/multiple_conditions
 examples/parameter_estimations
+examples/ECM
+examples/P2D
+examples/SP

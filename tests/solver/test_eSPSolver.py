@@ -2,7 +2,7 @@ import unittest
 import numpy as np
 
 import SPPy
-from SPPy.solvers.battery_solver import eSPSolver
+from SPPy.solvers.battery_solver import EnhancedSPSolver
 
 
 class TestESPSolver(unittest.TestCase):
@@ -21,7 +21,7 @@ class TestESPSolver(unittest.TestCase):
                                                          temp_init=T)
 
     def test_constructor(self):
-        test_solver = eSPSolver(b_cell=self.test_cell, isothermal=True, degradation=False)
+        test_solver = EnhancedSPSolver(b_cell=self.test_cell, isothermal=True, degradation=False)
 
         self.assertEqual(self.test_cell.elec_p.a_s, test_solver.b_cell.elec_p.a_s)
         self.assertEqual(True, test_solver.bool_isothermal)
