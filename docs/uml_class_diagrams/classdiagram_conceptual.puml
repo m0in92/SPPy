@@ -26,6 +26,8 @@ BatterySolver *-- LumpedThermalModel
 ROMSEI *- ROMSEISolver
 BatterySolver *-- ROMSEISolver
 
+KalmanBatterySolver --|> BatterySolver
+
 @enduml
 
 @enduml
