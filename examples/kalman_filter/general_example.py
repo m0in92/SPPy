@@ -6,6 +6,11 @@ y_k = h(x_k, u_k, v_k) = x_3 ** 3 + v_k
 
 """
 
+__author__ = "Moin Ahmed"
+__copyright__ = "Copyright 2024 by Moin Ahmed. All rights reserved."
+__status__ = "deployed"
+
+
 import numpy as np
 import scipy.linalg
 import matplotlib.pyplot as plt
