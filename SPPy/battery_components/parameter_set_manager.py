@@ -25,84 +25,84 @@ class ParameterSets:
         if not self._check_parameter_set(name):
             raise ValueError(f"{name} not found in the existing parameter_set")
 
-        self.name = name  # name of the parameter set
+        self.name: str = name  # name of the parameter set
 
-        self.POSITIVE_ELECTRODE_DIR = os.path.join(self.PARAMETER_SET_DIR, self.name, 'param_pos-electrode.csv')
-        self.NEGATIVE_ELECTRODE_DIR = os.path.join(self.PARAMETER_SET_DIR, self.name, 'param_neg-electrode.csv')
-        self.ELECTROLYTE_DIR = os.path.join(self.PARAMETER_SET_DIR, self.name, 'param_electrolyte.csv')
-        self.BATTERY_CELL_DIR = os.path.join(self.PARAMETER_SET_DIR, self.name, 'param_battery-cell.csv')
+        self.POSITIVE_ELECTRODE_DIR: str = os.path.join(self.PARAMETER_SET_DIR, self.name, 'param_pos-electrode.csv')
+        self.NEGATIVE_ELECTRODE_DIR: str = os.path.join(self.PARAMETER_SET_DIR, self.name, 'param_neg-electrode.csv')
+        self.ELECTROLYTE_DIR: str = os.path.join(self.PARAMETER_SET_DIR, self.name, 'param_electrolyte.csv')
+        self.BATTERY_CELL_DIR: str = os.path.join(self.PARAMETER_SET_DIR, self.name, 'param_battery-cell.csv')
 
         # Positive electrode parameters are extracted below
         df = ParameterSets._parse_csv(file_path=self.POSITIVE_ELECTRODE_DIR)  # Read and parse the csv file.
-        self.L_p = df['Electrode Thickness [m]']
-        self.A_p = df['Electrode Area [m^2]']
-        self.kappa_p = df['Ionic Conductivity [S m^-1]']
-        self.epsilon_p = df['Volume Fraction']
-        self.max_conc_p = df['Max. Conc. [mol m^-3]']
-        self.R_p = df['Radius [m]']
-        self.S_p = df['Electroactive Area [m^2]']
-        self.T_ref_p = df['Reference Temperature [K]']
-        self.D_ref_p = df['Reference Diffusitivity [m^2 s^-1]']
-        self.k_ref_p = df['Reference Rate Constant [m^2.5 mol^-0.5 s^-1]']
-        self.Ea_D_p = df['Activation Energy of Diffusion [J mol^-1]']
-        self.Ea_R_p = df['Activation Energy of Reaction [J mol^-1]']
-        self.alpha_p = df['Anodic Transfer Coefficient']
-        self.brugg_p = df['Bruggerman Coefficient']
-        self.soc_min_p = df['soc_min']
-        self.soc_max_p = df['soc_max']
+        self.L_p: float = df['Electrode Thickness [m]']
+        self.A_p: float = df['Electrode Area [m^2]']
+        self.kappa_p: float = df['Ionic Conductivity [S m^-1]']
+        self.epsilon_p: float = df['Volume Fraction']
+        self.max_conc_p: float = df['Max. Conc. [mol m^-3]']
+        self.R_p: float = df['Radius [m]']
+        self.S_p: float = df['Electroactive Area [m^2]']
+        self.T_ref_p: float = df['Reference Temperature [K]']
+        self.D_ref_p: float = df['Reference Diffusitivity [m^2 s^-1]']
+        self.k_ref_p: float = df['Reference Rate Constant [m^2.5 mol^-0.5 s^-1]']
+        self.Ea_D_p: float = df['Activation Energy of Diffusion [J mol^-1]']
+        self.Ea_R_p: float = df['Activation Energy of Reaction [J mol^-1]']
+        self.alpha_p: float = df['Anodic Transfer Coefficient']
+        self.brugg_p: float = df['Bruggerman Coefficient']
+        self.soc_min_p: float = df['soc_min']
+        self.soc_max_p: float = df['soc_max']
 
         # Negative electrode parameters are extracted below
         df = ParameterSets._parse_csv(file_path=self.NEGATIVE_ELECTRODE_DIR)  # Read and parse the csv file.
-        self.L_n = df['Electrode Thickness [m]']
-        self.A_n = df['Electrode Area [m^2]']
-        self.kappa_n = df['Ionic Conductivity [S m^-1]']
-        self.epsilon_n = df['Volume Fraction']
-        self.max_conc_n = df['Max. Conc. [mol m^-3]']
-        self.R_n = df['Radius [m]']
-        self.S_n = df['Electroactive Area [m^2]']
-        self.T_ref_n = df['Reference Temperature [K]']
-        self.D_ref_n = df['Reference Diffusitivity [m^2 s^-1]']
-        self.k_ref_n = df['Reference Rate Constant [m^2.5 mol^-0.5 s^-1]']
-        self.Ea_D_n = df['Activation Energy of Diffusion [J mol^-1]']
-        self.Ea_R_n = df['Activation Energy of Reaction [J mol^-1]']
-        self.alpha_n = df['Anodic Transfer Coefficient']
-        self.brugg_n = df['Bruggerman Coefficient']
-        self.soc_min_n = df['soc_min']
-        self.soc_max_n = df['soc_max']
+        self.L_n: float = df['Electrode Thickness [m]']
+        self.A_n: float = df['Electrode Area [m^2]']
+        self.kappa_n: float = df['Ionic Conductivity [S m^-1]']
+        self.epsilon_n: float = df['Volume Fraction']
+        self.max_conc_n: float = df['Max. Conc. [mol m^-3]']
+        self.R_n: float = df['Radius [m]']
+        self.S_n: float = df['Electroactive Area [m^2]']
+        self.T_ref_n: float = df['Reference Temperature [K]']
+        self.D_ref_n: float = df['Reference Diffusitivity [m^2 s^-1]']
+        self.k_ref_n: float = df['Reference Rate Constant [m^2.5 mol^-0.5 s^-1]']
+        self.Ea_D_n: float = df['Activation Energy of Diffusion [J mol^-1]']
+        self.Ea_R_n: float = df['Activation Energy of Reaction [J mol^-1]']
+        self.alpha_n: float = df['Anodic Transfer Coefficient']
+        self.brugg_n: float = df['Bruggerman Coefficient']
+        self.soc_min_n: float = df['soc_min']
+        self.soc_max_n: float = df['soc_max']
         # SEI parameters for the negative electrode are extracted below
-        self.U_s = df['SEI Reference Overpotential [V]']
-        self.i_s = df['SEI Exchange Current Density [mol m^-2 s^-1]']
-        self.MW_SEI = df['SEI Molar Weight [kg mol^-1]']
-        self.rho_SEI = df['SEI Density [kg m^-3]']
-        self.kappa_SEI = df['SEI Conductivity [S m^-1]']  # SEI conductivity [S/m]
+        self.U_s: float = df['SEI Reference Overpotential [V]']
+        self.i_s: float = df['SEI Exchange Current Density [mol m^-2 s^-1]']
+        self.MW_SEI: float = df['SEI Molar Weight [kg mol^-1]']
+        self.rho_SEI: float = df['SEI Density [kg m^-3]']
+        self.kappa_SEI: float = df['SEI Conductivity [S m^-1]']  # SEI conductivity [S/m]
 
         # Below extracts electrolyte parameters
         df = ParameterSets._parse_csv(file_path=self.ELECTROLYTE_DIR)
-        self.conc_es = df['Conc. [mol m^-3]']
-        self.L_es = df['Thickness [m]']
-        self.kappa_es = df['Ionic Conductivity [S m^-1]']
-        self.epsilon_es = df['Volume Fraction']
-        self.brugg_es = df['Bruggerman Coefficient']
+        self.conc_es: float = df['Conc. [mol m^-3]']
+        self.L_es: float = df['Thickness [m]']
+        self.kappa_es: float = df['Ionic Conductivity [S m^-1]']
+        self.epsilon_es: float = df['Volume Fraction']
+        self.brugg_es: float = df['Bruggerman Coefficient']
 
         # Below extracts the battery cell parameters
         df = ParameterSets._parse_csv(file_path=self.BATTERY_CELL_DIR)
-        self.rho = df['Density [kg m^-3]']
-        self.Vol = df['Volume [m^3]']
-        self.C_p = df['Specific Heat [J K^-1 kg^-1]']
-        self.h = df['Heat Transfer Coefficient [J s^-1 K^-1]']
-        self.A = df['Surface Area [m^2]']
-        self.cap = df['Capacity [A hr]']
-        self.V_max = df['Maximum Potential Cut-off [V]']
-        self.V_min = df['Minimum Potential Cut-off [V]']
+        self.rho: float = df['Density [kg m^-3]']
+        self.Vol: float = df['Volume [m^3]']
+        self.C_p: float = df['Specific Heat [J K^-1 kg^-1]']
+        self.h: float = df['Heat Transfer Coefficient [J s^-1 K^-1]']
+        self.A: float = df['Surface Area [m^2]']
+        self.cap: float = df['Capacity [A hr]']
+        self.V_max: float = df['Maximum Potential Cut-off [V]']
+        self.V_min: float = df['Minimum Potential Cut-off [V]']
 
         func_module = importlib.import_module(f'parameter_sets.{self.name}.funcs')  # imports the python module
         # containing the OCP related funcs in the parameter set.
-        self.OCP_ref_p_ = func_module.OCP_ref_p
-        self.dOCPdT_p_ = func_module.dOCPdT_p
-        self.OCP_ref_n_ = func_module.OCP_ref_n
-        self.dOCPdT_n_ = func_module.dOCPdT_n
+        self.OCP_ref_p_: Callable = func_module.OCP_ref_p
+        self.dOCPdT_p_: Callable = func_module.dOCPdT_p
+        self.OCP_ref_n_: Callable = func_module.OCP_ref_n
+        self.dOCPdT_n_: Callable = func_module.dOCPdT_n
 
-        # containing the electrolyte related fuctions in the parameter set below.
+        # containing the electrolyte related functions in the parameter set below.
         warning_msg: str = 'No electrolyte related functions found in the parameter set: '
         try:
             self.func_D_e_ = func_module.func_D_e
