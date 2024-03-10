@@ -6,4 +6,5 @@ scipy
 tqdm
 django
 typing_extensions
+pydantic
 
