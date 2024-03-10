@@ -2,7 +2,7 @@
 Contains the classes and functionality for the extracting battery cell parameters
 """
 
-__all__ = ['ParameterSets', 'ECMParameterSets']
+__all__ = ['ParameterSets', 'ECMParameterSets', 'PydanticParameterSets']
 
 __author__ = 'Moin Ahmed'
 __copyright__ = 'Copyright 2023 by Moin Ahmed. All rights reserved'
@@ -13,6 +13,7 @@ from typing import Optional, Callable
 import importlib
 
 import pandas as pd
+from pydantic import BaseModel
 
 from SPPy.config.definations import *
 
@@ -194,4 +195,139 @@ class ECMParameterSets:
     @classmethod
     def _parse_csv(self, file_path: str) -> pd.DataFrame:
         return pd.read_csv(file_path, index_col=0)['Value']
+
+
+class PydanticParameterSets(BaseModel):
+    """
+    This classes uses the pydantic Python package with the intended purpose of enforcing data types.
+    """
+
+    # class variables pertaining to the positive electrode
+    L_p: float
+    A_p: float
+    kappa_p: float
+    epsilon_p: float
+    max_conc_p: float
+    R_p: float
+    S_p: float
+    T_ref_p: float
+    D_ref_p: float
+    k_ref_p: float
+    Ea_D_p: float
+    Ea_R_p: float
+    alpha_p: float
+    brugg_p: float
+    soc_min_p: float
+    soc_max_p: float
+
+    # class variables pertaining to the negative electrode
+    L_n: float              # Electrode Thickness [m]
+    A_n: float              # Electrode Area [m^2]
+    kappa_n: float          # Ionic Conductivity [S m^-1]
+    epsilon_n: float        # Volume Fraction
+    max_conc_n: float       # Max. Conc. [mol m^-3]
+    R_n: float              # Radius [m]
+    S_n: float              # Electroactive Area [m^2]
+    T_ref_n: float          # Reference Temperature [K]
+    D_ref_n: float          # Reference Diffusitivity [m^2 s^-1]
+    k_ref_n: float          # Reference Rate Constant [m^2.5 mol^-0.5 s^-1]
+    Ea_D_n: float           # Activation Energy of Diffusion [J mol^-1]
+    Ea_R_n: float           # Activation Energy of Reaction [J mol^-1]
+    alpha_n: float          # Anodic Transfer Coefficient
+    brugg_n: float          # Bruggerman Coefficient
+    soc_min_n: float        # soc_min
+    soc_max_n: float        # soc_max
+    # SEI parameters for the negative electrode are extracted below
+    U_s: float         # SEI Reference Overpotential [V]
+    i_s: float         # SEI Exchange Current Density [mol m^-2 s^-1]
+    MW_SEI: float      # SEI Molar Weight [kg mol^-1]
+    rho_SEI: float     # SEI Density [kg m^-3]
+    kappa_SEI: float   # SEI Conductivity [S m^-1]
+
+    # class variables pertaining to the electrolyte
+    conc_es: float      # Conc. [mol m^-3]
+    L_es: float         # Thickness [m]
+    kappa_es: float     # Ionic Conductivity [S m^-1]
+    epsilon_es: float   # Volume Fraction
+    brugg_es: float     # Bruggerman Coefficient
+
+    # class variables pertaining to the battery cell
+    rho: float      # Density [kg m^-3]
+    Vol: float      # Volume [m^3]
+    C_p: float      # Specific Heat [J K^-1 kg^-1]
+    h: float        # Heat Transfer Coefficient [J s^-1 K^-1]
+    A: float        # Surface Area [m^2]
+    cap: float      # Capacity [A hr]
+    V_max: float    # Maximum Potential Cut-off [V]
+    V_min: float    # Minimum Potential Cut-off [V]
+
+    # Open-circuit potential [V] related functions
+    OCP_ref_p_: Callable
+    dOCPdT_p_: Callable
+    OCP_ref_n_: Callable
+    dOCPdT_n_: Callable
+
+    def __init__(self, parameter_set_name: str) -> None:
+        param_instance: ParameterSets = ParameterSets(parameter_set_name)
+
+        data: dict = {'L_p': param_instance.L_p,
+                      'A_p': param_instance.A_p,
+                      'kappa_p': param_instance.kappa_p,
+                      'epsilon_p': param_instance.epsilon_p,
+                      'max_conc_p': param_instance.max_conc_p,
+                      'R_p': param_instance.R_p,
+                      'S_p': param_instance.S_p,
+                      'T_ref_p': param_instance.T_ref_p,
+                      'D_ref_p': param_instance.D_ref_p,
+                      'k_ref_p': param_instance.k_ref_p,
+                      'Ea_D_p': param_instance.Ea_D_p,
+                      'Ea_R_p': param_instance.Ea_R_p,
+                      'alpha_p': param_instance.alpha_p,
+                      'brugg_p': param_instance.brugg_p,
+                      'soc_min_p': param_instance.soc_min_p,
+                      'soc_max_p': param_instance.soc_max_p,
+
+                      'L_n': param_instance.L_n,
+                      'A_n': param_instance.A_n,
+                      'kappa_n': param_instance.kappa_n,
+                      'epsilon_n': param_instance.epsilon_n,
+                      'max_conc_n': param_instance.max_conc_n,
+                      'R_n': param_instance.R_n,
+                      'S_n': param_instance.S_n,
+                      'T_ref_n': param_instance.T_ref_n,
+                      'D_ref_n': param_instance.D_ref_n,
+                      'k_ref_n': param_instance.k_ref_n,
+                      'Ea_D_n': param_instance.Ea_D_n,
+                      'Ea_R_n': param_instance.Ea_R_n,
+                      'alpha_n': param_instance.alpha_n,
+                      'brugg_n': param_instance.brugg_n,
+                      'soc_min_n': param_instance.soc_min_n,
+                      'soc_max_n': param_instance.soc_max_n,
+                      'U_s': param_instance.U_s,
+                      'i_s': param_instance.i_s,
+                      'MW_SEI': param_instance.MW_SEI,
+                      'rho_SEI': param_instance.rho_SEI,
+                      'kappa_SEI': param_instance.kappa_SEI,
+
+                      'conc_es': param_instance.conc_es,
+                      'L_es': param_instance.L_es,
+                      'kappa_es': param_instance.kappa_es,
+                      'epsilon_es': param_instance.epsilon_es,
+                      'brugg_es': param_instance.brugg_es,
+
+                      'rho': param_instance.rho,
+                      'Vol': param_instance.Vol,
+                      'C_p': param_instance.C_p,
+                      'h': param_instance.h,
+                      'A': param_instance.A,
+                      'cap': param_instance.cap,
+                      'V_max': param_instance.V_max,
+                      'V_min': param_instance.V_min,
+
+                      'OCP_ref_p_': param_instance.OCP_ref_p_,
+                      'dOCPdT_p_': param_instance.dOCPdT_p_,
+                      'OCP_ref_n_': param_instance.OCP_ref_n_,
+                      'dOCPdT_n_': param_instance.dOCPdT_n_
+                      }
+        super().__init__(**data)
 

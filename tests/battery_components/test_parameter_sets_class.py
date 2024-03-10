@@ -5,6 +5,7 @@ import unittest
 import os
 
 from SPPy.battery_components.battery_cell import ParameterSets
+from SPPy.battery_components.parameter_set_manager import PydanticParameterSets
 from SPPy.battery_components.parameter_set_manager import ECMParameterSets
 
 
@@ -147,4 +148,65 @@ class TestECMParameterSet(unittest.TestCase):
 
     def test_list_parameter_names(self):
         self.assertTrue('test' in self.instance_test.lst_parameter_names())
+
+
+class TestPydanticParameterSet(unittest.TestCase):
+    def test_constructor(self):
+        parameter_set_name: str = "test"
+        pyd_parameterset_instance: PydanticParameterSets = PydanticParameterSets(parameter_set_name=parameter_set_name)
+
+        # Testing for the positive electrode parameters
+        self.assertEqual(7e-5, pyd_parameterset_instance.L_p)
+        self.assertEqual(0.0596, pyd_parameterset_instance.A_p)
+        self.assertEqual(3.8, pyd_parameterset_instance.kappa_p)
+        self.assertEqual(0.49, pyd_parameterset_instance.epsilon_p)
+        self.assertEqual(8.5e-6, pyd_parameterset_instance.R_p)
+        self.assertEqual(1.1167, pyd_parameterset_instance.S_p)
+
+        self.assertEqual(298.15, pyd_parameterset_instance.T_ref_p)
+        self.assertEqual(1e-14, pyd_parameterset_instance.D_ref_p)
+        self.assertEqual(6.67e-11, pyd_parameterset_instance.k_ref_p)
+
+        self.assertEqual(0.5, pyd_parameterset_instance.alpha_p)
+        self.assertEqual(1.5, pyd_parameterset_instance.brugg_p)
+
+        self.assertEqual(0.4956, pyd_parameterset_instance.soc_min_p)
+        self.assertEqual(0.989011, pyd_parameterset_instance.soc_max_p)
+
+        # Testing for the negative electrode parameters
+        self.assertEqual(7.35e-5, pyd_parameterset_instance.L_n)
+        self.assertEqual(0.0596, pyd_parameterset_instance.A_n)
+        self.assertEqual(100, pyd_parameterset_instance.kappa_n)
+        self.assertEqual(0.59, pyd_parameterset_instance.epsilon_n)
+        self.assertEqual(1.25e-5, pyd_parameterset_instance.R_n)
+        self.assertEqual(0.7824, pyd_parameterset_instance.S_n)
+
+        self.assertEqual(298.15, pyd_parameterset_instance.T_ref_n)
+        self.assertEqual(3.9e-14, pyd_parameterset_instance.D_ref_n)
+        self.assertEqual(1.76e-11, pyd_parameterset_instance.k_ref_n)
+
+        self.assertEqual(0.5, pyd_parameterset_instance.alpha_n)
+        self.assertEqual(1.5, pyd_parameterset_instance.brugg_n)
+
+        self.assertEqual(0.01890232, pyd_parameterset_instance.soc_min_n)
+        self.assertEqual(0.7568, pyd_parameterset_instance.soc_max_n)
+
+        # Below test for the electrolyte parameters
+        self.assertEqual(1000, pyd_parameterset_instance.conc_es)
+        self.assertEqual(2e-5, pyd_parameterset_instance.L_es)
+        self.assertEqual(0.2875, pyd_parameterset_instance.kappa_es)
+        self.assertEqual(0.724, pyd_parameterset_instance.epsilon_es)
+        self.assertEqual(1.5, pyd_parameterset_instance.brugg_es)
+
+        # Below tests for the battery cell parameters
+        self.assertEqual(1626, pyd_parameterset_instance.rho)
+        self.assertEqual(3.38e-5, pyd_parameterset_instance.Vol)
+        self.assertEqual(750, pyd_parameterset_instance.C_p)
+        self.assertEqual(1, pyd_parameterset_instance.h)
+        self.assertEqual(1.65, pyd_parameterset_instance.cap)
+        self.assertEqual(4.2, pyd_parameterset_instance.V_max)
+        self.assertEqual(2.5, pyd_parameterset_instance.V_min)
+
+
+
 

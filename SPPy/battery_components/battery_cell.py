@@ -2,7 +2,7 @@
 contains the class and functionality for the battery cell objects
 """
 
-__all__ = ['BatteryCell', 'ECMBatteryCell']
+__all__ = ['BatteryCell', 'ECMBatteryCell', 'ParameterSets']
 
 __author__ = 'Moin Ahmed'
 __copyright__ = 'Copyright 2023 by Moin Ahmed. All rights reserved.'
