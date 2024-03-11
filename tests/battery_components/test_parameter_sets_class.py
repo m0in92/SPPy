@@ -207,6 +207,13 @@ class TestPydanticParameterSet(unittest.TestCase):
         self.assertEqual(4.2, pyd_parameterset_instance.V_max)
         self.assertEqual(2.5, pyd_parameterset_instance.V_min)
 
+        # Below are the tests for the positive and negative electrode ocp functions
+        self.assertEqual(4.176505962016067, pyd_parameterset_instance.OCP_ref_p_(0.4956))
+        self.assertEqual(-3.493449781653898e-05, pyd_parameterset_instance.dOCPdT_p_(0.5))
+        self.assertAlmostEqual(0.09051278679435444, pyd_parameterset_instance.OCP_ref_n_(0.5), places=3)
+        self.assertAlmostEqual(-0.00011021528491435903, pyd_parameterset_instance.dOCPdT_n_(0.5))
+
+
 
 
 
