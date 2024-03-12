@@ -59,7 +59,7 @@ class NormalRandomVector:
     #     a = np.linalg.cholesky(cov)
     #     return mean + a @ cls.create_unit_normal_rv_sample(vector_size=mean.shape[0])
 
-    def get_vector(self) -> Optional[npt.ArrayLike]:
+    def get_vector(self) -> Optional[np.ndarray]:
         return self._vector
 
     def get_cov(self) -> npt.ArrayLike:
