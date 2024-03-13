@@ -506,7 +506,7 @@ class KFSPSolver(SPPySolver):
                 step_completed = True
             if t_curr > cycling_step.array_t[-1]:
                 step_completed = True
-            if i >= len(cycling_step.array_t) - 1:
+            if i_sim >= len(cycling_step.array_t) - 1:
                 step_completed = True
 
             # update sol attributes

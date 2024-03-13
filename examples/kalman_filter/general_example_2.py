@@ -10,6 +10,7 @@ __status__ = "developement"
 from typing import Union
 
 import numpy as np
+import matplotlib.pyplot as plt
 
 from SPPy.calc_helpers.kalman_filter import NormalRandomVector, SigmaPointKalmanFilter
 
@@ -63,14 +64,25 @@ def output_equation(x_k: np.ndarray, u_k: Union[float, np.ndarray], v_k: Union[f
     return func_ocv(x_k[0, :]) - R1 * x_k[1, :] - R0 * u_k + v_k
 
 
+def calc_v(i_app: float, soc_: float) -> float:
+    """
+    Output Equation.
+    :param x_k:
+    :param u_k:
+    :param v_k:
+    :return:
+    """
+    return func_ocv(soc_) + R1 * soc_ + R0 * i_app
+
+
 # Below are the variables (including Normal Random Variable) to be used to the SPKF. At the end the instance for
 # Sigma-point kalman filter (SPKF) is introduced.
 i_r1_init: float = 0.0  # [A]
-soc_init: float = 0.8993866666666667
-cov_soc: float = 1e-3
-cov_current: float = 1e-3
-cov_sensor: float = 1e-3
-cov_process: float = 1e-3
+soc_init: float = 0.9
+cov_soc: float = 1e-6
+cov_current: float = 1e-6
+cov_sensor: float = 1e-6
+cov_process: float = 1e-6
 
 x_array: np.ndarray = np.array([[soc_init], [i_r1_init]])
 x_cov: np.ndarray = np.array([[cov_soc, 0],
@@ -89,24 +101,57 @@ spkf: SigmaPointKalmanFilter = SigmaPointKalmanFilter(x=x, w=w, v=v, y_dim=1,
                                                       output_equation=output_equation)
 
 # Simulation loop is performed below
-t: np.ndarray = np.array([0, 1, 2])  # time values at each time step [s]
-i_app: np.ndarray = -1.656 * np.ones(len(t))  # applied current [A]
-# y_true: float = output_equation(x_k=x_array, u_k=-1.656, v_k=0)
-# print(y_true)
+t: np.ndarray = np.arange(0.0, 10.0, 1.0)  # time values at each time step [s]
+i_app: np.ndarray = 1.656 * np.ones(len(t))  # applied current [A]
 
-x_true: np.ndarray = np.array([0.9, 0.899693333, 0.899386667])
-y_true: np.ndarray = np.array([3.56130097, 3.56108907, 3.56088061])
+w_array: np.ndarray = np.random.normal(loc=0, scale=cov_sensor, size=(len(t), 2, 1))
+v_array: np.ndarray = np.random.normal(loc=0, scale=cov_process, size=(len(t),))
+
+x_true: np.ndarray = np.zeros((len(t), 2, 1))
+x_true[0] = x_array
+for i in range(1, len(t)):
+    x_true[i] = state_equation(x_k=x_true[i-1], u_k=i_app[i-1], w_k=w_array[i])
+print(x_true)
+y_true: np.ndarray = np.zeros(len(t))
+for i in range(len(t)):
+    y_true[i] = output_equation(x_k=x_true[i], u_k=i_app[i], v_k=v_array[i])
+# print(y_true)
+x_calc: np.ndarray = np.zeros((len(t), 2, 1))
+x_calc[0] = x_array
+
+soc_calc: np.ndarray = np.zeros(len(t))  # array for storage of calculated values
+soc_calc[0] = x_array[0, 0]
+i_R1_calc: np.ndarray = np.zeros(len(t)) # array for storage of calculated values
+v_calc: np.ndarray = np.zeros(len(t))
 
 t_prev: float = 0.0  # [s]
 step_completed: bool = False
 loop_index: int = 1
-for i in range(1, len(t)):
+for loop_index in range(0, len(t)):
     i_app_prev: float = i_app[loop_index-1]
     dt: float = t[loop_index] - t[loop_index-1]
 
     spkf.solve(u=i_app_prev, y_true=y_true[loop_index])
+    soc_calc[loop_index] = spkf.x.get_vector()[0, 0]
+    i_R1_calc[loop_index] = spkf.x.get_vector()[1, 0]
+    v_calc[loop_index] = calc_v(i_app=i_app[loop_index-1], soc_=spkf.x.get_vector()[0, 0])
 
     print(f"loop_interation {loop_index}: ", spkf.x.get_vector())
 
-    loop_index += 1
+# plots
+soc_true: np.ndarray = x_true[:, 0, :]
+print(soc_true)
+# soc_calc: np.ndarray = x_calc[:, 0, :]
+fig = plt.figure()
+ax1 = fig.add_subplot(211)
+ax1.plot(t, soc_true, label="true")
+ax1.plot(t, soc_calc, label="calc")
+ax1.legend()
+
+ax2 = fig.add_subplot(212)
+ax2.plot(t[1:], y_true[1:], label="true")
+ax2.plot(t[1:], v_calc[1:], label="calc")
+ax2.legend()
+
+plt.show()
 
