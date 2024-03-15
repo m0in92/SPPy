@@ -1,3 +1,14 @@
+"""
+Contains classes for electrolyte solvers.
+"""
+
+__all__ = ['ElectrolyteConcFVMSolver']
+
+__authors__ = "Moin Ahmed"
+__copyright__ = "Copyright by SPPy. All rights reserved."
+__status__ = "deployed"
+
+
 import numpy as np
 import numpy.typing as npt
 
@@ -13,7 +24,8 @@ class ElectrolyteConcFVMSolver:
         self.co_ords = fvm_co_ords
         self.t_c = transference
         self.c_e_init = c_e_init
-        self.array_c_e_ = self.c_e_init * np.ones(len(self.co_ords.array_x))
+        self.array_c_e_ = self.c_e_init * np.ones(len(self.co_ords.array_x))  # assuming consistent electrolyte conc
+        # across the battery cell.
 
         self.epsilon_en = epsilon_en
         self.epsilon_esep = epsilon_esep

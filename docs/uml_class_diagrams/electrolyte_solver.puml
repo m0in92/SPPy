@@ -1,0 +1,16 @@
+@startuml
+
+class ElectrolyteFVMCoordinates {
+    + dx_n: float
+    + dx_s: float
+    + dx_p: float
+
+    + array_x_n: np.ndarray
+    + array_x_s: np.ndarray
+    + array_x_p: np.ndarray
+    + array_dx: np.ndarray
+}
+
+
+
+@enduml

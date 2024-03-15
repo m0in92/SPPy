@@ -1,5 +1,5 @@
 """
-Contains classes and functionalities pertaining to the co-ordinate system
+Contains classes and functionalities pertaining to the co-ordinate system.
 """
 
 __all__ = ['ElectrolyteFVMCoordinates', 'FVMCoordinates', 'FDMCoordinates']
