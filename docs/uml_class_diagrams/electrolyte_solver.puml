@@ -1,5 +1,13 @@
 @startuml
 
+class SPMe {
+    + molar_electrode_flux(...)
+    + a_s(...)
+    + i_0(...)
+    + eta(...)
+    + calc_terminal_voltage(...)
+}
+
 class ElectrolyteFVMCoordinates {
     + dx_n: float
     + dx_s: float
@@ -11,6 +19,21 @@ class ElectrolyteFVMCoordinates {
     + array_dx: np.ndarray
 }
 
+class ElectrolyteConcFVMSolver {
+    + co_ords: ElectrolyteFVMCoordinates
+    + t_c: float
+    + c_e_init: float
+    + epsilon_e_n: float
+    + epsilon_sep: float
+    + epsilon_e_p: float
+    + a_s_n: float
+    + a_s_p: float
 
+    + array_epsilon_e: np.ndarray
+    + array_D_e: np.ndarray
+    + array_a_s: np.ndarray
+    + array_c_e: np.ndarray
+
+}
 
 @enduml

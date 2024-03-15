@@ -1,7 +1,9 @@
 import unittest
 
+import numpy as np
 
-from SPPy.solvers.electrolyte_conc import ElectrolyteFVMCoordinates
+from SPPy.solvers.co_ordinates import ElectrolyteFVMCoordinates
+from SPPy.solvers.electrolyte_conc import ElectrolyteConcFVMSolver
 
 
 class TestElectrolyteFVMCoordinates(unittest.TestCase):
@@ -62,4 +64,74 @@ class TestElectrolyteFVMCoordinates(unittest.TestCase):
         self.assertEqual(self.instance.dx_p, self.instance.array_dx[25])
         self.assertEqual(self.instance.dx_p, self.instance.array_dx[-1])
         self.assertEqual(30, len(self.instance.array_dx))
+
+
+class TestElectrolyteConcFVMSolver(unittest.TestCase):
+    def test_array_a_s(self):
+        epsilon_en: float = 0.385
+        epsilon_esep: float = 0.785
+        epsilon_ep: float = 0.485
+
+        D_e: float = 3.5e-10  # [mol/m3]
+        brugg: float = 4
+
+        co_ords: ElectrolyteFVMCoordinates = ElectrolyteFVMCoordinates(L_n=8e-5, L_s=2.5e-5, L_p=8.8e-5)
+        conc_solver: ElectrolyteConcFVMSolver = ElectrolyteConcFVMSolver(fvm_co_ords=co_ords, transference=0.354,
+                                                                         epsilon_en=epsilon_en,
+                                                                         epsilon_esep=epsilon_esep,
+                                                                         epsilon_ep=epsilon_ep,
+                                                                         a_sn=5.78e3, a_sp=7.28e3,
+                                                                         D_e=3.5e-10,
+                                                                         brugg=brugg,
+                                                                         c_e_init=1000)
+        self.assertTrue(np.array_equal(epsilon_en * np.ones(10), conc_solver.array_epsilon_e[:10]))
+        self.assertTrue(np.array_equal(epsilon_esep * np.ones(10), conc_solver.array_epsilon_e[10:20]))
+        self.assertTrue(np.array_equal(epsilon_ep * np.ones(10), conc_solver.array_epsilon_e[20:30]))
+
+    def test_array_D_e(self):
+        epsilon_en: float = 0.385
+        epsilon_esep: float = 0.785
+        epsilon_ep: float = 0.485
+
+        D_e: float = 3.5e-10  # [mol/m3]
+        brugg: float = 4
+
+        co_ords: ElectrolyteFVMCoordinates = ElectrolyteFVMCoordinates(L_n=8e-5, L_s=2.5e-5, L_p=8.8e-5)
+        conc_solver: ElectrolyteConcFVMSolver = ElectrolyteConcFVMSolver(fvm_co_ords=co_ords, transference=0.354,
+                                                                         epsilon_en=epsilon_en,
+                                                                         epsilon_esep=epsilon_esep,
+                                                                         epsilon_ep=epsilon_ep,
+                                                                         a_sn=5.78e3, a_sp=7.28e3,
+                                                                         D_e=D_e,
+                                                                         brugg=brugg,
+                                                                         c_e_init=1000)
+        self.assertTrue(np.allclose(7.689727719e-12 * np.ones(10), conc_solver.array_D_eff[:10]))
+        self.assertTrue(np.allclose(1.329066377e-10 * np.ones(10), conc_solver.array_D_eff[10:20]))
+        self.assertTrue(np.allclose(1.936578022e-11 * np.ones(10), conc_solver.array_D_eff[20:30]))
+
+    def test_array_a_s(self):
+        epsilon_en: float = 0.385
+        epsilon_esep: float = 0.785
+        epsilon_ep: float = 0.485
+
+        D_e: float = 3.5e-10  # [mol/m3]
+        brugg: float = 4
+
+        a_s_n: float = 5.78e3
+        a_s_p: float = 7.28e3
+
+        co_ords: ElectrolyteFVMCoordinates = ElectrolyteFVMCoordinates(L_n=8e-5, L_s=2.5e-5, L_p=8.8e-5)
+        conc_solver: ElectrolyteConcFVMSolver = ElectrolyteConcFVMSolver(fvm_co_ords=co_ords, transference=0.354,
+                                                                         epsilon_en=epsilon_en,
+                                                                         epsilon_esep=epsilon_esep,
+                                                                         epsilon_ep=epsilon_ep,
+                                                                         a_sn=a_s_n, a_sp=a_s_p,
+                                                                         D_e=D_e,
+                                                                         brugg=brugg,
+                                                                         c_e_init=1000)
+        self.assertTrue(np.allclose(a_s_n * np.ones(10), conc_solver.array_a_s[:10]))
+        self.assertTrue(np.allclose(np.zeros(10), conc_solver.array_a_s[10:20]))
+        self.assertTrue(np.allclose(a_s_p * np.ones(10), conc_solver.array_a_s[20:30]))
+
+
 

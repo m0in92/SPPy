@@ -1,3 +1,14 @@
+"""
+Contains classes and functionality to represent the current during battery discharge.
+"""
+
+__all__ = ['Discharge', 'DischargeRest', 'CustomDischarge']
+
+__author__ = 'Moin Ahmed'
+__copyright__ = 'Copyright 2023 by SPPy. All rights reserved.'
+__status__ = 'deployed'
+
+
 import numpy as np
 
 from SPPy.cycler.base import BaseCycler

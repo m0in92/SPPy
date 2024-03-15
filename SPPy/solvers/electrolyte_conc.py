@@ -11,6 +11,7 @@ __status__ = "deployed"
 
 import numpy as np
 import numpy.typing as npt
+import scipy.interpolate
 
 from SPPy.calc_helpers.matrix_operations import TDMAsolver
 from SPPy.solvers.co_ordinates import ElectrolyteFVMCoordinates
@@ -23,19 +24,19 @@ class ElectrolyteConcFVMSolver:
                  D_e: float, brugg: float):
         self.co_ords = fvm_co_ords
         self.t_c = transference
-        self.c_e_init = c_e_init
-        self.array_c_e_ = self.c_e_init * np.ones(len(self.co_ords.array_x))  # assuming consistent electrolyte conc
+        self.c_e_init: float = c_e_init
+        self.array_c_e_ = self.c_e_init * np.ones(len(self.co_ords.array_x))  # assuming consistent electrolyte conc.
         # across the battery cell.
 
-        self.epsilon_en = epsilon_en
-        self.epsilon_esep = epsilon_esep
-        self.epsilon_ep = epsilon_ep
+        self.epsilon_en: float = epsilon_en
+        self.epsilon_esep: float = epsilon_esep
+        self.epsilon_ep: float = epsilon_ep
 
-        self.a_sn = a_sn
-        self.a_sp = a_sp
+        self.a_sn: float = a_sn
+        self.a_sp: float = a_sp
 
-        self.D_e = D_e
-        self.brugg = brugg
+        self.D_e: float = D_e
+        self.brugg: float = brugg
 
     @property
     def array_epsilon_e(self) -> npt.ArrayLike:
@@ -71,10 +72,10 @@ class ElectrolyteConcFVMSolver:
         return self.array_c_e_
 
     @array_c_e.setter
-    def array_c_e(self, new_array_c_e_prev):
+    def array_c_e(self, new_array_c_e_prev: np.ndarray) -> None:
         self.array_c_e_ = new_array_c_e_prev
 
-    def diags(self, dt: float):
+    def diags(self, dt: float) -> tuple[list[float], list[float], list[float]]:
         # initialize the diagonals
         diag_elements = []
         upper_diag_elements = []
@@ -122,6 +123,14 @@ class ElectrolyteConcFVMSolver:
         elif solver_method == 'inverse':
             M = np.linalg.inv(self.M_ce(dt=dt))
             self.array_c_e = np.ndarray.flatten(M @ b)
+
+    def extrapolate_conc(self, L_value: float) -> float:
+        """
+        Returns the electrolyte conc. [mol/m3] at the specified value L_value.
+        :param L_value: float representing the cross-sectional length of the battery cell.
+        :return: (float) electrolyte conc [mol/m3] at the specified value of L_value.
+        """
+        return scipy.interpolate.interp1d(self.co_ords.array_x, self.array_c_e, fill_value='extrapolate')(L_value)
 
 
 class ElectrolyteConcROMSolver:
