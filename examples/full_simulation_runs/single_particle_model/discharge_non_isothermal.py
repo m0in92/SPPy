@@ -22,7 +22,7 @@ SOC_LIB = 0.9
 SOC_init_p, SOC_init_n = 0.4956, 0.7568  # conditions in the literature source. Guo et al
 
 # Setup battery components
-cell = SPPy.BatteryCell.read_from_parametersets(parameter_set_name='Gao-Randall',
+cell = SPPy.BatteryCell.read_from_parametersets(parameter_set_name='Gao-Randall-Han',
                                                 soc_init_p=SOC_init_p, soc_init_n=SOC_init_n,
                                                 temp_init=T)
 

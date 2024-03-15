@@ -58,6 +58,7 @@ class TestParameterSets(unittest.TestCase):
         self.assertEqual(0.2875, params.kappa_es)
         self.assertEqual(0.724, params.epsilon_es)
         self.assertEqual(1.5, params.brugg_es)
+        self.assertEqual(0.38, params.t_c)
 
         # Below tests for the battery cell parameters
         self.assertEqual(1626, params.rho)

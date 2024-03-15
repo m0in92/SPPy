@@ -534,7 +534,7 @@ class KFSPSolver(SPPySolver):
         return Solution(base_solution_instance=self.sol_init)
 
 
-class EnhancedSPSolver(BaseSolver):
+class EnhancedSPSolver(SPPySolver):
     """
     Solver for performing simulations using single-particle model with electrolyte dynamics.
     """
@@ -543,11 +543,21 @@ class EnhancedSPSolver(BaseSolver):
         super().__init__(b_cell=b_cell, isothermal=isothermal, degradation=degradation,
                          electrode_SOC_solver=electrode_soc_solver)
 
-        if electrode_soc_solver == 'poly':
-            self.soc_solver_p = PolynomialApproximation(c_init=self.b_cell.elec_p.SOC * self.b_cell.elec_p.max_conc,
-                                                        electrode_type='p')
-            self.soc_solver_n = PolynomialApproximation(c_init=self.b_cell.elec_n.SOC * self.b_cell.elec_n.max_conc,
-                                                        electrode_type='n')
+        # The electrode solver is initialized from the parent class __init__ method.
+
+        # The electrolyte solver is initialized below.
+        self.electrolyte_co_ords: ElectrolyteFVMCoordinates = ElectrolyteFVMCoordinates(L_n=self.b_cell.elec_n.L,
+                                                                                        L_s=self.b_cell.electrolyte.L,
+                                                                                        L_p=self.b_cell.elec_p.L)
+        # self.electrolyte_conc_solver: ElectrolyteConcFVMSolver = ElectrolyteConcFVMSolver(fvm_co_ords=electrode_soc_solver,
+        #                                                                                   transference=0.354,
+        #                                                                                   epsilon_en=0.385,
+        #                                                                                   epsilon_esep=0.785,
+        #                                                                                   epsilon_ep=0.485,
+        #                                                                                   a_sn=5.78e3, a_sp=7.28e3,
+        #                                                                                   D_e=3.5e-10,
+        #                                                                                   brugg=4,
+        #                                                                                   c_e_init=1000)
 
     def solve_one_iteration(self):
         pass

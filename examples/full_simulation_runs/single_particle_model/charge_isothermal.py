@@ -22,7 +22,7 @@ SOC_init_p: float = 0.989011
 SOC_init_n: float = 0.01890232
 
 # Setup battery components
-cell: SPPy.BatteryCell = SPPy.BatteryCell.read_from_parametersets(parameter_set_name='Gao-Randall',
+cell: SPPy.BatteryCell = SPPy.BatteryCell.read_from_parametersets(parameter_set_name='Gao-Randall-Han',
                                                                   soc_init_p=SOC_init_p, soc_init_n=SOC_init_n,
                                                                   temp_init=T)
 

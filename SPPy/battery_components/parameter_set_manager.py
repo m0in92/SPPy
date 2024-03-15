@@ -84,6 +84,7 @@ class ParameterSets:
         self.kappa_es: float = df['Ionic Conductivity [S m^-1]']
         self.epsilon_es: float = df['Volume Fraction']
         self.brugg_es: float = df['Bruggerman Coefficient']
+        self.t_c: float = df['Cation Transference No.']
 
         # Below extracts the battery cell parameters
         df = ParameterSets._parse_csv(file_path=self.BATTERY_CELL_DIR)
