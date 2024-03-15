@@ -36,7 +36,7 @@ cycler = SPPy.HPPCCycler(t1=500, t2=100, i_app=1.5,
                          V_min=2.5, V_max=4.2, soc_lib_min=0.0,
                          soc_lib_max=1.0, soc_lib=1.0, hppc_steps=2)
 cycler.plot()
-solver = SPPy.SPPySolver(b_cell=cell, N=5, isothermal=True, degradation=False,
+solver = SPPy.SPPySolver(b_cell=cell, isothermal=True, degradation=False,
                          electrode_SOC_solver="poly")
 
 # simulate and plot

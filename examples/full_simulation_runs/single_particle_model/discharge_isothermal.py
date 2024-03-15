@@ -27,8 +27,9 @@ cell: SPPy.BatteryCell = SPPy.BatteryCell.read_from_parametersets(parameter_set_
 # set-up cycler and solver
 dc: SPPy.Discharge = SPPy.Discharge(discharge_current=I, v_min=V_min,
                                     SOC_LIB_min=SOC_min, SOC_LIB=soc_lib_init)
-solver: SPPy.SPPySolver = SPPy.SPPySolver(b_cell=cell, N=5,
-                                          isothermal=True, degradation=False, electrode_SOC_solver='poly')
+solver: SPPy.SPPySolver = SPPy.SPPySolver(b_cell=cell,
+                                          isothermal=True, degradation=False,
+                                          electrode_SOC_solver='poly')
 
 # simulate
 sol: SPPy.SPPySolver = solver.solve(cycler_instance=dc)

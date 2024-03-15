@@ -36,7 +36,7 @@ df = pd.read_csv('example_data.csv')
 cycler = SPPy.CustomCycler(array_t=df['t [s]'].to_numpy(), array_I=df['I [A]'].to_numpy(), SOC_LIB=1.0,
                            V_min=V_min, V_max=V_max)
 cycler.plot()
-solver = SPPy.SPPySolver(b_cell=cell, N=5, isothermal=True, degradation=False)
+solver = SPPy.SPPySolver(b_cell=cell, isothermal=True, degradation=False)
 
 # simulate and plot
 sol = solver.solve(cycler_instance=cycler, verbose=False)

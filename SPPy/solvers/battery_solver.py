@@ -103,17 +103,18 @@ class SPPySolver(BaseSolver):
     the rk4 method.
     """
 
-    def __init__(self, b_cell, isothermal: bool = True, degradation: bool = False, N: int = 5,
+    def __init__(self, b_cell, isothermal: bool = True, degradation: bool = False,
                  electrode_SOC_solver: str = 'eigen', **electrode_SOC_solver_params):
         super().__init__(b_cell=b_cell, isothermal=isothermal, degradation=degradation,
                          electrode_SOC_solver=electrode_SOC_solver)
-        self.N = N
+        self.N: int = 0  # number of roots for eigen-value solver
 
         # initialize result storage lists below.
         self.sol_init = SolutionInitializer()  # initializes the empty lists that will store the simulation results
 
         # initialize electrode surface SOC, temperature solvers, and degradation instances below.
         if self.electrode_SOC_solver == 'eigen':
+            self.N = 5  # TODO: can be changed later to higher number or let user modify it as well
             self.SOC_solver_p = EigenFuncExp(x_init=self.b_cell.elec_p.SOC, n=self.N, electrode_type='p')
             self.SOC_solver_n = EigenFuncExp(x_init=self.b_cell.elec_n.SOC, n=self.N, electrode_type='n')
         elif self.electrode_SOC_solver == 'cn':
