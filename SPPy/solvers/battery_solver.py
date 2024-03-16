@@ -553,7 +553,7 @@ class EnhancedSPSolver(SPPySolver):
                                                                                         L_p=self.b_cell.elec_p.L)
         a_s_p: float = self.b_cell.elec_p.S / self.b_cell.elec_p.L
         a_s_n: float = self.b_cell.elec_n.S / self.b_cell.elec_n.L
-        self.electrolyte_conc_solver: ElectrolyteConcFVMSolver = ElectrolyteConcFVMSolver(fvm_co_ords=self.electrode_soc_solver,
+        self.electrolyte_conc_solver: ElectrolyteConcFVMSolver = ElectrolyteConcFVMSolver(fvm_co_ords=self.electrolyte_co_ords,
                                                                                           transference=self.b_cell.electrolyte.t_c,
                                                                                           epsilon_en=0.385,
                                                                                           epsilon_esep=0.785,
