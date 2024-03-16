@@ -30,6 +30,7 @@ class Electrolyte:
 
     t_c: Optional[float] = None  # cationic transference number
 
+    D_e: Optional[float] = None  # electrolyte diffusivity [mol/m3]
     func_D_e: Optional[Callable[[float, float], float]] = None  # function that outputs the electrolyte diffusivity and
     # takes parameters of c_e [mol/m3] and temp [K].
     func_ln_f: Optional[Callable[[float, float], float]] = None  # function representing the (1+dlnf/dlnc_e) that takes

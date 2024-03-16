@@ -549,13 +549,13 @@ class EnhancedSPSolver(SPPySolver):
         self.electrolyte_co_ords: ElectrolyteFVMCoordinates = ElectrolyteFVMCoordinates(L_n=self.b_cell.elec_n.L,
                                                                                         L_s=self.b_cell.electrolyte.L,
                                                                                         L_p=self.b_cell.elec_p.L)
-        # self.electrolyte_conc_solver: ElectrolyteConcFVMSolver = ElectrolyteConcFVMSolver(fvm_co_ords=electrode_soc_solver,
-        #                                                                                   transference=0.354,
+        # self.electrolyte_conc_solver: ElectrolyteConcFVMSolver = ElectrolyteConcFVMSolver(fvm_co_ords=self.electrode_soc_solver,
+        #                                                                                   transference=self.b_cell.electrolyte.t_c,
         #                                                                                   epsilon_en=0.385,
         #                                                                                   epsilon_esep=0.785,
         #                                                                                   epsilon_ep=0.485,
         #                                                                                   a_sn=5.78e3, a_sp=7.28e3,
-        #                                                                                   D_e=3.5e-10,
+        #                                                                                   D_e=self.b_cell.electrolyte.D_e,
         #                                                                                   brugg=4,
         #                                                                                   c_e_init=1000)
 
