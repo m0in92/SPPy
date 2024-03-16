@@ -1,0 +1,5 @@
+Name,Value,Reference
+SEI Reference Overpotential [V],0.4,Randell et al.
+SEI Molar Weight [kg mol^-1],0.16,Yin et al.
+SEI Density [kg m^-3],1600,Yin et al.
+SEI Conductivity [S m^-1],5.00E-06,Yin et al.

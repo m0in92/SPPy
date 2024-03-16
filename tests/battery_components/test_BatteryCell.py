@@ -11,6 +11,9 @@ class TestBatteryCell(unittest.TestCase):
     test_cell = SPPy.BatteryCell.read_from_parametersets(parameter_set_name='test',
                                                          soc_init_p=SOC_init_p, soc_init_n=SOC_init_n,
                                                          temp_init=T)
+    test_cell_sp = SPPy.BatteryCell.read_from_parametersets(parameter_set_name="test_single_particle_only",
+                                                            soc_init_p=SOC_init_p, soc_init_n=SOC_init_n,
+                                                            temp_init=T)
 
     def test_negative_electrode_parameters(self):
         """
@@ -58,12 +61,22 @@ class TestBatteryCell(unittest.TestCase):
         self.assertEqual(0.4956, self.test_cell.elec_p.SOC)
 
     def test_electrolyte_parameters(self):
-        # Below tests for the electrolyte parameters
         self.assertEqual(self.test_cell.electrolyte.conc, 1000)
         self.assertEqual(self.test_cell.electrolyte.L, 2e-5)
         self.assertEqual(self.test_cell.electrolyte.kappa, 0.2875)
         self.assertEqual(self.test_cell.electrolyte.epsilon_sep, 0.724)
         self.assertEqual(self.test_cell.electrolyte.brugg, 1.5)
+        self.assertEqual(0.38, self.test_cell.electrolyte.t_c)
+        self.assertEqual(3.5e-10, self.test_cell.electrolyte.D_e)
+
+        # tests for the test parameter named "test_single_particle_only"
+        self.assertEqual(1000, self.test_cell.electrolyte.conc)
+        self.assertEqual(2e-5, self.test_cell.electrolyte.L)
+        self.assertEqual(0.2875, self.test_cell.electrolyte.kappa)
+        self.assertEqual(0.724, self.test_cell.electrolyte.epsilon_sep)
+        self.assertEqual(1.5, self.test_cell.electrolyte.brugg)
+        self.assertEqual(None, self.test_cell_sp.electrolyte.t_c)
+        self.assertEqual(None, self.test_cell_sp.electrolyte.D_e)
 
     def test_battery_cell_parameters(self):
         # below tests for the battery cell parameters

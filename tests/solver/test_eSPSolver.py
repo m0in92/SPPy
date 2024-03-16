@@ -3,11 +3,12 @@ import numpy as np
 
 import SPPy
 from SPPy.solvers.battery_solver import EnhancedSPSolver
+from SPPy.warnings_and_exceptions.custom_exceptions import *
 
 
 class TestESPSolver(unittest.TestCase):
     """
-    This class contains the test cases for intializing and performing simulations using solver for single particle model
+    This class contains the test cases for initializing and performing simulations using solver for single particle model
     with electrolyte dynamics
     """
     T = 298.15
@@ -27,3 +28,14 @@ class TestESPSolver(unittest.TestCase):
         self.assertEqual(True, test_solver.bool_isothermal)
         self.assertEqual(False, test_solver.bool_degradation)
         self.assertEqual('poly', test_solver.electrode_SOC_solver)
+
+        self.assertEqual(7.35e-5 / 10, test_solver.electrolyte_co_ords.dx_n)
+        self.assertEqual(2.0e-5 / 10, test_solver.electrolyte_co_ords.dx_s)
+
+    def test_constructor_with_insufficient_parameters(self):
+        b_cell: SPPy.BatteryCell = SPPy.BatteryCell.read_from_parametersets(parameter_set_name="test_single_particle_only",
+                                                                            soc_init_p=self.SOC_init_p,
+                                                                            soc_init_n=self.SOC_init_n,
+                                                                            temp_init=self.T)
+        with self.assertRaises(InsufficientParameters):
+            test_solver = EnhancedSPSolver(b_cell=b_cell, isothermal=True, degradation=False)

@@ -542,6 +542,8 @@ class EnhancedSPSolver(SPPySolver):
     def __init__(self, b_cell: BatteryCell, isothermal: bool, degradation: bool, electrode_soc_solver: str = 'poly'):
         super().__init__(b_cell=b_cell, isothermal=isothermal, degradation=degradation,
                          electrode_SOC_solver=electrode_soc_solver)
+        if b_cell.electrolyte.D_e is None or b_cell.electrolyte.t_c is None:
+            raise InsufficientParameters
 
         # The electrode solver is initialized from the parent class __init__ method.
 
@@ -549,15 +551,17 @@ class EnhancedSPSolver(SPPySolver):
         self.electrolyte_co_ords: ElectrolyteFVMCoordinates = ElectrolyteFVMCoordinates(L_n=self.b_cell.elec_n.L,
                                                                                         L_s=self.b_cell.electrolyte.L,
                                                                                         L_p=self.b_cell.elec_p.L)
-        # self.electrolyte_conc_solver: ElectrolyteConcFVMSolver = ElectrolyteConcFVMSolver(fvm_co_ords=self.electrode_soc_solver,
-        #                                                                                   transference=self.b_cell.electrolyte.t_c,
-        #                                                                                   epsilon_en=0.385,
-        #                                                                                   epsilon_esep=0.785,
-        #                                                                                   epsilon_ep=0.485,
-        #                                                                                   a_sn=5.78e3, a_sp=7.28e3,
-        #                                                                                   D_e=self.b_cell.electrolyte.D_e,
-        #                                                                                   brugg=4,
-        #                                                                                   c_e_init=1000)
+        a_s_p: float = self.b_cell.elec_p.S / self.b_cell.elec_p.L
+        a_s_n: float = self.b_cell.elec_n.S / self.b_cell.elec_n.L
+        self.electrolyte_conc_solver: ElectrolyteConcFVMSolver = ElectrolyteConcFVMSolver(fvm_co_ords=self.electrode_soc_solver,
+                                                                                          transference=self.b_cell.electrolyte.t_c,
+                                                                                          epsilon_en=0.385,
+                                                                                          epsilon_esep=0.785,
+                                                                                          epsilon_ep=0.485,
+                                                                                          a_sn=a_s_n, a_sp=a_s_p,
+                                                                                          D_e=self.b_cell.electrolyte.D_e,
+                                                                                          brugg=self.b_cell.electrolyte.brugg,
+                                                                                          c_e_init=self.b_cell.electrolyte.conc)
 
     def solve_one_iteration(self):
         pass

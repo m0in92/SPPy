@@ -112,7 +112,7 @@ class BatteryCell:
                                           T=temp_init)
         obj_electrolyte = electrolyte.Electrolyte(L=param_set.L_es, conc=param_set.conc_es, kappa=param_set.kappa_es,
                                                   epsilon_sep=param_set.epsilon_es, brugg=param_set.brugg_es,
-                                                  t_c=param_set.t_c)
+                                                  t_c=param_set.t_c, D_e=param_set.value_D_e)
 
         return cls(T_=temp_init, rho=rho, Vol=Vol, C_p=C_p, h=h, A=A, cap=cap, V_max=V_max, V_min=V_min,
                    elec_p=obj_elec_p, elec_n=obj_elec_n, electrolyte=obj_electrolyte)

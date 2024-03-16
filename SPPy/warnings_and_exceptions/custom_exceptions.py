@@ -1,5 +1,9 @@
+"""
+Contains custom exceptions for this repository.
+"""
+
 __author__ = 'Moin Ahmed'
-__copywrite__ = 'Copywrite 2023 by Moin Ahmed. All rights are reserved.'
+__copywrite__ = 'Copyright 2023 by Moin Ahmed. All rights are reserved.'
 __status__ = 'deployed'
 
 
@@ -8,7 +12,6 @@ class InvalidSOCException(Exception):
     def __init__(self, electrode_type):
         self.msg = f"{electrode_type} SOC is beyond 0-1"
         super().__init__(self.msg)
-
 
 
 class InsufficientInputOperatingConditions(Exception):
@@ -28,4 +31,12 @@ class MaxConcReached(Exception):
 
 class PotientialThesholdReached(Exception):
     "Raised with the threshold potential is reached."
+    pass
+
+
+class InsufficientParameters(Exception):
+    """
+    Raised in case of Insufficient parameters. For instance, this is raised when an attempt is made to initiate
+    EnhancedSingleParticle solver in case of missing electrolyte parameters.
+    """
     pass

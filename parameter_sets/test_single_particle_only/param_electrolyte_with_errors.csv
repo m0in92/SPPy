@@ -1,8 +1,6 @@
 Name,Value,Reference
 Conc. [mol m^-3],1000,Guo et al.
-Thickness [m],2.00E-05,Randall et a.
+Thickness [m],stra,Randall et a.
 Ionic Conductivity [S m^-1],0.2875,Wiki
 Volume Fraction,0.724,Randell et al.
 Bruggerman Coefficient,1.50E+00,
-Cation Transference No.,0.38,Han et al.
-Diffusivity,3.5e-10,Han et al.

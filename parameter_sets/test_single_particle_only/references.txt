@@ -1,0 +1,11 @@
+Parameter Value References:
+
+1. Guo, M., Sikha, G., & White, R. E. (2011). Single-Particle Model for a Lithium-Ion Cell: Thermal Behavior.
+Journal of The Electrochemical Society, 158(2), A122. https://doi.org/10.1149/1.3521314/XML
+
+2. Randell et al. "Controls oriented reduced order modeling of solid-electrolyte interphase layer growth". 2012.
+Journal of Power Sources. Vol: 209. pgs: 282-288.
+
+3. Han, S., Tang, Y., & Khaleghi Rahimian, S. (2021). A numerically efficient method of solving the full-order
+pseudo-2-dimensional (P2D) Li-ion cell model. Journal of Power Sources, 490, 229571.
+https://doi.org/10.1016/J.JPOWSOUR.2021.229571
