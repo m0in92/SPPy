@@ -59,6 +59,8 @@ class TestParameterSets(unittest.TestCase):
         self.assertEqual(0.724, params.epsilon_es)
         self.assertEqual(1.5, params.brugg_es)
         self.assertEqual(0.38, params.t_c)
+        self.assertEqual(0.385, params.epsilon_en)
+        self.assertEqual(0.485, params.epsilon_ep)
 
         # Below tests for the battery cell parameters
         self.assertEqual(1626, params.rho)
@@ -68,6 +70,13 @@ class TestParameterSets(unittest.TestCase):
         self.assertEqual(1.65, params.cap)
         self.assertEqual(4.2, params.V_max)
         self.assertEqual(2.5, params.V_min)
+
+        # Below tests the parameters with only the single particle model parameters
+        params_sp = ParameterSets(name='test_single_particle_only')
+        self.assertEqual(None, params_sp.t_c)
+        self.assertEqual(None, params_sp.value_D_e)
+        self.assertEqual(None, params_sp.epsilon_en)
+        self.assertEqual(None, params_sp.epsilon_ep)
 
     def test_constructor_with_invalid_name(self):
         with self.assertRaises(ValueError) as context:

@@ -233,7 +233,7 @@ class SPPySolver(BaseSolver):
 
     @timer
     def solve(self, cycler_instance: BaseCycler, sol_name: str = None, save_csv_dir: str = None, verbose: bool = False,
-              t_increment: float = 0.1, termination_criteria: float = 'V'):
+              t_increment: float = 0.1, termination_criteria: str = 'V'):
         # check for function input parameter types below.
         if not isinstance(cycler_instance, BaseCycler):
             raise TypeError("cycler needs to be a Cycler object.")
@@ -261,9 +261,9 @@ class SPPySolver(BaseSolver):
                 step_completed = False
                 while not step_completed:
                     if isinstance(cycler, CustomDischarge):
-                        I = cycler.get_current(step, t_prev)
+                        I: float = cycler.get_current(step, t_prev)
                     else:
-                        I = cycler.get_current(step, t_prev)
+                        I: float = cycler.get_current(step, t_prev)
                     t_curr = t_prev + t_increment
                     dt = t_increment
 
@@ -274,7 +274,7 @@ class SPPySolver(BaseSolver):
                     # All simulations parameters and battery cell attributes updates are done the in the code block
                     # below.
                     try:
-                        V = self.solve_iteration_one_step(t_prev=t_prev, dt=dt, I=I)
+                        V: float = self.solve_iteration_one_step(t_prev=t_prev, dt=dt, I=I)
                     except InvalidSOCException as e:
                         print(e)
                         break
@@ -555,42 +555,80 @@ class EnhancedSPSolver(SPPySolver):
         a_s_n: float = self.b_cell.elec_n.S / self.b_cell.elec_n.L
         self.electrolyte_conc_solver: ElectrolyteConcFVMSolver = ElectrolyteConcFVMSolver(fvm_co_ords=self.electrolyte_co_ords,
                                                                                           transference=self.b_cell.electrolyte.t_c,
-                                                                                          epsilon_en=0.385,
-                                                                                          epsilon_esep=0.785,
-                                                                                          epsilon_ep=0.485,
+                                                                                          epsilon_en=self.b_cell.electrolyte.epsilon_n,
+                                                                                          epsilon_esep=self.b_cell.electrolyte.epsilon_sep,
+                                                                                          epsilon_ep=self.b_cell.electrolyte.epsilon_p,
                                                                                           a_sn=a_s_n, a_sp=a_s_p,
                                                                                           D_e=self.b_cell.electrolyte.D_e,
                                                                                           brugg=self.b_cell.electrolyte.brugg,
                                                                                           c_e_init=self.b_cell.electrolyte.conc)
+        # the instance of the class containing the battery model is initialized below.
+        self.b_model = SPM()  # initializes the single particle model instance.
 
-    def solve_one_iteration(self):
-        pass
+    def solve_one_iteration(self, t_prev: float, dt: float, i_app: float) -> float:
+        # Solve for the electrode SOC below
+        self.b_cell.elec_p.SOC = self.SOC_solver_p(dt=dt, t_prev=t_prev, i_app=i_app,
+                                                   R=self.b_cell.elec_p.R,
+                                                   S=self.b_cell.elec_p.S,
+                                                   D_s=self.b_cell.elec_p.D,
+                                                   c_smax=self.b_cell.elec_p.max_conc)  # calc p surf SOC
+        self.b_cell.elec_n.SOC = self.SOC_solver_n(dt=dt, t_prev=t_prev, i_app=i_app,
+                                                   R=self.b_cell.elec_n.R,
+                                                   S=self.b_cell.elec_n.S,
+                                                   D_s=self.b_cell.elec_n.D,
+                                                   c_smax=self.b_cell.elec_n.max_conc)  # calc n surf SOC
 
-    def solver(self, cycling_step: BaseCycler, dt: float = 0.1) -> npt.ArrayLike:
+        # Solve for the electrolyte conc. below.
+        # First, the array for the electolyte is defined below. Note if contains three distinct sub-domains, the domain
+        # for the negative electrode, seperator, and the positive electrode.
+        j_p = SPMe.molar_flux_electrode(I=i_app, S=self.b_cell.elec_p.S, electrode_type='p') * np.ones(
+            len(self.electrolyte_co_ords.array_x_p))  # [mol/m2/s]
+        j_sep = np.zeros(len(self.electrolyte_co_ords.array_x_s))  # [mol/m2/s]
+        j_n = SPMe.molar_flux_electrode(I=i_app, S=self.b_cell.elec_n.S, electrode_type='n') * np.ones(
+            len(self.electrolyte_co_ords.array_x_n))  # [mol/m2/s]
+        j = np.append(np.append(j_n, j_sep), j_p)  # [mol/m2/s]
+
+        self.electrolyte_conc_solver.solve_ce(j=j, dt=dt, solver_method='TDMA')
+
+        # Finally the termination voltage is calculated and returned
+        return self.b_model(OCP_p=self.b_cell.elec_p.OCP, OCP_n=self.b_cell.elec_n.OCP, R_cell=self.b_cell.R_cell,
+                            k_p=self.b_cell.elec_p.k, S_p=self.b_cell.elec_p.S, c_smax_p=self.b_cell.elec_p.max_conc,
+                            SOC_p=self.b_cell.elec_p.SOC,
+                            k_n=self.b_cell.elec_n.k, S_n=self.b_cell.elec_n.S, c_smax_n=self.b_cell.elec_n.max_conc,
+                            SOC_n=self.b_cell.elec_n.SOC,
+                            c_e=self.b_cell.electrolyte.conc, T=self.b_cell.T, I_p_i=i_app, I_n_i=i_app)
+
+    # @timer
+    def solve(self, cycler: BaseCycler, dt: float = 0.1, termination_criteria: str = "V") -> npt.ArrayLike:
         step_completed: bool = False
 
         t_prev = 0
-        for cycle_no in cycling_step.num_cycles:
-            for step in cycling_step.cycle_steps:
+        for cycle_no in tqdm(range(cycler.num_cycles)):
+            for step in cycler.cycle_steps:
                 while not step_completed:
                     t_curr = t_prev + dt
-                    i_app = cycling_step.get_current(step_name=step, t=t_curr)
+                    i_app = cycler.get_current(step_name=step, t=t_curr)
 
-                    # Calculate the electrode flux below
-                    j_p = SPMe.molar_flux_electrode(I=i_app, S=self.b_cell.elec_p.S, electrode_type='p')
-                    j_n = SPMe.molar_flux_electrode(I=i_app, S=self.b_cell.elec_n.S, electrode_type='n')
+                    # break condition for rest time
+                    if (step == "rest") and (t_curr > cycler.rest_time):
+                        step_completed = True
 
-                    # Solve for electrode SOC below
-                    self.b_cell.elec_p.SOC = self.SOC_solver_p(dt=dt, t_prev=t_prev, i_app=i_app,
-                                                               R=self.b_cell.elec_p.R,
-                                                               S=self.b_cell.elec_p.S,
-                                                               D_s=self.b_cell.elec_p.D,
-                                                               c_smax=self.b_cell.elec_p.max_conc)  # calc p surf SOC
-                    self.b_cell.elec_n.SOC = self.SOC_solver_n(dt=dt, t_prev=t_prev, i_app=i_app,
-                                                               R=self.b_cell.elec_n.R,
-                                                               S=self.b_cell.elec_n.S,
-                                                               D_s=self.b_cell.elec_n.D,
-                                                               c_smax=self.b_cell.elec_n.max_conc)  # calc n surf SOC
+                    V: float = self.solve_one_iteration(t_prev=t_prev, dt=dt, i_app=i_app)
 
-                    # Solve for the electrolyte conc. below
-                    # electrolyte_co_ord = ElectrolyteFVMCoordinates(D_e=self.b_cell.electrolyte.D)
+                    # break condition for charge and discharge if stop criteria is V-based
+                    if termination_criteria == 'V':
+                        if (step == "charge") and (V > cycler.v_max):
+                            step_completed = True
+                        if (step == "discharge") and (V < cycler.v_min):
+                            step_completed = True
+
+                    print(V)
+                    print(self.electrolyte_conc_solver.array_c_e)
+
+    def _custom_cycler_solve(self, custom_cycler_instance: CustomCycler, sol_name: str = None, save_csv_dir: str = None,
+                             verbose: bool = False, t_increment: float = 0.1, termination_criteria: str = 'V'):
+        pass
+
+    def _cycler_solve(self, cycler: BaseCycler, sol_name: str = None, save_csv_dir: str = None, verbose: bool = False,
+                      t_increment: float = 0.1, termination_criteria: float = 'V'):
+        pass

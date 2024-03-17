@@ -68,6 +68,8 @@ class TestBatteryCell(unittest.TestCase):
         self.assertEqual(self.test_cell.electrolyte.brugg, 1.5)
         self.assertEqual(0.38, self.test_cell.electrolyte.t_c)
         self.assertEqual(3.5e-10, self.test_cell.electrolyte.D_e)
+        self.assertEqual(0.385, self.test_cell.electrolyte.epsilon_n)
+        self.assertEqual(0.485, self.test_cell.electrolyte.epsilon_p)
 
         # tests for the test parameter named "test_single_particle_only"
         self.assertEqual(1000, self.test_cell.electrolyte.conc)
@@ -77,6 +79,8 @@ class TestBatteryCell(unittest.TestCase):
         self.assertEqual(1.5, self.test_cell.electrolyte.brugg)
         self.assertEqual(None, self.test_cell_sp.electrolyte.t_c)
         self.assertEqual(None, self.test_cell_sp.electrolyte.D_e)
+        self.assertEqual(None, self.test_cell_sp.electrolyte.epsilon_n)
+        self.assertEqual(None, self.test_cell_sp.electrolyte.epsilon_p)
 
     def test_battery_cell_parameters(self):
         # below tests for the battery cell parameters

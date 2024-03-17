@@ -84,16 +84,34 @@ class ParameterSets:
         self.kappa_es: float = df['Ionic Conductivity [S m^-1]']
         self.epsilon_es: float = df['Volume Fraction']
         self.brugg_es: float = df['Bruggerman Coefficient']
+
         try:
-            self.t_c: float = df['Cation Transference No.']  # This parameter is NOT used in the single particle model
-        except:
-            self.t_c = None
-            print("No value found for t_c. Can only perform single particle model.")
-        try:
-            self.value_D_e: float = df['Diffusivity']  # This parameter is NOT used in the single particle model
+            self.t_c: Optional[float] = df['Cation Transference No.']  # This parameter is NOT used in the single
+            # particle model
         except KeyError as e:
-            self.value_D_e = None
+            self.t_c: Optional[float] = None
+            print("No value found for t_c. Can only perform single particle model.")
+
+        try:
+            self.value_D_e: Optional[float] = df['Diffusivity']  # This parameter is NOT used in the single
+            # particle model
+        except KeyError as e:
+            self.value_D_e: Optional[float] = None
             print("No value found for D_e [m2/s]. Can only perform single particle model.")
+
+        try:
+            self.epsilon_en: Optional[float] = df['Volume Fraction N']  # This parameter is NOT used in the
+            # single particle model
+        except KeyError as e:
+            self.epsilon_en: Optional[float] = None
+            print("No value found for kappa_en. Can only perform single particle model.")
+
+        try:
+            self.epsilon_ep: Optional[float] = df['Volume Fraction P']  # This parameter is NOT used in the
+            # single particle model
+        except KeyError as e:
+            self.epsilon_ep: Optional[float] = None
+            print("No value found for kappa_pn. Can only perform single particle model.")
 
         # Below extracts the battery cell parameters
         df = ParameterSets._parse_csv(file_path=self.BATTERY_CELL_DIR)

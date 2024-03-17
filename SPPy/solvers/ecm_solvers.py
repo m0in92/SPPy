@@ -1,4 +1,4 @@
-__all__ = ['BaseSolver', 'DTSolver', 'ESCDTSolver']
+__all__ = ['BaseSolver', 'DTSolver', 'ESCDTSolver', 'KFDTSolver']
 
 __author__ = 'Moin Ahmed'
 __copywrite__ = 'Copywrite 2023 by Moin Ahmed. All rights are reserved.'
