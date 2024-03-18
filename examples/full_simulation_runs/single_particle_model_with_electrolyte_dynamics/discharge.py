@@ -29,7 +29,7 @@ dc: SPPy.Discharge = SPPy.Discharge(discharge_current=I, v_min=V_min,
                                     SOC_LIB_min=SOC_min, SOC_LIB=soc_lib_init)
 solver: SPPy.EnhancedSPSolver = SPPy.EnhancedSPSolver(b_cell=cell, electrode_soc_solver="poly",
                                                       isothermal=True, degradation=False)
-sol: SPPy.Solution = solver.solve(cycler=dc, verbose=True)
+sol: SPPy.Solution = solver.solve(cycler=dc)
 
 sol.comprehensive_isothermal_plot()
 # print(sol.electrolyte_conc)

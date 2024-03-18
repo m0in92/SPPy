@@ -15,9 +15,10 @@ This work is licensed under a
 ## Description
 
 <p>
-This repository contains the code for running equivalent circuit model (ECM) and single particle model (SPM) with thermal and degradation models on 
-Lithium-ion Batteries (LIB). Moreover, the repository contains the tools for visualization and 
-parameter estimations (using genetic algorithm).
+This repository contains the code for running equivalent circuit model (ECM), single particle model (SPM), 
+single particle model with electrolyte dynamics (eSPM) with thermal and degradation models on Lithium-ion Batteries (LIB). Moreover, the repository contains the tools for 
+visualization, model parameter estimations (e.g., using genetic algorithm), and Kalman filters (using Sigma Point Kalman 
+Filter).
 </p>
 <p>
 All the code is written in Python programming language, and it is written in a modular fashion. The code is
@@ -27,11 +28,12 @@ The [documentation](https://libsim.readthedocs.io/en/latest/) is available and c
 
 ## Features
 
-- <b>Single Particle Model (SPM) and Equivalent circuit model with thermal (lumped thermal) and degradation (reduced-order SEI) models
+- <b>Single Particle Model with electrolyte dynamics, Single Particle Model (SPM) and Equivalent circuit model with 
+ thermal (lumped thermal) and degradation (reduced-order SEI) models
 ![](Assests/SPPy.png)
 - Parameter estimation using genetic algorithm
 ![](Assests/GA.png)
-- Visualization tools</b>
+- Visualization tools
 - Sigma Point Kalman Filter (for analyzing application' battery management system (BMS)) </b>
 
 ## Dependencies
@@ -41,6 +43,7 @@ The [documentation](https://libsim.readthedocs.io/en/latest/) is available and c
 - matplotlib
 - scipy
 - tqdm
+- pytests
 
 ## Installation
 
@@ -57,12 +60,17 @@ installation procedures are listed below.
    - tqdm
 2. Clone the repository, for example using git clone git@github.com:m0in92/EV_sim.git using Git Bash.
 
-### Python setup
+### Python setup and tests
 1. Download or clone this repository 
 2. Ensure you are on the repository directory (where the setup.py resides) and run python setup.py sdist on the command line.
 3. Step 2 will create a dist directory in the repository. Extract the contents tar.gz file in this directory. Move to 
 the directory where the extracted files reside and run pip install EV_sim on the command line. This will install EV_sim
 on your system (along with the external dependencies) and EV_sim can be imported as any other Python package.
+4. The unittests on the repository can be performed by running the code below on the command line at the root project
+directory.
+    ```angular2html
+    pytests tests
+    ```
 
 ## Usage
 
@@ -85,6 +93,17 @@ Example usage are included in the SPPy/examples folder.
 
 
 ## Solution Scheme
+
+### Single Particle Model with Electrolyte Dynamics:
+#### _Diffusion Equation Formulation:_
+- Crank-Nicolson Method
+- Eigen Function Expansion [1]
+- Two Term Polynomial [2]
+#### _Electrolyte Concentration Formulation:_
+- Finite Volume Method (FVM)
+#### _Numerical Schemes:_
+- ODE solvers (rk4)
+
 ### Single Particle Model:
 #### _Diffusion Equation Formulation:_
 - Crank-Nicolson Method
@@ -92,10 +111,12 @@ Example usage are included in the SPPy/examples folder.
 - Two Term Polynomial [2]
 #### _Numerical Schemes:_
 - ODE solvers (rk4)
-### Equivalent Circuit Model
-#### _Solution Schemes:_
+
+### Equivalent Circuit Model (Thevenin and Enhanced Self-Correcting (ESC))
+##### _Solution Schemes:_
 - Discrete Time Solver
-- Discrete Time Solver with Sigma Point Kalman Filter (under construction)
+- Discrete Time Solver with Sigma Point Kalman Filter
+
 ### Thermal Models:
 - Lumped Thermal Model
 #### _Numerical Schemes:_
@@ -105,50 +126,13 @@ Example usage are included in the SPPy/examples folder.
 #### _Numerical Schemes:_
 - ODE solvers (Euler)
 
-### Sample Usage
-The simulation consists of creating a (1) battery cell, (2) cycler, and (3) solver object. For the battery cell object, the parameters can be read from the parameter sets.
+### Sample Outputs
 
-The following gives an example of running a single particle model under isothermal conditions using the 
-parameter_set named "test". <br>
-<code>
-import SPPy
+#### Single Particle Model with Electrolyte Dynamics
+![image](Assests/eSP.png)
 
-#### Define operating parameters
-I = 1.656 </br>
-T = 298.15 </br>
-V_min = 3 </br>
-SOC_min = 0.1 </br>
-SOC_LIB = 0.9 </br>
-
-#### Define modelling parameters </br>
-SOC_init_p, SOC_init_n = 0.4956, 0.7568  # conditions in the literature source. Guo et al 
-
-#### Setup battery components </br>
-cell = SPPy.BatteryCell.read_from_parameter_set(parameter_set_name='test', SOC_init_p=SOC_init_p, SOC_init_n=SOC_init_n, temp_init=T)
-
-#### set-up cycler and solver </br>
-dc = SPPy.Discharge(discharge_current=I, V_min=V_min, SOC_LIB_min=SOC_min, SOC_LIB=SOC_LIB) </br>
-solver = SPPy.SPPySolver(b_cell=cell, N=5, isothermal=True, degradation=False, electrode_SOC_solver='poly')
-</code></br>
-
-The simulation will start once the <code>solve</code> method of the SPPySolver instance is called. This method requires the cycler instance.
-
-<code>
-# simulate </br>
-sol = solver.solve(cycler_instance=dc)
-</code>
-
-The <code>sol</code> object stores various simulation results, including time, cell terminal voltage, electrode's lithium surface concentrations, etc.
-Furthermore, it has plotting methods, for eg.,
-
-<code>
-# Plot </br>
-sol.comprehensive_plot()
-</code>
-
-Which outputs a matplotlib plot
-
-![image](Assests/simulation_example_discharge_isothermal_noSEI.png)
+#### Single Particle Model - non isothermal
+![image](Assests/SP_non_isothermal.png)
 
 ### References:
 1. Guo, M., Sikha, G., & White, R. E. (2011). Single-Particle Model for a Lithium-Ion Cell: Thermal Behavior. Journal of The Electrochemical Society, 158(2), A122. https://doi.org/10.1149/1.3521314/XML
