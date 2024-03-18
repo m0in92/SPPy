@@ -32,6 +32,12 @@ class TestESPSolver(unittest.TestCase):
         self.assertEqual(7.35e-5 / 10, test_solver.electrolyte_co_ords.dx_n)
         self.assertEqual(2.0e-5 / 10, test_solver.electrolyte_co_ords.dx_s)
 
+        self.assertEqual([], test_solver.sol_init.lst_V)
+
+        c_init: np.ndarray = 1000 * np.ones(30)
+        c_init = c_init[np.newaxis, :]
+        self.assertTrue(np.array_equal(c_init, test_solver.sol_init.electrolyte_conc[1:]))
+
     def test_constructor_with_insufficient_parameters(self):
         b_cell: SPPy.BatteryCell = SPPy.BatteryCell.read_from_parametersets(parameter_set_name="test_single_particle_only",
                                                                             soc_init_p=self.SOC_init_p,

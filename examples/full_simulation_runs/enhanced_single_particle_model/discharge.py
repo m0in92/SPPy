@@ -12,7 +12,7 @@ import SPPy
 # Operating parameters
 I: float = 1.656
 temp: float = 298.15
-V_min: float = 3
+V_min: float = 3.0
 SOC_min: float = 0.1
 soc_lib_init: float = 1.0
 
@@ -27,7 +27,10 @@ cell: SPPy.BatteryCell = SPPy.BatteryCell.read_from_parametersets(parameter_set_
 # set-up cycler and solver
 dc: SPPy.Discharge = SPPy.Discharge(discharge_current=I, v_min=V_min,
                                     SOC_LIB_min=SOC_min, SOC_LIB=soc_lib_init)
-solver: SPPy.EnhancedSPSolver = SPPy.EnhancedSPSolver(b_cell=cell,
+solver: SPPy.EnhancedSPSolver = SPPy.EnhancedSPSolver(b_cell=cell, electrode_soc_solver="poly",
                                                       isothermal=True, degradation=False)
-solver.solve(cycler=dc)
+sol: SPPy.Solution = solver.solve(cycler=dc, verbose=True)
+
+sol.comprehensive_isothermal_plot()
+print(sol.electrolyte_conc)
 

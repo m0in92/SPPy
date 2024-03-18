@@ -29,6 +29,9 @@ class TestSolutionInitializer(unittest.TestCase):
         self.assertEqual([], sol.lst_j_i)
         self.assertEqual([], sol.lst_j_s)
 
+        # spatial electrolyte related quantities
+        self.assertEqual(None, sol.electrolyte_conc)
+
 
 class TestSolution(unittest.TestCase):
     def test_classmethod_read_from_arrays(self):

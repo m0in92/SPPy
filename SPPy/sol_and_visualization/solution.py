@@ -169,6 +169,9 @@ class SolutionInitializer:
     lst_j_i: list = field(default_factory=lambda: [])  # total intercalation flux at the negative electrode [mol/m2/s]
     lst_j_s: list = field(default_factory=lambda: [])  # side reaction molar flux at the negative electrode [mol/m2/s]
 
+    # attributes below are related to the spatial electrolyte quantities
+    electrolyte_conc: Optional[np.ndarray] = None
+
     def update(self, cycle_num: float = 0, cycle_step: str = 'rest', t: float = 0, I: float = 0, V: float = 0,
                OCV: float = 0, x_surf_p: float = 0, x_surf_n: float = 0,
                cap: float = 0, cap_charge: float = 0, cap_discharge: float = 0, SOC_LIB: float = 0,
@@ -227,6 +230,11 @@ class Solution:
         self.js = np.array(base_solution_instance.lst_j_s)
 
         self.name = name  # name of the solution
+
+        self.electrolyte_conc_enabled: bool = False
+        if base_solution_instance.electrolyte_conc is not None:
+            self.electrolyte_conc_enabled = True
+            self.electrolyte_conc: np.ndarray = base_solution_instance.electrolyte_conc
 
         if save_csv_dir is not None:
             self.save_csv_func(save_csv_dir)
@@ -412,9 +420,15 @@ class Solution:
     def comprehensive_isothermal_plot(self, save_dir: str = None):
         self.set_matplotlib_settings()
 
-        num_rows = 2
-        num_cols = 2
-        fig = plt.figure(figsize=(6.4 * 2, 4.8 * 2), dpi=300)
+        num_rows: int = 2
+        num_cols: int = 2
+        if not self.electrolyte_conc_enabled:
+            fig = plt.figure(figsize=(6.4 * 2, 4.8 * 2), dpi=300)
+        else:
+            fig = plt.figure(figsize=(6.4 * 2, 4.8 * 3), dpi=300)
+
+        if self.electrolyte_conc_enabled:
+            num_rows = 3
 
         ax1 = fig.add_subplot(num_rows, num_cols, 1)
         ax1.plot(self.t, self.V)
@@ -451,6 +465,14 @@ class Solution:
         ax4.set_xlabel('Time [s]')
         ax4.set_ylabel('SOC')
         ax4.set_title('Negative Electrode SOC')
+
+        if self.electrolyte_conc_enabled:
+            ax5 = fig.add_subplot(num_rows, num_cols, 5)
+            ax5.plot(self.electrolyte_conc[0, :], self.electrolyte_conc[1, :])
+            ax5.plot(self.electrolyte_conc[0, :], self.electrolyte_conc[2, :])
+            ax5.set_xlabel('thickness [m]')
+            ax5.set_ylabel('$c_{e} [mol/{m^3}]$')
+            ax5.ticklabel_format(axis="x", scilimits=[-1, 1])
 
         plt.tight_layout()
 

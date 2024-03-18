@@ -7,7 +7,7 @@ __copyright__ = 'Copyright 2023 by Moin Ahmed. All rights are reserved.'
 __status__ = 'deployed'
 
 import time
-from typing import Union
+from typing import Union, Optional
 
 import numpy as np
 import numpy.typing as npt
@@ -562,6 +562,15 @@ class EnhancedSPSolver(SPPySolver):
                                                                                           D_e=self.b_cell.electrolyte.D_e,
                                                                                           brugg=self.b_cell.electrolyte.brugg,
                                                                                           c_e_init=self.b_cell.electrolyte.conc)
+
+        self.sol_init.electrolyte_conc = self.electrolyte_co_ords.array_x  # Add the spatial electrolyte conc.
+        # across the battery length.
+        self.sol_init.electrolyte_conc = self.sol_init.electrolyte_conc[np.newaxis, :]
+        electrolyte_conc_: np.ndarray = self.electrolyte_conc_solver.array_c_e[np.newaxis, :]
+        self.sol_init.electrolyte_conc = np.append(self.sol_init.electrolyte_conc,
+                                                   electrolyte_conc_,
+                                                   axis=0)
+
         # the instance of the class containing the battery model is initialized below.
         self.b_model = SPMe()  # initializes the single particle model instance.
 
@@ -578,8 +587,8 @@ class EnhancedSPSolver(SPPySolver):
                                                    D_s=self.b_cell.elec_n.D,
                                                    c_smax=self.b_cell.elec_n.max_conc)  # calc n surf SOC
 
-        # Solve for the electrolyte conc. below.
-        # First, the array for the electolyte is defined below. Note if contains three distinct sub-domains, the domain
+        # Solve for the electrolyte concentration below.
+        # First, the array for the electrolyte is defined below. Note if contains three distinct subdomains, the domain
         # for the negative electrode, seperator, and the positive electrode.
         j_p = SPMe.molar_flux_electrode(I=i_app, S=self.b_cell.elec_p.S, electrode_type='p') * np.ones(
             len(self.electrolyte_co_ords.array_x_p))  # [mol/m2/s]
@@ -591,6 +600,8 @@ class EnhancedSPSolver(SPPySolver):
         self.electrolyte_conc_solver.solve_ce(j=j, dt=dt, solver_method='TDMA')
 
         # Finally the termination voltage is calculated and returned
+        # Note that the concentration of the electrolyte for the electrode's exchange current density is assumed
+        # to be the initial electrolyte concentration.
         L_cell: float = self.b_cell.elec_n.L + self.b_cell.electrolyte.L + self.b_cell.elec_p.L
         return self.b_model(ocp_p=self.b_cell.elec_p.OCP, ocp_n=self.b_cell.elec_n.OCP,
                             R_cell=self.b_cell.R_cell,
@@ -598,7 +609,7 @@ class EnhancedSPSolver(SPPySolver):
                             soc_surf_p=self.b_cell.elec_p.SOC,
                             k_n=self.b_cell.elec_n.k, S_n=self.b_cell.elec_n.S, c_smax_n=self.b_cell.elec_n.max_conc,
                             soc_surf_n=self.b_cell.elec_n.SOC,
-                            c_e=1000,
+                            c_e=self.b_cell.electrolyte.conc,
                             I_p_i=i_app, I_n_i=i_app, temp=temp,
                             l_p=self.b_cell.elec_p.L, l_sep=self.b_cell.electrolyte.L, l_n=self.b_cell.elec_n.L,
                             kappa_eff_avg=self.b_cell.electrolyte.kappa_sep_eff, k_f_avg=1,
@@ -607,11 +618,18 @@ class EnhancedSPSolver(SPPySolver):
                             c_e_p=self.electrolyte_conc_solver.extrapolate_conc(L_value=L_cell))
 
     # @timer
-    def solve(self, cycler: BaseCycler, dt: float = 0.1, termination_criteria: str = "V") -> npt.ArrayLike:
-        step_completed: bool = False
+    def solve(self, cycler: BaseCycler, sol_name: Optional[str] = None, verbose: bool = False,
+              dt: float = 0.1, termination_criteria: str = "V") -> Solution:
 
-        t_prev = 0
         for cycle_no in tqdm(range(cycler.num_cycles)):
+
+            cap: float = 0
+            cap_charge: float = 0
+            cap_discharge: float = 0
+
+            step_completed: bool = False
+            t_prev: float = 0.0
+
             for step in cycler.cycle_steps:
                 while not step_completed:
                     t_curr = t_prev + dt
@@ -624,6 +642,16 @@ class EnhancedSPSolver(SPPySolver):
                     V: float = self.solve_one_iteration(t_prev=t_prev, dt=dt, i_app=i_app,
                                                         temp=self.b_cell.T)
 
+                    # Calc charge capacity, discharge capacity, and overall LIB capacity
+                    cap = self.calc_SOC_cap(cap_prev=cap, Q=self.b_cell.cap, I=i_app, dt=dt)
+                    delta_cap = self.delta_SOC_cap(Q=self.b_cell.cap, I=i_app, dt=dt)
+                    if step == "charge":
+                        cap_charge += self.delta_cap(I=i_app, dt=dt)
+                        cycler.SOC_LIB += delta_cap
+                    elif step == "discharge":
+                        cap_discharge += self.delta_cap(I=i_app, dt=dt)
+                        cycler.SOC_LIB -= delta_cap
+
                     # break condition for charge and discharge if stop criteria is V-based
                     if termination_criteria == 'V':
                         if (step == "charge") and (V > cycler.v_max):
@@ -631,8 +659,37 @@ class EnhancedSPSolver(SPPySolver):
                         if (step == "discharge") and (V < cycler.v_min):
                             step_completed = True
 
-                    print(V)
-                    print(self.electrolyte_conc_solver.array_c_e)
+                    # update time
+                    t_prev = t_curr
+                    cycler.time_elapsed += dt
+
+                    # Update results lists
+                    self.sol_init.update(cycle_num=cycle_no,
+                                         cycle_step=step,
+                                         t=cycler.time_elapsed,
+                                         I=i_app,
+                                         V=V,
+                                         OCV=self.b_cell.elec_p.OCP - self.b_cell.elec_n.OCP,
+                                         x_surf_p=self.b_cell.elec_p.SOC,
+                                         x_surf_n=self.b_cell.elec_n.SOC,
+                                         cap=cap,
+                                         cap_charge=cap_charge,
+                                         cap_discharge=cap_discharge,
+                                         SOC_LIB=cycler.SOC_LIB,
+                                         battery_cap=self.b_cell.cap,
+                                         temp=self.b_cell.T,
+                                         R_cell=self.b_cell.R_cell)
+
+                    if verbose:
+                        print("time elapsed [s]: ", cycler.time_elapsed, ", cycle_no: ", cycle_no,
+                              'step: ', step, "current [A]", i_app, ", terminal voltage [V]: ", V, ", SOC_LIB: ",
+                              cycler.SOC_LIB, "SOC_p: ", self.b_cell.elec_p.SOC, "SOC_n: ", self.b_cell.elec_n.SOC,
+                              "cap: ", cap)
+        electrolyte_conc: np.ndarray = self.electrolyte_conc_solver.array_c_e[np.newaxis, :]
+        self.sol_init.electrolyte_conc = np.append(self.sol_init.electrolyte_conc,
+                                                   electrolyte_conc,
+                                                   axis=0)
+        return Solution(base_solution_instance=self.sol_init, name=sol_name)
 
     def _custom_cycler_solve(self, custom_cycler_instance: CustomCycler, sol_name: str = None, save_csv_dir: str = None,
                              verbose: bool = False, t_increment: float = 0.1, termination_criteria: str = 'V'):
