@@ -57,43 +57,53 @@ class TestESP(unittest.TestCase):
         self.assertEqual(2.1936265167099342e-05, battery.SPMe.molar_flux_electrode(I=I, S=S, electrode_type='n'))
         self.assertEqual(-2.1936265167099342e-05, battery.SPMe.molar_flux_electrode(I=I, S=S, electrode_type='p'))
 
+    def test_method_a_s(self):
+        epsilon: float = 0.5
+        particle_radius: float = 10e-6
+        self.assertEqual(1.5e5, battery.SPMe.a_s(epsilon=epsilon, R=particle_radius))
+
     def test_i_0(self):
-        k = 1.764e-11
-        c_s_max = 31833
-        c_e = 1000
-        soc_surf = 0.5
+        k: float = 1.764e-11
+        c_s_max: float = 31833
+        c_e: float = 1000
+        soc_surf: float = 0.5
         self.assertEqual(8.878634015491551e-06, battery.SPMe.i_0(k=k, c_s_max=c_s_max, c_e=c_e, soc_surf=soc_surf))
 
-    def test_eta(self):
-        j = 2.1936265167099342e-05
-        i_0_ = 8.878634015491551e-06
-        temp = 298.15
-        self.assertAlmostEqual(0.05335777844201581, battery.SPMe.eta(temp=temp, j=j, i_0_=i_0_))
+    def test_m(self):
+        i_app: float = 1.5
+        S: float = 0.5
+        k: float = 1.764e-11
+        c_s_max: float = 31833
+        c_e: float = 1000
+        soc_surf: float = 0.5
+        self.assertEqual(3.501920615656027, battery.SPMe.m(i_app=i_app, k=k, S=S, c_s_max=c_s_max, c_e=c_e,
+                                                           soc_surf=soc_surf))
 
     def test_calc_terminal_voltage(self):
-        ocp_p = 4.2
-        ocp_n = 0.15
-        eta_p = 0.05
-        eta_n = 0.05
-        l_p = 7.35E-05
-        l_sep = 2.00E-05
-        l_n = 7.00E-05
-        battery_cross_area = 0.0596
-        kappa_eff_avg = 0.2
-        t_c = 0.38
-        R_p = 0.0
-        R_n = 0.0
-        S_p = 1.1167
-        S_n = 0.7824
-        c_e_n = 1100
-        c_e_p = 900
-        i_app = -1.656
+        ocp_p: float = 4.2
+        ocp_n: float = 0.15
+        m_p: float = 3.0
+        m_n: float = 1.0
 
-        print(battery.SPMe.calc_terminal_voltage(ocp_p=ocp_p, ocp_n=ocp_n, eta_p=eta_p, eta_n=eta_n, l_p=l_p,
-                                                 l_sep=l_sep, l_n=l_n, battery_cross_area=battery_cross_area,
-                                                 kappa_eff_avg=kappa_eff_avg, t_c=t_c, R_p=R_p, R_n=R_n,
-                                                 S_p=S_p, S_n=S_n, c_e_n=c_e_n, c_e_p=c_e_p, i_app=i_app, k_f_avg=5,
-                                                 temp=298.15))
+        l_p: float = 7.35E-05
+        l_sep: float = 2.00E-05
+        l_n: float = 7.00E-05
+        kappa_eff_avg: float = 0.2
+        k_f_avg: float = 1
+        t_c: float = 0.38
+        c_e_n: float = 1100
+        c_e_p: float = 900
+
+        i_app: float = -1.656
+        R_cell: float = 0.5
+        temp: float = 298.15
+
+        self.assertEqual(3.3009664058697896,
+                         battery.SPMe.calc_terminal_voltage(ocp_p=ocp_p, ocp_n=ocp_n, m_p=m_p, m_n=m_n,
+                                                            l_p=l_p, l_sep=l_sep, l_n=l_n,
+                                                            kappa_eff_avg=kappa_eff_avg, k_f_avg=k_f_avg, t_c=t_c,
+                                                            c_e_n=c_e_n, c_e_p=c_e_p, R_cell=R_cell,
+                                                            i_app=i_app, temp=temp))
 
 
 class TestP2DM(unittest.TestCase):
