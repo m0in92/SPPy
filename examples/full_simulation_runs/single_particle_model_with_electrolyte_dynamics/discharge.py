@@ -32,5 +32,5 @@ solver: SPPy.EnhancedSPSolver = SPPy.EnhancedSPSolver(b_cell=cell, electrode_soc
 sol: SPPy.Solution = solver.solve(cycler=dc, verbose=True)
 
 sol.comprehensive_isothermal_plot()
-print(sol.electrolyte_conc)
+# print(sol.electrolyte_conc)
 
