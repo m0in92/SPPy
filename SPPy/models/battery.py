@@ -1,5 +1,9 @@
+"""
+Contains classes with the equations for the relevant continuum-scale battery models.
+"""
+
 __author__ = 'Moin Ahmed'
-__copywrite__ = 'Copywrite 2023 by Moin Ahmed. All rights are reserved.'
+__copywrite__ = 'Copyright 2024 by Moin Ahmed. All rights are reserved.'
 __status__ = 'deployed'
 
 from typing import Union
@@ -51,22 +55,23 @@ class SPM:
             raise InvalidElectrodeType
 
     @staticmethod
-    def m(I, k, S, c_max, SOC, c_e) -> float:
+    def m(I: float, k: float, S: float, c_max: float, SOC: float, c_e: float) -> float:
         return I / (Constants.F * k * S * c_max * (c_e ** 0.5) * ((1 - SOC) ** 0.5) * (SOC ** 0.5))
 
     @staticmethod
-    def calc_cell_terminal_voltage(OCP_p, OCP_n, m_p, m_n, R_cell, T, I) -> float:
+    def calc_cell_terminal_voltage(OCP_p: float, OCP_n: float, m_p: float, m_n: float, R_cell: float,
+                                   T: float, I: float) -> float:
         V = OCP_p - OCP_n
         V += (2 * Constants.R * T / Constants.F) * np.log((np.sqrt(m_p ** 2 + 4) + m_p) / 2)
         V += (2 * Constants.R * T / Constants.F) * np.log((np.sqrt(m_n ** 2 + 4) + m_n) / 2)
         V += I * R_cell
         return V
 
-    def __call__(self, OCP_p, OCP_n, R_cell,
-                 k_p, S_p, c_smax_p, SOC_p,
-                 k_n, S_n, c_smax_n, SOC_n,
-                 c_e,
-                 T, I_p_i, I_n_i) -> float:
+    def __call__(self, OCP_p: float, OCP_n: float, R_cell: float,
+                 k_p: float, S_p: float, c_smax_p: float, SOC_p: float,
+                 k_n: float, S_n: float, c_smax_n: float, SOC_n: float,
+                 c_e: float,
+                 T: float, I_p_i: float, I_n_i: float) -> float:
         """
         Calculates the cell terminal voltage.
         :param OCP_p: Open-circuit potential of the positive electrode [V]
@@ -86,8 +91,8 @@ class SPM:
         :param I_n_i: negative electrode intercalation applied current [A]
         :return: Battery cell terminal voltage [V]
         """
-        m_p = self.m(I=I_p_i, k=k_p, S=S_p, c_max=c_smax_p, SOC=SOC_p, c_e=c_e)
-        m_n = self.m(I=I_n_i, k=k_n, S=S_n, c_max=c_smax_n, SOC=SOC_n, c_e=c_e)
+        m_p: float = self.m(I=I_p_i, k=k_p, S=S_p, c_max=c_smax_p, SOC=SOC_p, c_e=c_e)
+        m_n: float = self.m(I=I_n_i, k=k_n, S=S_n, c_max=c_smax_n, SOC=SOC_n, c_e=c_e)
         return self.calc_cell_terminal_voltage(OCP_p=OCP_p, OCP_n=OCP_n, m_p=m_p, m_n=m_n, R_cell=R_cell, T=T, I=I_p_i)
 
 
@@ -132,7 +137,7 @@ class SPMe:
     @classmethod
     def i_0(cls, k: float, c_s_max: float, c_e: float, soc_surf: float) -> float:
         """
-        Calculates the exchange current density for an electrode.
+        Calculates the exchange current density for an electrode [mol/m2/s].
         :param k: rate constant [m2.5 / mol0.5 / s]
         :param c_s_max: max. lithium-ion electrode conc. [mol/m3]
         :param c_e: lithium-ion conc in the electrolyte [mol/m3]
@@ -142,31 +147,64 @@ class SPMe:
         return k * c_s_max * (c_e ** 0.5) * ((1 - soc_surf) ** 0.5) * (soc_surf ** 0.5)
 
     @classmethod
-    def eta(cls, temp, j: float, i_0_: float) -> float:
-        """
-        Returns the overpotential of the electrode surface
-        :param temp: electrode temperature
-        :param j: molar flux [mol/m2/s]
-        :param i_0_: exchange current density [mol/m2/s]
-        :return:
-        """
-        return (2 * Constants.R * temp / Constants.F) * np.arcsinh(j / (2 * i_0_))
+    def m(cls, i_app: float, k: float, S: float, c_s_max: float, c_e: float, soc_surf: float) -> float:
+        return i_app / (Constants.F * S * SPMe.i_0(k=k, c_s_max=c_s_max, c_e=c_e, soc_surf=soc_surf))
 
     @classmethod
-    def calc_terminal_voltage(cls, ocp_p: float, ocp_n: float, eta_p: float, eta_n: float,
-                              l_p: float, l_sep: float, l_n: float, battery_cross_area: float,
+    def calc_terminal_voltage(cls, ocp_p: float, ocp_n: float, m_p: float, m_n: float,
+                              l_p: float, l_sep: float, l_n: float,
                               kappa_eff_avg: float, k_f_avg: float, t_c: float,
-                              R_p: float, R_n: float,
-                              S_n: float, S_p: float,
+                              R_cell: float,
                               c_e_n: float, c_e_p: float,
-                              temp: float, i_app: float):
-        k_conc = (2 * Constants.R * temp / Constants.F) * (1 - t_c) * k_f_avg
+                              temp: float, i_app: float) -> float:
+        """
+        Returns the cell terminal voltage [V] according to Moura et al.
+        Note that the charge and the discharge currents are denoted with a positive and negative numbers, respectively.
+        :param ocp_p:
+        :param ocp_n:
+        :param m_p:
+        :param m_n:
+        :param l_p:
+        :param l_sep:
+        :param l_n:
+        :param battery_cross_area:
+        :param kappa_eff_avg:
+        :param k_f_avg:
+        :param t_c:
+        :param R_cell:
+        :param c_e_n:
+        :param c_e_p:
+        :param temp:
+        :param i_app:
+        :return:
+        """
+        k_conc: float = (2 * Constants.R * temp / Constants.F) * (1 - t_c) * k_f_avg
 
-        term_v = eta_p - eta_n + ocp_p - ocp_n
-        term_v -= (R_p / (S_p) + R_n / (S_n)) * i_app
-        term_v += (l_p + 2 * l_sep + l_n) * i_app / (2 * kappa_eff_avg * battery_cross_area)
-        term_v += k_conc * (np.log(c_e_p) - np.log(c_e_n))
-        return term_v
+        V: float = ocp_p - ocp_n
+        V += (2 * Constants.R * temp / Constants.F) * np.log((np.sqrt(m_p ** 2 + 4) + m_p) / 2)
+        V += (2 * Constants.R * temp / Constants.F) * np.log((np.sqrt(m_n ** 2 + 4) + m_n) / 2)
+        V += R_cell * i_app
+        V += (l_p + 2 * l_sep + l_n) * i_app / (2 * kappa_eff_avg)
+        V += k_conc * (np.log(c_e_p) - np.log(c_e_n))
+        return V
+
+    def __call__(self, ocp_p: float, ocp_n: float, R_cell: float,
+                 k_p: float, S_p: float, c_smax_p: float, soc_surf_p: float,
+                 k_n: float, S_n: float, c_smax_n: float, soc_surf_n: float,
+                 c_e: float,
+                 temp: float, I_p_i: float, I_n_i: float,
+                 l_p: float, l_sep: float, l_n: float,
+                 kappa_eff_avg: float, k_f_avg: float, t_c: float,
+                 c_e_n: float, c_e_p: float) -> float:
+        m_p: float = self.m(i_app=I_p_i, k=k_p, S=S_p, c_s_max=c_smax_p, soc_surf=soc_surf_p, c_e=c_e)
+        m_n: float = self.m(i_app=I_n_i, k=k_n, S=S_n, c_s_max=c_smax_n, soc_surf=soc_surf_n, c_e=c_e)
+
+        return self.calc_terminal_voltage(ocp_p=ocp_p, ocp_n=ocp_n, m_p=m_p, m_n=m_n,
+                                          l_p=l_p, l_sep=l_sep, l_n=l_n,
+                                          kappa_eff_avg=kappa_eff_avg, k_f_avg=k_f_avg, t_c=t_c,
+                                          R_cell=R_cell,
+                                          c_e_n=c_e_n, c_e_p=c_e_p,
+                                          temp=temp, i_app=I_n_i)
 
 
 class P2DM:

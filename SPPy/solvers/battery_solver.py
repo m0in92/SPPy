@@ -563,9 +563,9 @@ class EnhancedSPSolver(SPPySolver):
                                                                                           brugg=self.b_cell.electrolyte.brugg,
                                                                                           c_e_init=self.b_cell.electrolyte.conc)
         # the instance of the class containing the battery model is initialized below.
-        self.b_model = SPM()  # initializes the single particle model instance.
+        self.b_model = SPMe()  # initializes the single particle model instance.
 
-    def solve_one_iteration(self, t_prev: float, dt: float, i_app: float) -> float:
+    def solve_one_iteration(self, t_prev: float, dt: float, i_app: float, temp: float) -> float:
         # Solve for the electrode SOC below
         self.b_cell.elec_p.SOC = self.SOC_solver_p(dt=dt, t_prev=t_prev, i_app=i_app,
                                                    R=self.b_cell.elec_p.R,
@@ -591,12 +591,20 @@ class EnhancedSPSolver(SPPySolver):
         self.electrolyte_conc_solver.solve_ce(j=j, dt=dt, solver_method='TDMA')
 
         # Finally the termination voltage is calculated and returned
-        return self.b_model(OCP_p=self.b_cell.elec_p.OCP, OCP_n=self.b_cell.elec_n.OCP, R_cell=self.b_cell.R_cell,
+        L_cell: float = self.b_cell.elec_n.L + self.b_cell.electrolyte.L + self.b_cell.elec_p.L
+        return self.b_model(ocp_p=self.b_cell.elec_p.OCP, ocp_n=self.b_cell.elec_n.OCP,
+                            R_cell=self.b_cell.R_cell,
                             k_p=self.b_cell.elec_p.k, S_p=self.b_cell.elec_p.S, c_smax_p=self.b_cell.elec_p.max_conc,
-                            SOC_p=self.b_cell.elec_p.SOC,
+                            soc_surf_p=self.b_cell.elec_p.SOC,
                             k_n=self.b_cell.elec_n.k, S_n=self.b_cell.elec_n.S, c_smax_n=self.b_cell.elec_n.max_conc,
-                            SOC_n=self.b_cell.elec_n.SOC,
-                            c_e=self.b_cell.electrolyte.conc, T=self.b_cell.T, I_p_i=i_app, I_n_i=i_app)
+                            soc_surf_n=self.b_cell.elec_n.SOC,
+                            c_e=1000,
+                            I_p_i=i_app, I_n_i=i_app, temp=temp,
+                            l_p=self.b_cell.elec_p.L, l_sep=self.b_cell.electrolyte.L, l_n=self.b_cell.elec_n.L,
+                            kappa_eff_avg=self.b_cell.electrolyte.kappa_sep_eff, k_f_avg=1,
+                            t_c=self.b_cell.electrolyte.t_c,
+                            c_e_n=self.electrolyte_conc_solver.extrapolate_conc(L_value=0),
+                            c_e_p=self.electrolyte_conc_solver.extrapolate_conc(L_value=L_cell))
 
     # @timer
     def solve(self, cycler: BaseCycler, dt: float = 0.1, termination_criteria: str = "V") -> npt.ArrayLike:
@@ -613,7 +621,8 @@ class EnhancedSPSolver(SPPySolver):
                     if (step == "rest") and (t_curr > cycler.rest_time):
                         step_completed = True
 
-                    V: float = self.solve_one_iteration(t_prev=t_prev, dt=dt, i_app=i_app)
+                    V: float = self.solve_one_iteration(t_prev=t_prev, dt=dt, i_app=i_app,
+                                                        temp=self.b_cell.T)
 
                     # break condition for charge and discharge if stop criteria is V-based
                     if termination_criteria == 'V':
