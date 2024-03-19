@@ -7,6 +7,17 @@ from SPPy.solvers.co_ordinates import FVMCoordinates, ElectrolyteFVMCoordinates
 
 
 class ElectrolytePotentialFVMSolver:
+    """
+    This solver solves for the electrolyte potential across the battery cell thickness. It uses
+    the finite volume method (FVM) as indicated by Han et al. [1].
+
+    In their paper, Han et al. defined the flux in terms of A/m2/s. Here, the relevant equations have been modified
+    to refer to flux in terms of mol/m2/s.
+
+    [1] Han, S., Tang, Y., & Khaleghi Rahimian, S. (2021). A numerically efficient method of solving the full-order
+    pseudo-2-dimensional (P2D) Li-ion cell model. Journal of Power Sources, 490, 229571.
+    https://doi.org/10.1016/J.JPOWSOUR.2021.229571Han, S., Tang, Y., & Khaleghi Rahimian, S. (2021).
+    """
     def __init__(self, fvm_coords: ElectrolyteFVMCoordinates,
                  epsilon_en: float, epsilon_esep: float, epsilon_ep: float,
                  a_s_n: float, a_s_p: float,
