@@ -8,7 +8,7 @@ __authors__ = "Moin Ahmed"
 __copyright__ = "Copyright by SPPy. All rights reserved."
 __status__ = "deployed"
 
-from typing import Callable
+from typing import Callable, Union
 
 import numpy as np
 import numpy.typing as npt
@@ -159,7 +159,10 @@ class ElectrolyteConcVolAvgSolver:
         self.L_s: float = L_s
         self.L_p: float = L_p
         self.L_n: float = L_n
+        self.L_cell: float = L_n + L_s + L_p
         self.D_s: float = D_s
+        self.D_p: float = D_p
+        self.D_n: float = D_n
         self.c_e_init: float = c_e_init
 
         num_first_term: float = (L_n * L_s * epsilon_n) / (2 * D_s)
@@ -205,9 +208,11 @@ class ElectrolyteConcVolAvgSolver:
     def func_c_p(self, q_n: float, q_p: float) -> float:
         return self.c_e_init + self.alpha_n * q_n + self.alpha_p * q_p
 
-    def conc_profile_n(self, L_value: float = 0.0) -> float:
-        pass
-        # return self.c_e_n + self.q_n * () / ()
+    def conc_profile_n(self, L_value: Union[float, np.ndarray] = 0.0) -> float:
+        return self.c_e_n + self.q_n * (self.q_n * (self.L_n**2 - L_value**2)) / (2 * self.L_n * self.D_n)
+
+    def conc_profile_p(self, L_value: Union[float, np.ndarray]) -> float:
+        return self.c_e_p + self.q_p * (self.L_p**2 - (self.L_cell - L_value)**2) / (2 * self.L_p * self.D_p)
 
     def solve(self, t_prev: float, dt: float,
               avg_j_n: float, avg_j_p: float) -> None:
