@@ -199,20 +199,20 @@ class ElectrolyteConcVolAvgSolver:
 
     def func_q_p(self, avg_j_n: float, avg_j_p: float) -> Callable:
         def wrapper(x: float, t: float) -> float:
-            return self.B_1*x + self.A_1*x - self.A_3*self.B_1*avg_j_n + self.A_1*self.B_3*avg_j_p
+            return (1/self.D_) * (self.B_1*x + self.A_1*x - self.A_3*self.B_1*avg_j_n + self.A_1*self.B_3*avg_j_p)
         return wrapper
 
-    def func_c_n(self, c_p: float, q_n: float, q_p: float) -> float:
-        return c_p + self.L_s * (q_n + q_p) / (2 * self.D_s)
+    def func_c_n(self, c_p: float) -> float:
+        return c_p + self.L_s * (self.q_n + self.q_p) / (2 * self.D_s)
 
-    def func_c_p(self, q_n: float, q_p: float) -> float:
-        return self.c_e_init + self.alpha_n * q_n + self.alpha_p * q_p
+    def func_c_p(self) -> float:
+        return self.c_e_init + self.alpha_n * self.q_n + self.alpha_p * self.q_p
 
     def conc_profile_n(self, L_value: Union[float, np.ndarray] = 0.0) -> float:
         return self.c_e_n + self.q_n * (self.q_n * (self.L_n**2 - L_value**2)) / (2 * self.L_n * self.D_n)
 
     def conc_profile_p(self, L_value: Union[float, np.ndarray]) -> float:
-        return self.c_e_p + self.q_p * (self.L_p**2 - (self.L_cell - L_value)**2) / (2 * self.L_p * self.D_p)
+        return self.c_e_p - self.q_p * (self.L_p**2 - (self.L_cell - L_value)**2) / (2 * self.L_p * self.D_p)
 
     def solve(self, t_prev: float, dt: float,
               avg_j_n: float, avg_j_p: float) -> None:
@@ -220,6 +220,6 @@ class ElectrolyteConcVolAvgSolver:
                                    t_prev=t_prev, y_prev=self.q_n, step_size=dt)
         self.q_p = ode_solvers.rk4(func=self.func_q_n(avg_j_n=avg_j_n, avg_j_p=avg_j_p),
                                    t_prev=t_prev, y_prev=self.q_p, step_size=dt)
-        self.c_e_p = self.func_c_p(q_n=self.q_n, q_p=self.q_p)
-        self.c_e_n = self.func_c_n(c_p=self.c_e_p, q_n=self.q_n, q_p=self.q_p)
+        self.c_e_p = self.func_c_p()
+        self.c_e_n = self.func_c_n(c_p=self.c_e_p)
 
