@@ -13,7 +13,8 @@ class ElectrodePotentialFVMSolver:
         self.electrode_type = electrode_type
         self.a_s = a_s
         self.sigma_eff = sigma_eff
-        self.ref_potential = ref_potential
+        self.ref_potential = ref_potential  # usually set to zero. Refers to the potential at the negative electrode/CC
+        # interface.
 
         if electrode_type == 'n':
             self.coords = fvm_coords.array_x_n
