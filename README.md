@@ -12,7 +12,7 @@ This work is licensed under a
 # SPPy
 #### SPPy © 2023 by Moin Ahmed is licensed under Attribution-NonCommercial 4.0 International. To view a copy of this license, visit http://creativecommons.org/licenses/by-nc/4.0
 
-#### Created by Moin Ahmed
+#### Created by Moin Ahmed (moinahmed100@gmail.com)
 
 ## Description
 
@@ -94,7 +94,7 @@ Example usage are included in the SPPy/examples folder.
 ```tests``` - test files for this repository
 
 
-## Solution Scheme
+## Solution Schemes
 
 ### Single Particle Model with Electrolyte Dynamics:
 #### _Diffusion Equation Formulation:_
@@ -135,6 +135,11 @@ Example usage are included in the SPPy/examples folder.
 
 #### Single Particle Model - non isothermal
 ![image](Assests/SP_non_isothermal.png)
+
+### Class Diagrams
+#### Single Particle Model - Conceptual
+![image](Assests/conceptual_class_diagram_SP.png)
+
 
 ### References:
 1. Guo, M., Sikha, G., & White, R. E. (2011). Single-Particle Model for a Lithium-Ion Cell: Thermal Behavior. Journal of The Electrochemical Society, 158(2), A122. https://doi.org/10.1149/1.3521314/XML

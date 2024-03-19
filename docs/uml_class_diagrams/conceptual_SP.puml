@@ -1,0 +1,28 @@
+@startuml
+
+Electrode <|-- PElectrode
+Electrode <|-- NElectrode
+BatteryCell *-- Electrode
+BatteryCell *-- Electrolyte
+
+BaseCycler <|--- Discharge
+BaseCycler <|--- DischargeRest
+BaseCycler <|--- Charge
+BaseCycler <|-left ChargeDischarge
+BaseCycler <|-- CustomCycler
+CustomCycler <|--- HPPCCyler
+CustomCycler <|--- DSTCycler
+
+BaseElectrodeConcSolver <|-- PolynomialSolver
+BaseElectrodeConcSolver <|-- EigenSolver
+BaseElectrodeConcSolver <|-- CNSolver
+
+SPSolver *-- BaseElectrodeConcSolver
+SPSolver *-- BatteryCell
+SPSolver *-- BaseCycler
+
+SPSolver *- SPModel
+SPSolver *-- LumpedThermalModel
+SPSolver *---right ROMSEI
+
+@enduml

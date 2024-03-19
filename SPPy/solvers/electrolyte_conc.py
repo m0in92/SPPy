@@ -50,14 +50,14 @@ class ElectrolyteConcFVMSolver:
         self.brugg: float = brugg
 
     @property
-    def array_epsilon_e(self) -> npt.ArrayLike:
+    def array_epsilon_e(self) -> np.ndarray:
         """
         Returns an array containing the volume fraction of the electrolyte at each spatial region
         :return:
         """
-        array_epsilon_n = self.epsilon_en * np.ones(len(self.co_ords.array_x_n))
-        array_epsilon_s = self.epsilon_esep * np.ones(len(self.co_ords.array_x_s))
-        array_epsilon_p = self.epsilon_ep * np.ones(len(self.co_ords.array_x_p))
+        array_epsilon_n: np.ndarray = self.epsilon_en * np.ones(len(self.co_ords.array_x_n))
+        array_epsilon_s: np.ndarray = self.epsilon_esep * np.ones(len(self.co_ords.array_x_s))
+        array_epsilon_p: np.ndarray = self.epsilon_ep * np.ones(len(self.co_ords.array_x_p))
         return np.append(np.append(array_epsilon_n, array_epsilon_s), array_epsilon_p)
 
     @property
@@ -66,9 +66,9 @@ class ElectrolyteConcFVMSolver:
         Returns an array containing the effective electrolyte diffusivity at spatial FVM points.
         :return:
         """
-        array_D_eff_n = self.D_e * (self.epsilon_en ** self.brugg) * np.ones(len(self.co_ords.array_x_n))
-        array_D_eff_s = self.D_e * (self.epsilon_esep ** self.brugg) * np.ones(len(self.co_ords.array_x_s))
-        array_D_eff_p = self.D_e * (self.epsilon_ep ** self.brugg) * np.ones(len(self.co_ords.array_x_p))
+        array_D_eff_n: np.ndarray = self.D_e * (self.epsilon_en ** self.brugg) * np.ones(len(self.co_ords.array_x_n))
+        array_D_eff_s: np.ndarray = self.D_e * (self.epsilon_esep ** self.brugg) * np.ones(len(self.co_ords.array_x_s))
+        array_D_eff_p: np.ndarray = self.D_e * (self.epsilon_ep ** self.brugg) * np.ones(len(self.co_ords.array_x_p))
         return np.append(np.append(array_D_eff_n, array_D_eff_s), array_D_eff_p)
 
     @property
