@@ -57,19 +57,21 @@ j = np.append(np.append(j_n, j_sep), j_p)  # [mol/m2/s]
 for i in range(t_end):
     conc_solver.solve_ce(j=j, dt=dt, solver_method='TDMA')
 
-_, phi, _ = potential_solver.solve_phi_e(j=j, c_e=conc_solver.array_c_e)
+terminal_phi, phi, rel_phi = potential_solver.solve_phi_e(j=j, c_e=conc_solver.array_c_e)
+
+print(terminal_phi, rel_phi)
 
 print(f"Electrolyte Length Dimensions [m]: {conc_solver.co_ords.array_x}")
 print(f"Electrolyte conc. [mol/m3]: {conc_solver.array_c_e}")
 print(f"Electrolyte conc. at L=0 [mol/m3]: {conc_solver.extrapolate_conc(L_value=0.0)} mol/m3")
 print(f"Electrolyte conc. at L=L_cell [mol/m3]: {conc_solver.extrapolate_conc(L_value=19.3e-5)} mol/m3")
 
-print(f"Electrolyte potential [V]: {phi}")
+print(f"Electrolyte potential [V]: {phi-terminal_phi}")
 
 
 plt.xlabel("Battery Cell Thickness [m]")
 plt.ylabel("Electrolyte Potential. [V]")
 plt.title(f"Electrolyte Potential. [V] after {t_end} s of discharge")
 plt.ticklabel_format(axis="x", scilimits=[-3, 1])
-plt.plot(co_ords.array_x, phi)
+plt.plot(co_ords.array_x, phi-terminal_phi)
 plt.show()

@@ -39,7 +39,7 @@ class TestElectrolytePotentialFVMSolver(unittest.TestCase):
                                    9.100e-05, 9.500e-05, 9.900e-05, 1.088e-04, 1.244e-04, 1.400e-04, 1.556e-04,
                                    1.712e-04])
         self.assertTrue(np.allclose(actual_array_x, self.instance_solver.coords.array_x))
-        self.assertEqual(2 * Constants.R * self.temp * self.kappa_e * (self.t_c - 1) / Constants.F,
+        self.assertEqual(-2 * Constants.R * self.temp * self.kappa_e * (self.t_c - 1) / Constants.F,
                          self.instance_solver.kappa_D)
 
     def test_kappa_eff_e(self):
@@ -53,7 +53,7 @@ class TestElectrolytePotentialFVMSolver(unittest.TestCase):
                                  np.append(-0.01186765 * np.ones(5),
                                  -0.00566614 * np.ones(5)))
 
-        self.assertTrue(np.allclose(array_actual, self.instance_solver.array_kappa_D_eff))
+        self.assertTrue(np.allclose(-array_actual, self.instance_solver.array_kappa_D_eff))
 
     def test_array_a_s(self):
         array_actual = np.append(self.a_s_n * np.ones(5),
