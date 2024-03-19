@@ -318,11 +318,11 @@ class PolynomialApproximation(BaseElectrodeConcSolver):
         self.c_s_avg_prev = c_init
         self.c_surf = c_init
         if type == 'two' or type == 'higher':
-            self.type = type
+            self.type: str = type
         else:
             raise ValueError(f"{type} is not recognized as a solver type")
         if self.type == 'higher':
-            self.q = 0
+            self.q: float = 0
 
     def func_c_s_avg(self, j: float, R: float) -> Callable:
         def wrapper(r, t):

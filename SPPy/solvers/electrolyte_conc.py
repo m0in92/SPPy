@@ -8,6 +8,7 @@ __authors__ = "Moin Ahmed"
 __copyright__ = "Copyright by SPPy. All rights reserved."
 __status__ = "deployed"
 
+from typing import Callable
 
 import numpy as np
 import numpy.typing as npt
@@ -15,6 +16,7 @@ import scipy.interpolate
 
 from SPPy.calc_helpers.matrix_operations import TDMAsolver
 from SPPy.solvers.co_ordinates import ElectrolyteFVMCoordinates
+from SPPy.calc_helpers import ode_solvers
 
 
 class ElectrolyteConcFVMSolver:
@@ -144,5 +146,75 @@ class ElectrolyteConcFVMSolver:
         return scipy.interpolate.interp1d(self.co_ords.array_x, self.array_c_e, fill_value='extrapolate')(L_value)
 
 
-class ElectrolyteConcROMSolver:
-    pass
+class ElectrolyteConcVolAvgSolver:
+    """
+    Volume average technique for the electrolyte concentration.
+    """
+    def __init__(self, L_n: float, L_s: float, L_p: float,
+                 epsilon_n: float, epsilon_s: float, epsilon_p: float,
+                 D_n: float, D_s: float, D_p: float,
+                 a_n: float, a_p: float,
+                 t_c: float,
+                 c_e_init: float):
+        self.L_s: float = L_s
+        self.L_p: float = L_p
+        self.L_n: float = L_n
+        self.D_s: float = D_s
+        self.c_e_init: float = c_e_init
+
+        num_first_term: float = (L_n * L_s * epsilon_n) / (2 * D_s)
+        num_second_term: float = (L_s**2 * epsilon_s) / (6*D_s)
+        num_third_term: float = (L_n**2 * epsilon_n) / (3*D_n)
+        dem: float = L_n * epsilon_n + L_s * epsilon_s + L_p * epsilon_p
+        self.alpha_n: float = (num_first_term + num_second_term + num_third_term) / dem
+
+        num_first_term: float = (L_p * L_s * epsilon_p) / (2 * D_s)
+        num_second_term: float = (L_s ** 2 * epsilon_s) / (6 * D_s)
+        num_third_term: float = (L_p ** 2 * epsilon_p) / (3 * D_p)
+        self.alpha_p: float = (num_first_term + num_second_term + num_third_term) / dem
+
+        self.A_1: float = L_n * epsilon_n * self.alpha_n + L_s * L_n * epsilon_n / (2*D_s) + L_n**2 * epsilon_n / (3*D_n)
+        self.A_2: float = L_p * epsilon_p * self.alpha_p - L_p**2 * epsilon_p / (3*D_p)
+        self.A_3: float = (1-t_c) * a_n * L_n
+
+        self.B_1: float = L_p * epsilon_p * self.alpha_n
+        self.B_2: float = L_p * epsilon_p * self.alpha_p - L_p**2 * epsilon_p / (3 * D_p)
+        self.B_3: float = (1-t_c) * a_p * L_p
+
+        self.D_: float = self.A_1 * self.B_2 - self.A_2 * self.B_1
+
+        # The variables refer to the interfacial area and flux
+        self.c_e_n: float = self.c_e_init
+        self.c_e_p: float = self.c_e_init
+        self.q_n: float = 0.0
+        self.q_p: float = 0.0
+
+    def func_q_n(self, avg_j_n: float, avg_j_p: float) -> Callable:
+        def wrapper(x: float, t: float) -> float:
+            return (1/self.D_) * (-self.B_2*x - self.A_2*x + self.A_3*self.B_2*avg_j_n - self.A_2*self.B_3*avg_j_p)
+        return wrapper
+
+    def func_q_p(self, avg_j_n: float, avg_j_p: float) -> Callable:
+        def wrapper(x: float, t: float) -> float:
+            return self.B_1*x + self.A_1*x - self.A_3*self.B_1*avg_j_n + self.A_1*self.B_3*avg_j_p
+        return wrapper
+
+    def func_c_n(self, c_p: float, q_n: float, q_p: float) -> float:
+        return c_p + self.L_s * (q_n + q_p) / (2 * self.D_s)
+
+    def func_c_p(self, q_n: float, q_p: float) -> float:
+        return self.c_e_init + self.alpha_n * q_n + self.alpha_p * q_p
+
+    def conc_profile_n(self, L_value: float = 0.0) -> float:
+        pass
+        # return self.c_e_n + self.q_n * () / ()
+
+    def solve(self, t_prev: float, dt: float,
+              avg_j_n: float, avg_j_p: float) -> None:
+        self.q_n = ode_solvers.rk4(func=self.func_q_n(avg_j_n=avg_j_n, avg_j_p=avg_j_p),
+                                   t_prev=t_prev, y_prev=self.q_n, step_size=dt)
+        self.q_p = ode_solvers.rk4(func=self.func_q_n(avg_j_n=avg_j_n, avg_j_p=avg_j_p),
+                                   t_prev=t_prev, y_prev=self.q_p, step_size=dt)
+        self.c_e_p = self.func_c_p(q_n=self.q_n, q_p=self.q_p)
+        self.c_e_n = self.func_c_n(c_p=self.c_e_p, q_n=self.q_n, q_p=self.q_p)
+
