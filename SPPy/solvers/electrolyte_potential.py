@@ -3,11 +3,11 @@ import numpy.typing as npt
 import scipy
 
 from SPPy.calc_helpers.constants import Constants
-from SPPy.solvers.co_ordinates import FVMCoordinates
+from SPPy.solvers.co_ordinates import FVMCoordinates, ElectrolyteFVMCoordinates
 
 
 class ElectrolytePotentialFVMSolver:
-    def __init__(self, fvm_coords: FVMCoordinates,
+    def __init__(self, fvm_coords: ElectrolyteFVMCoordinates,
                  epsilon_en: float, epsilon_esep: float, epsilon_ep: float,
                  a_s_n: float, a_s_p: float,
                  t_c: float, kappa_e: float, brugg: float, temp: float):
@@ -22,7 +22,7 @@ class ElectrolytePotentialFVMSolver:
         self.t_c = t_c
         self.kappa_e = kappa_e
         self.temp = temp
-        self.kappa_D = 2 * Constants.R * self.temp * self.kappa_e * (self.t_c - 1) / Constants.F
+        self.kappa_D = 2 * Constants.R * self.temp * self.kappa_e * (1 - self.t_c) / Constants.F
         self.brugg = brugg
 
         self.n: int = len(self.coords.array_x)  # the number of rows and columns of the matrix..
@@ -102,7 +102,7 @@ class ElectrolytePotentialFVMSolver:
         returns the vector for the matrix form of the  FVM equations.
         :param j: molar lithium-ion flux in the electrode throughout the battery cell.
         :param c_e: array containing the lithium-ion concentration in the electrolyte in the individual fvm nodes.
-        :return: vector for the matrix form of the FVM equations.
+        :return: column vector for the matrix form of the FVM equations.
         """
         col_vec = np.zeros(self.n)
 
@@ -132,12 +132,12 @@ class ElectrolytePotentialFVMSolver:
         col_vec[-1] = -(kappa_D / dx) * ((c2 - c1) / (c2 + c1))
         return 2 * col_vec.reshape(-1, 1) - self.array_a_s.reshape(-1, 1) * Constants.F * j * self.coords.array_dx.reshape(-1,1)
 
-    def solve_phi_e(self, j: npt.ArrayLike, c_e: npt.ArrayLike) -> npt.ArrayLike:
-        M = np.linalg.inv(self._m_phi_e())
-        b = self._vec_phi_e(j=j, c_e=c_e)
-        array_phi_e = np.ndarray.flatten(M @ b)
-        terminal_phi_e = self.extrapolate_terminal_potential(array_phi_e=array_phi_e)
-        array_rel_phi_e = array_phi_e - terminal_phi_e
+    def solve_phi_e(self, j: np.ndarray, c_e: np.ndarray) -> tuple[np.ndarray, np.ndarray, np.ndarray]:
+        M: np.ndarray = np.linalg.inv(self._m_phi_e())
+        b: np.ndarray = self._vec_phi_e(j=j, c_e=c_e)
+        array_phi_e: np.ndarray = np.ndarray.flatten(M @ b)
+        terminal_phi_e: np.ndarray = self.extrapolate_terminal_potential(array_phi_e=array_phi_e)
+        array_rel_phi_e: np.ndarray = array_phi_e - terminal_phi_e
         return terminal_phi_e, array_phi_e, array_rel_phi_e
 
     def extrapolate_terminal_potential(self, array_phi_e):

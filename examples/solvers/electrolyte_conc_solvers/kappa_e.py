@@ -1,3 +1,8 @@
+__author__ = 'Moin Ahmed'
+__copyright__ = 'Copyright 2024 SPPy. All rights reserved.'
+__status__ = "Deployed"
+
+
 from typing import Union, Optional
 
 import numpy as np
@@ -34,6 +39,9 @@ print('kappa_e at 1000 mol/3 at 308.15: ', func_kappa_e(1000, temp=308.15))
 plt.plot(array_c_e, array_kappa_e1, label=temp1)
 plt.plot(array_c_e, array_kappa_e2, label=temp2)
 plt.plot(array_c_e, array_kappa_e3, label=temp3)
+
+plt.xlabel("$c_e [mol/m^3]$")
+plt.ylabel("$\kappa [S/m]$")
 
 plt.legend()
 plt.tight_layout()
