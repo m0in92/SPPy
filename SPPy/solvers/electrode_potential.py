@@ -2,22 +2,29 @@
 Contains the classes and functionalities foe solving for the solid phase electrode potential
 """
 
-__all__ = ["ElectrodePotentialFVMSolver"]
+__all__ = ["BaseElectrodePotentialSolver", "ElectrodePotentialFVMSolver"]
 
 __author__ = "Moin Ahmed"
 __copyright__ = "Copyright 2024 by SPPy. All rights reserved."
 __status__ = "Deployed"
 
 
+from typing import Union
+
 import numpy as np
 import numpy.typing as npt
 
+from SPPy.calc_helpers.constants import Constants
 from SPPy.warnings_and_exceptions.custom_exceptions import InvalidElectrodeType
 from SPPy.calc_helpers import constants
 from SPPy.solvers.co_ordinates import ElectrolyteFVMCoordinates
 
 
-class ElectrodePotentialFVMSolver:
+class BaseElectrodePotentialSolver:
+    pass
+
+
+class ElectrodePotentialFVMSolver(BaseElectrodePotentialSolver):
     """
     This solver solves for the solid phase potential across the electrode. It uses the finite volume method (FVM)
     as indicated by Han et al. [1].
@@ -113,3 +120,13 @@ class ElectrodePotentialFVMSolver:
         vec = self._array_j(j=j) - 2 * self._array_V(terminal_potential=terminal_potential)
         inv_matrix = np.linalg.inv(self._M_phi_s)
         return inv_matrix@vec
+
+
+class ElectrodePotentialVolAvgSolver(BaseElectrodePotentialSolver):
+    def phi_s_n(self, ocp_n: float, phi_e_n_0: float, j_n: float, j_n_0: float,
+                temp: float) -> Union[float, np.ndarray]:
+        return ocp_n + phi_e_n_0 + (2 * Constants.R * temp / Constants.F) * np.arcsinh(j_n/j_n_0)
+
+    def phi_s_p(self, ocp_p: float, phi_e_p_L: float, j_p: float, j_p_0: float,
+                temp: float) -> Union[float, np.ndarray]:
+        return ocp_p + phi_e_p_L + (2 * Constants.R * temp / Constants.F) * np.arcsinh(j_p/j_p_0)

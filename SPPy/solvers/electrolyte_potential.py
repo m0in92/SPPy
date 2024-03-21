@@ -1,3 +1,13 @@
+"""
+Contains the classes and functionalites for the electrolyte potential solver.
+"""
+
+__all__ = ['BaseElectrolytePotentialSolver', 'ElectrolytePotentialFVMSolver', 'ElectrolytePotentialVolAvgSolver']
+__author__ = "Moin Ahmed"
+__copyright__ = "Copyright 2024 by SPPy. All rights reserved."
+
+from typing import Union
+
 import numpy as np
 import numpy.typing as npt
 import scipy
@@ -6,7 +16,11 @@ from SPPy.calc_helpers.constants import Constants
 from SPPy.solvers.co_ordinates import FVMCoordinates, ElectrolyteFVMCoordinates
 
 
-class ElectrolytePotentialFVMSolver:
+class BaseElectrolytePotentialSolver:
+    pass
+
+
+class ElectrolytePotentialFVMSolver(BaseElectrolytePotentialSolver):
     """
     This solver solves for the electrolyte potential across the battery cell thickness. It uses
     the finite volume method (FVM) as indicated by Han et al. [1].
@@ -155,3 +169,48 @@ class ElectrolytePotentialFVMSolver:
         L_tot = self.coords.L_n + self.coords.L_s + self.coords.L_p
         return scipy.interpolate.interp1d(self.coords.array_x, array_phi_e,
                                           fill_value='extrapolate')(L_tot)
+
+
+class ElectrolytePotentialVolAvgSolver(BaseElectrolytePotentialSolver):
+    def __init__(self, L_n: float, L_s: float, L_p: float,
+                 kappa_en: float, kappa_es: float, kappa_ep: float,
+                 t_c: float):
+        self.L_n: float = L_n
+        self.L_s: float = L_s
+        self.L_p: float = L_p
+        self.kappa_en: float = kappa_en
+        self.kappa_es: float = kappa_es
+        self.kappa_ep: float = kappa_ep
+        self.t_c: float = t_c
+
+    def phi_es(self, x: Union[float, np.ndarray],
+               c_lin: float, c_lmid: float,
+               i_app: float, temp: float) -> Union[float, np.ndarray]:
+        return (2 * Constants.R * temp / Constants.F) * (1-self.t_c) * np.log(c_lin/c_lmid) * (i_app / self.kappa_es) * \
+               (x - self.L_n - self.L_s/2)
+
+    def phi_lin(self, c_e_in: float, c_e_mid: float,
+                i_app: float, temp: float) -> float:
+        return (2 * Constants.R * temp / Constants.F) * (1-self.t_c) * np.log(c_e_in/c_e_mid) + \
+               i_app * self.L_s / (2 * self.kappa_es)
+
+    def phi_lip(self, c_e_ip: float, c_e_mid: float,
+                i_app: float, temp: float) -> float:
+        return (2 * Constants.R * temp / Constants.F) * (1 - self.t_c) * np.log(c_e_ip / c_e_mid) - \
+               i_app * self.L_s / (2 * self.kappa_es)
+
+    def phi_en(self, L_value: float,
+               c_e_mid: float, c_e_n: float, c_e_in: float,
+               i_app: float, temp: float) -> float:
+        phi_lin: float = self.phi_lin(c_e_in=c_e_in, c_e_mid=c_e_mid, i_app=i_app, temp=temp)
+        return phi_lin + (2 * Constants.R * temp / Constants.F) * (1-self.t_c) * np.log(c_e_n/c_e_in) + \
+               i_app * (self.L_n - L_value) / self.kappa_en - \
+               i_app * (self.L_n - L_value) ** 2 / (2*self.L_n*self.kappa_es)
+
+    def phi_ep(self, L_value: float,
+               c_e_mid: float, c_e_p: float, c_e_ip: float,
+               i_app: float, temp: float) -> float:
+        phi_lip: float = self.phi_lip(c_e_ip=c_e_ip, c_e_mid=c_e_mid, i_app=i_app, temp=temp)
+        return phi_lip + (2 * Constants.R * temp / Constants.F) * (1-self.t_c) * np.log(c_e_p / c_e_ip) - \
+               i_app * (L_value - self.L_n - self.L_s) - \
+               i_app * (L_value-self.L_n-self.L_s)**2 / (2*self.L_p*self.kappa_ep)

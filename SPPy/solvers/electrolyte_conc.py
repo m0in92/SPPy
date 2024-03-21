@@ -19,7 +19,11 @@ from SPPy.solvers.co_ordinates import ElectrolyteFVMCoordinates
 from SPPy.calc_helpers import ode_solvers
 
 
-class ElectrolyteConcFVMSolver:
+class BaseElectrolyteConcSolver:
+    pass
+
+
+class ElectrolyteConcFVMSolver(BaseElectrolyteConcSolver):
     """
     This solver solves for the lithium-ion concentration in the electrolyte across the battery cell thickness. It uses
     the finite volume method (FVM) as indicated by Han et al. [1].
@@ -146,7 +150,7 @@ class ElectrolyteConcFVMSolver:
         return scipy.interpolate.interp1d(self.co_ords.array_x, self.array_c_e, fill_value='extrapolate')(L_value)
 
 
-class ElectrolyteConcVolAvgSolver:
+class ElectrolyteConcVolAvgSolver(BaseElectrolyteConcSolver):
     """
     Volume average technique for the electrolyte concentration.
     """
@@ -218,6 +222,8 @@ class ElectrolyteConcVolAvgSolver:
         return self.c_e_n - self.q_n * (L_value-self.L_n) / self.D_n + \
                (self.q_n-self.q_p) * (L_value-self.L_n) ** 2 / (2 * self.L_s * self.D_s)
 
+    def conc_seperator_mid(self) -> float:
+        return self.conc_profile_s(L_value=self.L_n + self.L_s/2)
 
     def solve(self, t_prev: float, dt: float,
               avg_j_n: float, avg_j_p: float) -> None:
