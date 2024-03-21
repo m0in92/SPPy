@@ -1,20 +1,50 @@
+"""
+Contains the classes and functionalities foe solving for the solid phase electrode potential
+"""
+
+__all__ = ["ElectrodePotentialFVMSolver"]
+
+__author__ = "Moin Ahmed"
+__copyright__ = "Copyright 2024 by SPPy. All rights reserved."
+__status__ = "Deployed"
+
+
 import numpy as np
 import numpy.typing as npt
 
 from SPPy.warnings_and_exceptions.custom_exceptions import InvalidElectrodeType
 from SPPy.calc_helpers import constants
-from SPPy.solvers.co_ordinates import FVMCoordinates
+from SPPy.solvers.co_ordinates import ElectrolyteFVMCoordinates
 
 
 class ElectrodePotentialFVMSolver:
-    def __init__(self, fvm_coords: FVMCoordinates,
+    """
+    This solver solves for the solid phase potential across the electrode. It uses the finite volume method (FVM)
+    as indicated by Han et al. [1].
+
+    In their paper, Han et al. defined the flux in terms of A/m2/s. Here, the relevant equations have been modified
+    to refer to flux in terms of mol/m2/s.
+
+    [1] Han, S., Tang, Y., & Khaleghi Rahimian, S. (2021). A numerically efficient method of solving the full-order
+    pseudo-2-dimensional (P2D) Li-ion cell model. Journal of Power Sources, 490, 229571.
+    https://doi.org/10.1016/J.JPOWSOUR.2021.229571Han, S., Tang, Y., & Khaleghi Rahimian, S. (2021).
+    """
+    def __init__(self, fvm_coords: ElectrolyteFVMCoordinates,
                  electrode_type: str, a_s: float, sigma_eff: float,
                  ref_potential: float = 0.0) -> None:
-        self.electrode_type = electrode_type
-        self.a_s = a_s
-        self.sigma_eff = sigma_eff
-        self.ref_potential = ref_potential  # usually set to zero. Refers to the potential at the negative electrode/CC
-        # interface.
+        """
+        Constructor for the class
+        :param fvm_coords:
+        :param electrode_type: 'n' for the negative electrode and 'p' for positive electrode
+        :param a_s: electrode's specific interfacial area [m2/m3]
+        :param sigma_eff: effective conductivity [S/m]
+        :param ref_potential: Refers to the potential at the negative electrode/Current Collector interface. Usually set
+        to zero.
+        """
+        self.electrode_type: str = electrode_type
+        self.a_s: float = a_s
+        self.sigma_eff: float = sigma_eff
+        self.ref_potential: float = ref_potential
 
         if electrode_type == 'n':
             self.coords = fvm_coords.array_x_n
