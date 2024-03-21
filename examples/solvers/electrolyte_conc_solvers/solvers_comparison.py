@@ -76,6 +76,7 @@ for simulation_index in range(t_iterations):
 
 # post simulation
 x_n: np.ndarray = np.linspace(0.0, L_n)
+x_s: np.ndarray = np.linspace(L_n, L_n + L_s)
 x_p: np.ndarray = np.linspace(L_n+L_s, L_n+L_s+L_p)
 
 # plots
@@ -86,6 +87,7 @@ plt.title(f"Electrolyte Conc. [mol/m3] after {t_iterations * dt} s of discharge"
 plt.plot(co_ords.array_x, conc_fvm_solver.array_c_e, label="FMV")
 plt.plot(x_n, conc_avg_solver.conc_profile_n(L_value=x_n), label="Vol. Avg.")
 plt.plot(x_p, conc_avg_solver.conc_profile_p(L_value=x_p), label="Vol. Avg.")
+plt.plot(x_s, conc_avg_solver.conc_profile_s(L_value=x_s), label="Vol. Avg.")
 
 plt.vlines(L_n, np.min(conc_fvm_solver.array_c_e), np.max(conc_fvm_solver.array_c_e), colors='r', linestyles='dashed')
 plt.vlines(L_n + L_s, np.min(conc_fvm_solver.array_c_e), np.max(conc_fvm_solver.array_c_e), colors='r',
