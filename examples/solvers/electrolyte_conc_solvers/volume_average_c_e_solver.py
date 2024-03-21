@@ -58,4 +58,5 @@ print(conc_solver.conc_profile_p(x_p))
 
 plt.plot(x_n, conc_solver.conc_profile_n(L_value=x_n))
 plt.plot(x_p, conc_solver.conc_profile_p(L_value=x_p))
+plt.ticklabel_format(axis="x", scilimits=[-3, 1])
 plt.show()
