@@ -20,7 +20,7 @@ from django_app.models import EcmSimulationVariablesModel, SpSimulationVariables
 from django_app.serializers import EcmSimulationVariablesModelSerializer, EcmSolvedModelSerializer,\
     SpSolvedModelSerializer, SpSimulationVariablesModelSerializer
 
-import json
+import json, os
 import SPPy
 from SPPy.calc_helpers.constants import Constants
 
@@ -42,7 +42,7 @@ class EcmParamView(APIView):
     def get(self, request):
         parameter_name = request.query_params['parameter_name'] if bool(request.query_params) else 'test'
         # a placeholder solution to make django read ECM parameters from a json. said parameters will be served by a DB in the future
-        with open('django_app/static/parameter_sets_ecm.json', 'r') as f:
+        with open(os.path.dirname(os.path.realpath(__file__)) + '/static/parameter_sets_ecm.json', 'r') as f:
             parameter_sets = json.load(f)
         parameter_chosen = json.dumps(parameter_sets[parameter_name])
         ecm_sim_var_proto = EcmSimulationVariablesModel.objects.create_ecm_sim_var_model(
@@ -79,7 +79,7 @@ class SpParamView(APIView):
         # the query_params field is the backend contact point for Axios's GET method's param field
         parameter_name = request.query_params['parameter_name'] if bool(request.query_params) else 'test'
         # a placeholder solution to make django read SP parameters from a json. said parameters will be served by a DB in the future
-        with open('django_app/static/parameter_sets.json', 'r') as f:
+        with open(os.path.dirname(os.path.realpath(__file__)) + '/static/parameter_sets.json', 'r') as f:
             parameter_sets = json.load(f)
         parameter_chosen = json.dumps(parameter_sets[parameter_name])
         sp_sim_var_proto = SpSimulationVariablesModel.objects.create_sp_sim_var_model(

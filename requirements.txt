@@ -5,9 +5,11 @@ pytest
 scipy~=1.11.4
 tqdm~=4.66.1
 django~=4.2.7
+django-cors-headers~=4.3.1
 
 typing_extensions
 
+whitenoise
 
 djangorestframework==3.14.0
 # newer versions no longer support nullBooleanField, breaking package rest-framework-braces

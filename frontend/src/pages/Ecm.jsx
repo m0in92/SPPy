@@ -1,8 +1,10 @@
-import React, {useEffect, useState} from 'react';
+import {useEffect, useState, lazy, Suspense} from 'react';
 import axios from 'axios';
 import {API_BASE_URL} from "../constants/constants";
-import RenderDataPoints from "../componenets/battery_cell_simualtions/RenderDataPoints";
 import '../css/Ecm.css';
+//import RenderDataPoints from "../componenets/battery_cell_simualtions/RenderDataPoints";
+const RenderDataPoints = lazy(() => import("../componenets/battery_cell_simualtions/RenderDataPoints"));
+
 
 function Ecm(){
     const [paramNameList, setParamNameList] = useState([]);
@@ -246,9 +248,11 @@ function Ecm(){
 
             </div>
             <div className='plots'>
-                {RenderDataPoints({"Time [s]": tSim}, {"SOC LIB": socLibSim})}
-                {RenderDataPoints({"Time [s]": tSim}, {"Potential [V]": vSim})}
-                {RenderDataPoints({"Time [s]": tSim}, {"Temperature [C]": tempSim})}
+                <Suspense fallback={<h1>Loading...</h1>}>
+                    <RenderDataPoints xVal={{"Time [s]": tSim}} yVal={{"SOC LIB": socLibSim}}/>
+                    <RenderDataPoints xVal={{"Time [s]": tSim}} yVal={{"Potential [V]": vSim}}/>
+                    <RenderDataPoints xVal={{"Time [s]": tSim}} yVal={{"Temperature [C]": tempSim}}/>
+                </Suspense>
             </div>
         </div>
     );

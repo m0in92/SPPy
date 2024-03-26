@@ -1,8 +1,11 @@
-import React, {useEffect, useState} from 'react';
+import {lazy, useEffect, useState, Suspense} from 'react';
 import axios from 'axios';
 import {API_BASE_URL} from "../constants/constants";
-import RenderDataPoints from "../componenets/battery_cell_simualtions/RenderDataPoints";
 import '../css/Sp.css';
+
+//import RenderDataPoints from "../componenets/battery_cell_simualtions/RenderDataPoints";
+const RenderDataPoints = lazy(() => import("../componenets/battery_cell_simualtions/RenderDataPoints"));
+
 
 function Sp(){
     const [paramNameList, setParamNameList] = useState([]);
@@ -240,10 +243,12 @@ function Sp(){
                 </table>
             </div>
             <div className='plots'>
-                {RenderDataPoints({"Time [s]": tSim}, {"SOC_n": socNSim})}
-                {RenderDataPoints({"Time [s]": tSim}, {"SOC_p": socPSim})}
-                {RenderDataPoints({"Time [s]": tSim}, {"Potential [V]": vSim})}
-                {RenderDataPoints({"Time [s]": tSim}, {"Temperature [C]": tempSim})}
+                <Suspense fallback={<h1>Loading...</h1>}>
+                    <RenderDataPoints xVal={{"Time [s]": tSim}} yVal={{"SOC_n": socNSim}}/>
+                    <RenderDataPoints xVal={{"Time [s]": tSim}} yVal={{"SOC_p": socPSim}}/>
+                    <RenderDataPoints xVal={{"Time [s]": tSim}} yVal={{"Potential [V]": vSim}}/>
+                    <RenderDataPoints xVal={{"Time [s]": tSim}} yVal={{"Temperature [C]": tempSim}}/>
+                </Suspense>
             </div>
         </div>
 

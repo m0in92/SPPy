@@ -39,6 +39,6 @@ class TestBatterySimulationPages(TestCase):
     """
     def test_response(self):
         client: Client = Client()
-        self.assertEqual(client.get('/sp').status_code, 200)  # sp
-        self.assertEqual(client.get('/ecm').status_code, 200)  # ecm
+        self.assertEqual(client.get('/api/batterysim/sp').status_code, 200)  # sp
+        self.assertEqual(client.get('/api/batterysim/ecm').status_code, 200)  # ecm
 

@@ -1,5 +1,5 @@
-import React, {useState} from 'react';
-import { NavLink, Routes, Route } from 'react-router-dom';
+import {useState} from 'react';
+import {NavLink} from 'react-router-dom';
 import "../css/NavSimsOptions.css";
 
 const imgDir = require.context('../img/', true);
@@ -89,7 +89,7 @@ function NavSimsOptions() {
     function CreateDescription(){
         let selectedDescription = callFunctionByName(cursorLastOptionClassName);
         return (
-            <React.Fragment>
+            <div className={'section-description'}>
                 <h2>Description</h2>
                 <h3 id="id_h3_description">
                     {selectedDescription[cursorLastOptionArrId].desc !== '' ? selectedDescription[cursorLastOptionArrId].title : underConstructionTitle}
@@ -98,7 +98,7 @@ function NavSimsOptions() {
                 {selectedDescription[cursorLastOptionArrId].imgId !== '' ?
                     <img id="id_img" src={imgDir(`./${selectedDescription[cursorLastOptionArrId].imgId}`)} alt=""/> : null
                 }
-            </React.Fragment>
+            </div>
         );
     }
 
@@ -116,9 +116,7 @@ function NavSimsOptions() {
                     <CreateNavList arg_list={"BMSM_list"} />
                 </ul>
             </nav>
-            <div className={'section-description'}>
-                <CreateDescription/>
-            </div>
+            <CreateDescription/>
         </div>
     );
 }

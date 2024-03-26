@@ -1,16 +1,15 @@
-import React from 'react';
 import Plot from 'react-plotly.js';
-function RenderDataPoints(xVal, yVal) {
+function RenderDataPoints(props) {
     // both args are key-valued {"key": value}
     let xValue;
     let xKey;
     let yValue;
     let yKey;
-    Object.entries(xVal).map(([key,value]) => {
+    Object.entries(props.xVal).map(([key,value]) => {
         xKey = key;
         xValue = value;
     });
-    Object.entries(yVal).map(([key,value]) => {
+    Object.entries(props.yVal).map(([key,value]) => {
         yKey = key;
         yValue = value;
     });
