@@ -2,15 +2,15 @@ import unittest
 
 import numpy as np
 
-from SPPy.solvers.co_ordinates import FVMCoordinates, FDMCoordinates
+from SPPy.solvers.co_ordinates import FVMCoordinates, FDMCoordinates, ElectrolyteFVMCoordinates
 
 
-class TestFVMCoordinates(unittest.TestCase):
+class TestElectrolyteFVMCoordinates(unittest.TestCase):
     """
     Unittest for the finite volume method co-ordinates
     """
 
-    instance = FVMCoordinates(L_n=8e-5, L_s=2.5e-5, L_p=8.8e-5)
+    instance = ElectrolyteFVMCoordinates(L_n=8e-5, L_s=2.5e-5, L_p=8.8e-5)
 
     def test_array_xn(self):
         self.assertEqual(8e-5 / 10, self.instance.dx_n)
