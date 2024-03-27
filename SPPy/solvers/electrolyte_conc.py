@@ -94,31 +94,31 @@ class ElectrolyteConcFVMSolver(BaseElectrolyteConcSolver):
 
     def diags(self, dt: float) -> tuple[list[float], list[float], list[float]]:
         # initialize the diagonals
-        diag_elements = []
-        upper_diag_elements = []
-        lower_diag_elements = []
+        diag_elements: list = []
+        upper_diag_elements: list = []
+        lower_diag_elements: list = []
         # update first elements
-        dx = (self.co_ords.array_x[1] - self.co_ords.array_x[0])
-        D1 = self.array_D_eff[0]
-        D2 = self.array_D_eff[1]
-        A = dt / (2 * self.co_ords.array_dx[0])
+        dx: float = (self.co_ords.array_x[1] - self.co_ords.array_x[0])
+        D1: float = self.array_D_eff[0]
+        D2: float = self.array_D_eff[1]
+        A: float = dt / (2 * self.co_ords.array_dx[0])
         diag_elements.append(self.array_epsilon_e[0] + A * (D2 + D1) / dx)
         upper_diag_elements.append(-A * (D2 + D1) / dx)
         for i in range(1, len(self.co_ords.array_x) - 1):
-            dx1 = self.co_ords.array_x[i] - self.co_ords.array_x[i - 1]
-            dx2 = self.co_ords.array_x[i + 1] - self.co_ords.array_x[i]
-            D1 = self.array_D_eff[i - 1]
-            D2 = self.array_D_eff[i]
-            D3 = self.array_D_eff[i + 1]
-            A = dt / (2 * self.co_ords.array_dx[i])
+            dx1: float = self.co_ords.array_x[i] - self.co_ords.array_x[i - 1]
+            dx2: float = self.co_ords.array_x[i + 1] - self.co_ords.array_x[i]
+            D1: float = self.array_D_eff[i - 1]
+            D2: float = self.array_D_eff[i]
+            D3: float = self.array_D_eff[i + 1]
+            A: float = dt / (2 * self.co_ords.array_dx[i])
             diag_elements.append(self.array_epsilon_e[i] + A * ((D1 + D2) / dx1 + (D2 + D3) / dx2))
             upper_diag_elements.append(-A * (D3 + D2) / dx2)
             lower_diag_elements.append(-A * (D1 + D2) / dx1)
         # update last elements
-        dx = (self.co_ords.array_x[-1] - self.co_ords.array_x[-2])
-        D1 = self.array_D_eff[-1]
-        D2 = self.array_D_eff[-1]
-        A = dt / (2 * self.co_ords.array_dx[-1])
+        dx: float = (self.co_ords.array_x[-1] - self.co_ords.array_x[-2])
+        D1: float = self.array_D_eff[-1]
+        D2: float = self.array_D_eff[-1]
+        A: float = dt / (2 * self.co_ords.array_dx[-1])
         diag_elements.append(self.array_epsilon_e[-1] + A * (D2 + D1) / dx)
         lower_diag_elements.append(-A * (D2 + D1) / dx)
         return lower_diag_elements, diag_elements, upper_diag_elements
