@@ -2,6 +2,7 @@ import unittest
 
 import numpy as np
 
+from SPPy.models.battery import SPMe
 from SPPy.solvers.co_ordinates import ElectrolyteFVMCoordinates
 from SPPy.solvers.electrolyte_conc import ElectrolyteConcFVMSolver
 
@@ -198,3 +199,97 @@ class TestElectrolyteConcFVMSolver(unittest.TestCase):
                           -0.02500746412545197, -0.02500746412545197, -0.02500746412545197, -0.02500746412545197,
                           -0.02500746412545197, -0.02500746412545197, -0.02500746412545197, -0.02500746412545197]),
                 np.array(conc_solver.diags(dt=dt)[2])))
+
+    def test_method_c_e_j(self):
+        L_n: float = 8e-5
+        L_sep: float = 2.5e-5
+        L_p: float = 8.8e-5
+
+        epsilon_en: float = 0.385
+        epsilon_esep: float = 0.785
+        epsilon_ep: float = 0.485
+
+        D_e: float = 3.5e-10  # [m2/s]
+        brugg: float = 4
+        t_c: float = 0.354
+        c_e_init = 1000  # [mol/m3]
+
+        a_s_n: float = 5.78e3
+        a_s_p: float = 7.28e3
+
+        dt: float = 0.1  # [s]
+
+        co_ords: ElectrolyteFVMCoordinates = ElectrolyteFVMCoordinates(L_n=L_n, L_s=L_sep, L_p=L_p)
+        conc_solver: ElectrolyteConcFVMSolver = ElectrolyteConcFVMSolver(fvm_co_ords=co_ords, transference=t_c,
+                                                                         epsilon_en=epsilon_en,
+                                                                         epsilon_esep=epsilon_esep,
+                                                                         epsilon_ep=epsilon_ep,
+                                                                         a_sn=a_s_n, a_sp=a_s_p,
+                                                                         D_e=D_e,
+                                                                         brugg=brugg,
+                                                                         c_e_init=c_e_init)
+
+        j_p = SPMe.molar_flux_electrode(I=-1.656, S=1.1167, electrode_type='p') * np.ones(
+            len(co_ords.array_x_p))  # [mol/m2/s]
+        j_sep = np.zeros(len(co_ords.array_x_s))  # [mol/m2/s]
+        j_n = SPMe.molar_flux_electrode(I=-1.656, S=0.7824, electrode_type='n') * np.ones(
+            len(co_ords.array_x_n))  # [mol/m2/s]
+        j = np.append(np.append(j_n, j_sep), j_p)  # [mol/m2/s]
+
+        self.assertTrue(np.allclose(
+            np.array([[385.00819074], [385.00819074], [385.00819074], [385.00819074], [385.00819074],
+                      [385.00819074], [385.00819074], [385.00819074], [385.00819074], [385.00819074],
+                      [785.], [785.], [785.], [785.], [785.],
+                      [785.], [785.], [785.], [785.], [785.],
+                      [484.99277199], [484.99277199], [484.99277199], [484.99277199], [484.99277199],
+                      [484.99277199], [484.99277199], [484.99277199], [484.99277199], [484.99277199]]),
+            conc_solver.ce_j_vec(c_prev=conc_solver.array_c_e, j=j, dt=dt)))
+
+    def test_solve(self):
+        L_n: float = 8e-5
+        L_sep: float = 2.5e-5
+        L_p: float = 8.8e-5
+
+        epsilon_en: float = 0.385
+        epsilon_esep: float = 0.785
+        epsilon_ep: float = 0.485
+
+        D_e: float = 3.5e-10  # [m2/s]
+        brugg: float = 4
+        t_c: float = 0.354
+        c_e_init = 1000  # [mol/m3]
+
+        a_s_n: float = 5.78e3
+        a_s_p: float = 7.28e3
+
+        dt: float = 0.1  # [s]
+
+        co_ords: ElectrolyteFVMCoordinates = ElectrolyteFVMCoordinates(L_n=L_n, L_s=L_sep, L_p=L_p)
+        conc_solver: ElectrolyteConcFVMSolver = ElectrolyteConcFVMSolver(fvm_co_ords=co_ords, transference=t_c,
+                                                                         epsilon_en=epsilon_en,
+                                                                         epsilon_esep=epsilon_esep,
+                                                                         epsilon_ep=epsilon_ep,
+                                                                         a_sn=a_s_n, a_sp=a_s_p,
+                                                                         D_e=D_e,
+                                                                         brugg=brugg,
+                                                                         c_e_init=c_e_init)
+
+        j_p = SPMe.molar_flux_electrode(I=-1.656, S=1.1167, electrode_type='p') * np.ones(
+            len(co_ords.array_x_p))  # [mol/m2/s]
+        j_sep = np.zeros(len(co_ords.array_x_s))  # [mol/m2/s]
+        j_n = SPMe.molar_flux_electrode(I=-1.656, S=0.7824, electrode_type='n') * np.ones(
+            len(co_ords.array_x_n))  # [mol/m2/s]
+        j = np.append(np.append(j_n, j_sep), j_p)  # [mol/m2/s]
+
+        self.assertTrue(np.array_equal(1000 * np.ones(30), conc_solver.array_c_e))
+        print(conc_solver.solve_ce(j=j, dt=dt, solver_method='TDMA'))
+        print(conc_solver.array_c_e)
+
+        self.assertTrue(np.allclose(
+            np.array([1000.02127464, 1000.02127464, 1000.02127464, 1000.02127464, 1000.02127464,
+                      1000.02127464, 1000.02127451, 1000.02127015, 1000.02112188, 1000.01607847,
+                      1000.00376418, 1000.00205212, 1000.0010976, 1000.00054825, 1000.00020129,
+                      999.99992864, 999.99962965, 999.99919394, 999.99846067, 999.99715915,
+                      999.9878872, 999.98522759, 999.985103, 999.98509717, 999.98509689,
+                      999.98509688, 999.98509688, 999.98509688, 999.98509688, 999.98509688]),
+            conc_solver.array_c_e))

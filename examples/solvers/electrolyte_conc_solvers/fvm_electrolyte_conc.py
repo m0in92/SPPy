@@ -7,6 +7,7 @@ __author__ = "Moin Ahmed"
 __copyright__ = "Copyright SPPy 2024. All rights reserved."
 __status__ = "Deployed"
 
+import time
 
 import numpy as np
 import matplotlib.pyplot as plt
@@ -17,7 +18,7 @@ from SPPy.models.battery import SPMe
 
 # Simulation parameters
 dt: float = 0.1
-t_end: int = 360  # [s]
+max_iter: int = 1000
 
 co_ords: ElectrolyteFVMCoordinates = ElectrolyteFVMCoordinates(L_n=8e-5, L_s=2.5e-5, L_p=8.8e-5)
 conc_solver: ElectrolyteConcFVMSolver = ElectrolyteConcFVMSolver(fvm_co_ords=co_ords, transference=0.354,
@@ -32,8 +33,12 @@ j_sep = np.zeros(len(co_ords.array_x_s))  # [mol/m2/s]
 j_n = SPMe.molar_flux_electrode(I=-1.656, S=0.7824, electrode_type='n') * np.ones(len(co_ords.array_x_n))  # [mol/m2/s]
 j = np.append(np.append(j_n, j_sep), j_p)  # [mol/m2/s]
 
-for i in range(t_end):
+time_start: int = time.time()
+for i in range(max_iter):
     conc_solver.solve_ce(j=j, dt=dt, solver_method='TDMA')
+time_end: int = time.time()
+
+print("Simulation loop solution time ", time_end - time_start, " s.")
 
 print(f"Electrolyte Length Dimensions [m]: {conc_solver.co_ords.array_x}")
 print(f"Electrolyte conc. [mol/m3]: {conc_solver.array_c_e}")
@@ -42,7 +47,7 @@ print(f"Electrolyte conc. at L=L_cell [mol/m3]: {conc_solver.extrapolate_conc(L_
 
 plt.xlabel("Battery Cell Thickness [m]")
 plt.ylabel("Electrolyte Conc. [mol/m3]")
-plt.title(f"Electrolyte Conc. [mol/m3] after {t_end} s of discharge")
+plt.title(f"Electrolyte Conc. [mol/m3] after {max_iter * dt} s of discharge")
 plt.ticklabel_format(axis="x", scilimits=[-3, 1])
 plt.plot(co_ords.array_x, conc_solver.array_c_e)
 plt.show()

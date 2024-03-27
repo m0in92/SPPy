@@ -128,6 +128,13 @@ class ElectrolyteConcFVMSolver(BaseElectrolyteConcSolver):
         return np.diag(diag) + np.diag(u_diag, 1) + np.diag(l_diag, -1)
 
     def ce_j_vec(self, c_prev: npt.ArrayLike, j: npt.ArrayLike, dt: float) -> npt.ArrayLike:
+        """
+        Returns column vector, with the size (nx1).
+        :param c_prev:
+        :param j:
+        :param dt:
+        :return:
+        """
         ce_j_vec_1_ = (c_prev * self.array_epsilon_e).reshape(-1, 1)
         ce_j_vec_2_ = ((1 - self.t_c) * self.array_a_s * j * dt).reshape(-1, 1)
         return ce_j_vec_1_ + ce_j_vec_2_
