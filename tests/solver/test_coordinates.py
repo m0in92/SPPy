@@ -52,7 +52,7 @@ class TestElectrolyteFVMCoordinates(unittest.TestCase):
         self.assertAlmostEqual(1.05e-4 + 4.4e-6 + 7 * self.instance.dx_p, self.instance.array_x_p[7])
         self.assertAlmostEqual(1.05e-4 + 4.4e-6 + 8 * self.instance.dx_p, self.instance.array_x_p[8])
         self.assertAlmostEqual(1.05e-4 + 4.4e-6 + 9 * self.instance.dx_p, self.instance.array_x_p[9])
-        self.assertAlmostEqual(10, len(self.instance.array_x_s))
+        self.assertAlmostEqual(10, len(self.instance.array_x_p))
 
     def test_array_dx(self):
         self.assertEqual(self.instance.dx_n, self.instance.array_dx[0])
