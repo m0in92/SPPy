@@ -2,6 +2,11 @@
 Contains the functions for the positive electode's OCP as found in Schmit et al.
 
 Note that the electrode temperatures are assumed to be at 298.15 K.
+
+Reference:
+Schmitt, J., Schindler, M., & Jossen, A. (2021). Change in the half-cell open-circuit potential curves of
+silicon–graphite and nickel-rich lithium nickel manganese cobalt oxide during cycle aging.
+Journal of Power Sources, 506, 230240. https://doi.org/10.1016/J.JPOWSOUR.2021.230240
 """
 
 __author__ = "Moin Ahmed"
@@ -40,7 +45,6 @@ def calc_ocp_schmit(A_list: list, K: float, U0: float, x: float) -> float:
 
 
 def LCO(soc: Union[float, np.ndarray]) -> Union[float, np.ndarray]:
-    # # function calculations
     A_list: list = [5166082.0, -5191279.0, 5232986.0, -5257083.0, 5010583.0, -4520614.0, 7306952.0, -14634260.0,
                     6705611.0,
                     33894160.0, -63528110.0, 30487930.0, 21440020.0, -27731990.0, 8206452.0]

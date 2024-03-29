@@ -2,6 +2,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 
 from SPPy.general_OCP import funcs
+from SPPy.general_OCP import negative_electrode_ocps
 from parameter_sets.test.funcs import OCP_ref_n
 
 
@@ -10,16 +11,29 @@ SOC_init_p, SOC_init_n = 0.4956, 0.7568 # conditions in the literature source. G
 
 
 SOC_PC = np.linspace(1e-12, 0.69)
-OCP_PC = funcs.extract_OCP(SOC_PC, specie_name='Petroleum_coke', T=electrode_temp)
+OCP_PC = negative_electrode_ocps.PetroleumCoke(soc=SOC_PC)
+# OCP_PC = funcs.extract_OCP(SOC_PC, specie_name='Petroleum_coke', T=electrode_temp)
 
 SOC_graphite = np.linspace(0, 0.815)
 OCP_graphite = OCP_ref_n(SOC_graphite)
+
+SOC_MCMC: np.ndarray = np.linspace(0.32, 0.85)
+OCP_MCMB: np.ndarray = negative_electrode_ocps.MCMB(soc=SOC_MCMC)
+
+SOC_HardCarbon: np.ndarray = np.linspace(0.2, 0.65)
+OCP_HardCarbon: np.ndarray = negative_electrode_ocps.HardCarbon(soc=SOC_HardCarbon)
+
+SOC_LTO: np.ndarray = np.linspace(0, 1)
+OCP_LTO: np.ndarray = negative_electrode_ocps.LTO(soc=SOC_HardCarbon)
 
 print(OCP_graphite[-1])
 
 # Plots
 plt.plot(SOC_PC, OCP_PC, label="Petroleum Coke")
 plt.plot(SOC_graphite, OCP_graphite, label="graphite")
+plt.plot(SOC_MCMC, OCP_MCMB, label="MCMB")
+plt.plot(SOC_HardCarbon, OCP_HardCarbon, label="Hard Carbon")
+plt.plot(SOC_LTO, OCP_LTO, label="LTO")
 
 plt.grid()
 plt.legend()
