@@ -152,7 +152,7 @@ class OCVData:
                                                 [self.SOC_P_MAX_1, self.SOC_P_MAX_2],
                                                 [self.SOC_N_MIN_1, self.SOC_N_MIN_2],
                                                 [self.SOC_N_MAX_1, self.SOC_N_MAX_2]])
-        result: np.ndarray = GA(n_chromosomes=100, bounds=array_bounds, obj_func=func_obj,
+        result: np.ndarray = GA(n_chromosomes=1000, bounds=array_bounds, obj_func=func_obj,
                                 n_pool=7, n_elite=3, n_generations=10).solve()[0]
         self.fitted_soc_p_min = result[0]
         self.fitted_soc_p_max = result[1]
