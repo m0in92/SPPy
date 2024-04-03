@@ -25,6 +25,8 @@ from SPPy.cycler.custom import CustomCycler, HPPCCycler
 from SPPy.sol_and_visualization.solution import Solution, ECMSolution
 from SPPy.sol_and_visualization.plots import Plots
 
+from SPPy.parameter_estimations.procedural import OCVData
+
 from SPPy.calc_helpers.computational_intelligence_algorithms import GA
 
 

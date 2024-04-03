@@ -6,6 +6,7 @@ import matplotlib.pyplot as plt
 import scipy
 
 import SPPy
+from SPPy.general_OCP import positive_electrodes_ocps, negative_electrode_ocps
 from SPPy.calc_helpers.computational_intelligence_algorithms import GA
 
 
@@ -21,7 +22,7 @@ class OCVData:
 
     array_soc_lib = np.linspace(SOC_LIB_MIN, SOC_LIB_MAX)
 
-    def __init__(self, func_ocp_p: Callable, func_ocp_n: Callable,
+    def __init__(self, func_ocp_p: Union[str, Callable], func_ocp_n: Union[str, Callable],
                  soc_n_min_1: float, soc_n_min_2: float,
                  soc_n_max_1: float, soc_n_max_2: float,
                  soc_p_min_1: float, soc_p_min_2: float,
@@ -44,8 +45,25 @@ class OCVData:
 
         :charge_or_discharge: either 'charge' or 'discharge'
         """
-        self.func_ocp_p = func_ocp_p
-        self.func_ocp_n = func_ocp_n
+        self.func_ocp_n = None
+        if isinstance(func_ocp_n, str):
+            if func_ocp_n == "graphite":
+                self.func_ocp_n = negative_electrode_ocps.graphite
+        else:
+            self.func_ocp_n = func_ocp_n
+
+        self.func_ocp_p = None
+        if isinstance(func_ocp_p, str):
+            if func_ocp_p == "LCO":
+                self.func_ocp_p = positive_electrodes_ocps.LCO
+            elif func_ocp_p == "NMC":
+                self.func_ocp_p = positive_electrodes_ocps.NMC
+            elif func_ocp_p == "LPF":
+                self.func_ocp_p = positive_electrodes_ocps.LFP
+            elif func_ocp_p == "LMO":
+                self.func_ocp_p = positive_electrodes_ocps.LMO
+        else:
+            self.func_ocp_p = func_ocp_p
 
         self.SOC_N_MIN_1 = soc_n_min_1
         self.SOC_N_MIN_2 = soc_n_min_2
@@ -101,7 +119,8 @@ class OCVData:
     def ocv_lib(cls, ocp_p: float, ocp_n: float) -> float:
         return ocp_p - ocp_n
 
-    def mse(self, array_v_exp: npt.ArrayLike, array_v_fit: npt.ArrayLike) -> float:
+    @classmethod
+    def mse(cls, array_v_exp: npt.ArrayLike, array_v_fit: npt.ArrayLike) -> Union[float, np.ndarray]:
         return np.mean((array_v_exp - array_v_fit) ** 2)
 
     def find_optimized_parameters(self, array_cap_exp: npt.ArrayLike, array_v_exp_: npt.ArrayLike) -> np.ndarray:
