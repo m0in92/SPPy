@@ -239,7 +239,7 @@ dmypy.json
 cython_debug/
 
 # Personal Files
-data
+/data/
 data/Calce_PL
 analysis/
 
