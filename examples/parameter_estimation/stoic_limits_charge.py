@@ -12,7 +12,7 @@ BATTERY_CELL_CAP: float = 1.69230688135793
 df: pd.DataFrame = pd.read_csv("data/INR18650_slow_charge.csv")
 t_charge: np.ndarray = df['t [s]'].to_numpy()
 v_charge: np.ndarray = df['V [V]'].to_numpy()
-cap_charge: np.ndarray = df['charge cap [Ahr]'].to_numpy()
+cap_charge: np.ndarray = df['charge cap [Ahr]'].to_numpy() / BATTERY_CELL_CAP
 
 SOC_MIN_P: float = 0.35
 SOC_MAX_P: float = 0.9
@@ -29,12 +29,8 @@ soc_lib: np.ndarray = param_estimator.array_soc(0, 1)
 array_ocp_p: np.ndarray = param_estimator.array_ocp_p(soc_min=SOC_MIN_P, soc_max=SOC_MAX_P)
 array_ocp_n: np.ndarray = param_estimator.array_ocp_n(soc_min=SOC_MIN_N, soc_max=SOC_MAX_N)
 
-print(param_estimator.find_optimized_parameters(array_cap_exp=cap_charge, array_v_exp_=v_charge))
+result: np.ndarray = param_estimator.find_optimized_parameters(array_cap_exp=cap_charge, array_v_exp_=v_charge)
 
 # plots
-plt.plot(cap_charge / BATTERY_CELL_CAP, v_charge)
-plt.plot(soc_lib, array_ocp_p)
-plt.plot(soc_lib, array_ocp_n)
-plt.plot(soc_lib, array_ocp_p - array_ocp_n, 'r--')
-plt.show()
+param_estimator.plot_fit(cap_exp=cap_charge, v_exp=v_charge)
 

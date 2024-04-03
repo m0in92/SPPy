@@ -56,6 +56,11 @@ class OCVData:
         self.SOC_P_MAX_1 = soc_p_max_1
         self.SOC_P_MAX_2 = soc_p_max_2
 
+        self.fitted_soc_n_min: Optional[float] = None
+        self.fitted_soc_n_max: Optional[float] = None
+        self.fitted_soc_p_min: Optional[float] = None
+        self.fitted_soc_p_max: Optional[float] = None
+
         self.cycling_step: str = charge_or_discharge
 
     @staticmethod
@@ -63,10 +68,10 @@ class OCVData:
         return scipy.interpolate.interp1d(array_cap_exp, array_v_exp, fill_value="extrapolate")
 
     @classmethod
-    def array_soc(cls, soc_min: float, soc_max: float) -> npt.ArrayLike:
+    def array_soc(cls, soc_min: float, soc_max: float) -> np.ndarray:
         return np.linspace(soc_min, soc_max)
 
-    def array_ocp_p(self, soc_min: float, soc_max: float) -> npt.ArrayLike:
+    def array_ocp_p(self, soc_min: float, soc_max: float) -> np.ndarray:
         array_soc_p = self.array_soc(soc_min=soc_min, soc_max=soc_max)
         if self.cycling_step == 'discharge':
             return self.func_ocp_p(array_soc_p)
@@ -75,7 +80,7 @@ class OCVData:
         else:
             raise TypeError('Unknown charging step.')
 
-    def array_ocp_n(self, soc_min: float, soc_max: float) -> npt.ArrayLike:
+    def array_ocp_n(self, soc_min: float, soc_max: float) -> np.ndarray:
         array_soc_n = self.array_soc(soc_min=soc_min, soc_max=soc_max)
         if self.cycling_step == 'discharge':
             return np.flip(self.func_ocp_n(array_soc_n))
@@ -106,6 +111,7 @@ class OCVData:
         :param array_v_exp_: Array containing experimental voltage [V].
         :return: Array containing optimized parameters [SOC_P_MIN, SOC_P_MAX, SOC_N_MIN, SOC_N_MAX].
         """
+
         def func_obj(lst_param: list) -> float:
             # extract the params from the parameter set below
             soc_p_min, soc_p_max, soc_n_min, soc_n_max = lst_param[0], lst_param[1], lst_param[2], lst_param[3]
@@ -127,13 +133,18 @@ class OCVData:
                                                 [self.SOC_P_MAX_1, self.SOC_P_MAX_2],
                                                 [self.SOC_N_MIN_1, self.SOC_N_MIN_2],
                                                 [self.SOC_N_MAX_1, self.SOC_N_MAX_2]])
-        return GA(n_chromosomes=10, bounds=array_bounds, obj_func=func_obj,
-                  n_pool=7, n_elite=3, n_generations=2).solve()[0]
+        result: np.ndarray = GA(n_chromosomes=100, bounds=array_bounds, obj_func=func_obj,
+                                n_pool=7, n_elite=3, n_generations=10).solve()[0]
+        self.fitted_soc_p_min = result[0]
+        self.fitted_soc_p_max = result[1]
+        self.fitted_soc_n_min = result[2]
+        self.fitted_soc_n_max = result[3]
+        return result
 
     @classmethod
     def get_soc(cls, soc_lib: Union[float, npt.ArrayLike],
                 soc_p_min: float, soc_p_max: float,
-                soc_n_min: float, soc_n_max: float  ) -> tuple[float, float]:
+                soc_n_min: float, soc_n_max: float) -> tuple[float, float]:
         """
         Returns a tuple which contains the values of positive and negative electrode SOC from the LIB SOC.
         :param soc_lib: state-of-charge of the lithium-ion battery
@@ -150,11 +161,12 @@ class OCVData:
         func_interpolation_soc_n = scipy.interpolate.interp1d(OCVData.array_soc_lib, array_soc_n)
         return func_interpolation_soc_p(soc_lib), func_interpolation_soc_n(soc_lib)
 
-    def plot_fit(self, soc_p_min: float, soc_p_max: float, soc_n_min: float, soc_n_max: float,
-                 cap_exp: Optional[npt.ArrayLike] = None, v_exp: Optional[npt.ArrayLike] = None) -> None:
-        array_ocp_p = self._func_interp_ocp(soc_min=soc_p_min, soc_max=soc_p_max,
+    def plot_fit(self,
+                 cap_exp: Optional[npt.ArrayLike] = None,
+                 v_exp: Optional[npt.ArrayLike] = None) -> None:
+        array_ocp_p = self._func_interp_ocp(soc_min=self.fitted_soc_p_min, soc_max=self.fitted_soc_p_max,
                                             interpolation_type='p')(self.array_soc_lib)
-        array_ocp_n = self._func_interp_ocp(soc_min=soc_n_min, soc_max=soc_n_max,
+        array_ocp_n = self._func_interp_ocp(soc_min=self.fitted_soc_n_min, soc_max=self.fitted_soc_n_max,
                                             interpolation_type='n')(self.array_soc_lib)
         array_ocv = self.ocv_lib(ocp_p=array_ocp_p, ocp_n=array_ocp_n)
 
