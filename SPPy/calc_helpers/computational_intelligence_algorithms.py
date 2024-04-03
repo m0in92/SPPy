@@ -82,7 +82,7 @@ class GA:
         :returns: (Numpy array) a numpy array of populations. Each row contains the chromosomes (i.e. parameter set)
                 and each column contains the genes (i.e., parameter values)
         """
-        pop = np.zeros((self.n_chromosomes, self.n_genes)) # each row will be a parameter set
+        pop = np.zeros((self.n_chromosomes, self.n_genes))  # each row will be a parameter set
         for chromo_index in range(self.n_chromosomes):
             for gene_index in range(self.n_genes):
                 a = np.random.uniform(self.bounds[gene_index][0], self.bounds[gene_index][1])

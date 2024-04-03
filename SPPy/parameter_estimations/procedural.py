@@ -27,6 +27,23 @@ class OCVData:
                  soc_p_min_1: float, soc_p_min_2: float,
                  soc_p_max_1: float, soc_p_max_2: float,
                  charge_or_discharge: str):
+        """
+        Constructor
+        :param func_ocp_p: positive electrode OCP function
+        :param func_ocp_n: negative electrode OCP function
+
+        :soc_n_min_1: lower bound for negative electrode minimum SOC
+        :soc_n_min_2: upper bound for negative electrode minimum SOC
+        :soc_n_max_1: lower bound for negative electrode maximum SOC
+        :soc_n_max_2: upper bound for negative electrode maximum SOC
+
+        :soc_p_min_1: lower bound for positive electrode minimum SOC
+        :soc_p_min_2: upper bound for positive electrode minimum SOC
+        :soc_p_max_1: lower bound for positive electrode maximum SOC
+        :soc_p_max_2: upper bound for positive electrode maximum SOC
+
+        :charge_or_discharge: either 'charge' or 'discharge'
+        """
         self.func_ocp_p = func_ocp_p
         self.func_ocp_n = func_ocp_n
 
@@ -43,7 +60,7 @@ class OCVData:
 
     @staticmethod
     def _func_interp_ocp_exp(array_cap_exp: npt.ArrayLike, array_v_exp: npt.ArrayLike):
-        return scipy.interpolate.interp1d(array_cap_exp, array_v_exp)
+        return scipy.interpolate.interp1d(array_cap_exp, array_v_exp, fill_value="extrapolate")
 
     @classmethod
     def array_soc(cls, soc_min: float, soc_max: float) -> npt.ArrayLike:
@@ -82,7 +99,13 @@ class OCVData:
     def mse(self, array_v_exp: npt.ArrayLike, array_v_fit: npt.ArrayLike) -> float:
         return np.mean((array_v_exp - array_v_fit) ** 2)
 
-    def find_optimized_parameters(self, array_cap_exp: npt.ArrayLike, array_v_exp_: npt.ArrayLike):
+    def find_optimized_parameters(self, array_cap_exp: npt.ArrayLike, array_v_exp_: npt.ArrayLike) -> np.ndarray:
+        """
+        Applies the genetic algorithm to find the optimized parameters for the stoiciometric limits.
+        :param array_cap_exp: Array containing experimental capacity [Ahr].
+        :param array_v_exp_: Array containing experimental voltage [V].
+        :return: Array containing optimized parameters [SOC_P_MIN, SOC_P_MAX, SOC_N_MIN, SOC_N_MAX].
+        """
         def func_obj(lst_param: list) -> float:
             # extract the params from the parameter set below
             soc_p_min, soc_p_max, soc_n_min, soc_n_max = lst_param[0], lst_param[1], lst_param[2], lst_param[3]
