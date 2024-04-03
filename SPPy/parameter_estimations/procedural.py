@@ -41,16 +41,12 @@ class OCVData:
 
         self.cycling_step: str = charge_or_discharge
 
-    # @property
-    # def array_soc_lib(self):
-    #     return np.linspace(self.SOC_LIB_MIN, self.SOC_LIB_MAX)
-
     @staticmethod
     def _func_interp_ocp_exp(array_cap_exp: npt.ArrayLike, array_v_exp: npt.ArrayLike):
         return scipy.interpolate.interp1d(array_cap_exp, array_v_exp)
 
     @classmethod
-    def array_soc(soc_min: float, soc_max: float) -> npt.ArrayLike:
+    def array_soc(cls, soc_min: float, soc_max: float) -> npt.ArrayLike:
         return np.linspace(soc_min, soc_max)
 
     def array_ocp_p(self, soc_min: float, soc_max: float) -> npt.ArrayLike:
