@@ -1,3 +1,11 @@
+"""
+Python script to demonstrate the determination of stoiciometric ratios from slow battery charge.
+"""
+
+__author__ = "Moin Ahmed"
+__copyright__ = "Copyright 2024 by Moin Ahmed. All rights reserved."
+__status__ = "deployed"
+
 import numpy as np
 import pandas as pd
 
