@@ -1,7 +1,6 @@
 import numpy as np
 import matplotlib.pyplot as plt
 
-from SPPy.general_OCP import funcs
 from SPPy.general_OCP import positive_electrodes_ocps
 
 
