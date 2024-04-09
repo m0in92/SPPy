@@ -12,8 +12,8 @@ import numpy.typing as npt
 def first_centered_FD(y: np.ndarray, x: np.ndarray) -> np.ndarray:
     """
     calculates the first order differential using centered finite difference of the equation:
-    :param array_x: x value at the x step
-    :param array_t: t value at the t step
+    :param y: y value at the x step
+    :param x: x value at the t step
     :return: array containing the differential values.
     """
     array_diff = np.zeros(len(x)-2)
@@ -22,5 +22,6 @@ def first_centered_FD(y: np.ndarray, x: np.ndarray) -> np.ndarray:
     return array_diff
 
 
-def dVdQ(cap: np.ndarray, v: np.ndarray) -> np.ndarray:
-    return first_centered_FD(y=v, x=cap)
+def dVdQ(cap: np.ndarray, v: np.ndarray) -> tuple[np.ndarray, np.ndarray]:
+    return cap[1:-1], first_centered_FD(y=v, x=cap)
+
