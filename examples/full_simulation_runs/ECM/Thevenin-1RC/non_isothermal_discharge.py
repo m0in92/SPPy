@@ -5,33 +5,37 @@ import numpy as np
 import SPPy
 
 
-def func_eta(SOC, temp):
-    return 1
+def func_eta(soc: float, temp: float) -> float:
+    return 1.0
 
 
-# the functions below were estimated from the create_and_save_OCV.py module
+# the functions below were estimated from the create_and_save_OCV.py module. A polynomial approximation is used for the
+# functions below and the arrays below contains the co-efficients of the polynomials.
 func_OCV: Callable = np.poly1d(np.array([7.83002260e+03, -4.72721395e+04, 1.25237092e+05, -1.91403553e+05,
                                          1.86656077e+05, -1.21342077e+05, 5.33553293e+04, -1.57665852e+04,
                                          3.04748964e+03, -3.65636105e+02, 2.50281588e+01, 2.93438431e+00]))
-func_dOCVdT = np.poly1d(np.array([-1.62911207e+01, 9.66871309e+01, -2.50145828e+02, 3.70280039e+02,
-                                  -3.46021781e+02, 2.12461660e+02, -8.64646004e+01, 2.29561374e+01,
-                                  -3.80515739e+00, 3.58298325e-01, -1.40044753e-02, -6.86713653e-04]))
+func_dOCVdT: Callable = np.poly1d(np.array([-1.62911207e+01, 9.66871309e+01, -2.50145828e+02, 3.70280039e+02,
+                                            -3.46021781e+02, 2.12461660e+02, -8.64646004e+01, 2.29561374e+01,
+                                            -3.80515739e+00, 3.58298325e-01, -1.40044753e-02, -6.86713653e-04]))
 
 # Simulation Parameters
-I = 1.65
-V_min = 2.5
-SOC_min = 0
-SOC_LIB = 1
+I: float = 1.65
+V_min: float = 2.5
+SOC_min: float = 0
+SOC_LIB: float = 1
 
 # setup the battery cell
-cell = SPPy.ECMBatteryCell(R0_ref=0.005, R1_ref=0.001, C1=0.03, temp_ref=298.15, Ea_R0=400, Ea_R1=400,
-                           rho=1626, vol=3.38e-5, c_p=750, h=1, area=0.085, cap=1.65, v_max=4.2, v_min=2.5,
-                           soc_init=0.98, temp_init=298.15, func_eta=func_eta, func_ocv=func_OCV, func_docvdtemp=func_dOCVdT)
+cell: SPPy.ECMBatteryCell = SPPy.ECMBatteryCell(R0_ref=0.005, R1_ref=0.001, C1=0.03, temp_ref=298.15, Ea_R0=400,
+                                                Ea_R1=400,
+                                                rho=1626, vol=3.38e-5, c_p=750, h=1, area=0.085, cap=1.65, v_max=4.2,
+                                                v_min=2.5,
+                                                soc_init=0.98, temp_init=298.15, func_eta=func_eta, func_ocv=func_OCV,
+                                                func_docvdtemp=func_dOCVdT)
 # set-up cycler and solver
-dc = SPPy.Discharge(discharge_current=I, v_min=V_min, SOC_LIB_min=SOC_min, SOC_LIB=SOC_LIB)
-solver = SPPy.DTSolver(battery_cell_instance=cell, isothermal=False)
+dc: SPPy.Discharge = SPPy.Discharge(discharge_current=I, v_min=V_min, SOC_LIB_min=SOC_min, SOC_LIB=SOC_LIB)
+solver: SPPy.DTSolver = SPPy.DTSolver(battery_cell_instance=cell, isothermal=False)
 # solve
-sol = solver.solve(cycling_step=dc)
+sol: SPPy.ECMSolution = solver.solve(cycling_step=dc)
 
 # Plots
 sol.comprehensive_plot()

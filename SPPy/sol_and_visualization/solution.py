@@ -100,38 +100,43 @@ class ECMSolution:
         self.array_soc = np.append(self.array_soc, soc)
         self.array_I_R1 = np.append(self.array_I_R1, i_r1)
 
-    def comprehensive_plot(self, sol_exp: Optional[Self] = None, save_dir: Optional[str] = None):
+    def comprehensive_plot(self, sol_exp: Optional[Self] = None, save_dir: Optional[str] = None,
+                           plot_line_color: Optional[str] = None):
         fig = plt.figure(figsize=(6.4, 6), dpi=300)
 
         x_axis = self.array_t
 
+        color: str = '#1f77b4'
+        if plot_line_color is not None:
+            color: str = plot_line_color
+
         ax1 = fig.add_subplot(221)
-        ax1.plot(x_axis, self.array_V, label='sim')
+        ax1.plot(x_axis, self.array_V, label='sim', color=color)
         if sol_exp is not None:
-            ax1.plot(sol_exp.array_t, sol_exp.array_V, label='exp')
+            ax1.plot(sol_exp.array_t, sol_exp.array_V, label='exp', color=color)
             ax1.legend()
         ax1.set_xlabel('Time [s]')
         ax1.set_ylabel('Voltage [V]')
 
         ax2 = fig.add_subplot(222)
         if self.array_soc is not None:
-            ax2.plot(x_axis, self.array_soc)
+            ax2.plot(x_axis, self.array_soc, color)
         ax2.set_xlabel('Time [s]')
         ax2.set_ylabel('SOC')
 
         ax3 = fig.add_subplot(223)
-        ax3.plot(x_axis, self.array_temp - 273.15, label='sim')
+        ax3.plot(x_axis, self.array_temp - 273.15, label='sim', color=color)
         if sol_exp is not None:
             try:
-                ax3.plot(sol_exp.array_t, sol_exp.array_temp - 273.15, label='exp')
+                ax3.plot(sol_exp.array_t, sol_exp.array_temp - 273.15, label='exp', color=color)
                 ax3.legend()
             except Exception as e:
                 print("could not plot the experimental temp.")
         ax3.set_xlabel('Time [s]')
-        ax3.set_ylabel('Temp. [K]')
+        ax3.set_ylabel(r'Temp. [$^0$C]')
 
         ax4 = fig.add_subplot(224)
-        ax4.plot(x_axis, self.array_I)
+        ax4.plot(x_axis, self.array_I, color=color)
         ax4.set_xlabel('Time [s]')
         ax4.set_ylabel('Current [A]')
 
