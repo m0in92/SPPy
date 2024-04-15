@@ -329,7 +329,15 @@ class ESCDTSolver(BaseSolver):
                     s = ESC.s(i_app=i_app, s_prev=s)
                     v = ESC.v(i_app=i_app, ocv=self.b_cell.ocv, R0=self.b_cell.R0, R1=self.b_cell.R1, i_R1=i_R1_prev,
                               m_0=self.b_cell.M_0, m=self.b_cell.M, h=h_prev, s_prev=s_prev)
-                    # print(t_curr, v)
+
+                    # Calc temp
+                    if self.isothermal is not True:
+                        self.b_cell.temp = calc_cell_temp(t_prev=t_prev, dt=dt, temp_prev=self.b_cell.temp, V=v,
+                                                          I=-i_app,
+                                                          rho=self.b_cell.rho, Vol=self.b_cell.vol, C_p=self.b_cell.c_p,
+                                                          OCV=self.b_cell.ocv, dOCVdT=self.b_cell.docpdtemp,
+                                                          h=self.b_cell.h,
+                                                          A=self.b_cell.area, T_amb=self.b_cell.temp_init)
 
                     # Loop termination criteria
                     if (step == 'charge') and (v > cycler.v_max):

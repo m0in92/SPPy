@@ -113,7 +113,7 @@ class ECMSolution:
         ax1 = fig.add_subplot(221)
         ax1.plot(x_axis, self.array_V, label='sim', color=color)
         if sol_exp is not None:
-            ax1.plot(sol_exp.array_t, sol_exp.array_V, label='exp', color=color)
+            ax1.plot(sol_exp.array_t, sol_exp.array_V, label='exp', color='red')
             ax1.legend()
         ax1.set_xlabel('Time [s]')
         ax1.set_ylabel('Voltage [V]')

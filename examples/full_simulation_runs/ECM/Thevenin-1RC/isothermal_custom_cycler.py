@@ -2,21 +2,23 @@
 This example script conducts the Thevenin ECM simulation (with 1 RC pair) using custom cycler.
 """
 __author__ = 'Moin Ahmed'
-__copywrite__ = 'Copywrite 2023 by Moin Ahmed. All rights reserved.'
-__status__ = 'developement'
+__copywrite__ = 'Copyright 2023 by Moin Ahmed. All rights reserved.'
+__status__ = 'deployed'
 
+import numpy as np
 import pickle
 
 import SPPy
 import scipy
+import matplotlib.pyplot as plt
 
 # Read experimental data below
 sol_exp = SPPy.ECMSolution().read_from_csv_file(filepath='../A1-A123-Dynamics.csv')
 
 # Simulation Parameters
-R0: float = 0.225
-R1: float = 0.001
-C1: float = 0.03
+R0: float = 0.08
+R1: float = 0.2
+C1: float = 20
 Q: float = 1.1
 
 
@@ -61,7 +63,14 @@ custom_step = SPPy.CustomCycler(array_t=sol_exp.array_t, array_I=sol_exp.array_I
                                 SOC_LIB=0.0, SOC_LIB_min=0.0, SOC_LIB_max=1.0)
 solver = SPPy.DTSolver(battery_cell_instance=cell, isothermal=True)
 # solve
-sol = solver.solve(cycling_step=custom_step, dt=10)
+sol: SPPy.ECMSolution = solver.solve(cycling_step=custom_step, dt=10)
 
 # Plots
-sol.comprehensive_plot()
+sol.comprehensive_plot(sol_exp=sol_exp)
+# print(np.abs(scipy.interpolate.interp1d(sol_exp.array_t,
+#                                                  sol_exp.array_V,
+#                                                  fill_value="extrapolate")(sol.array_t) - sol.array_V).sum())
+# plt.plot(sol.array_t, scipy.interpolate.interp1d(sol_exp.array_t,
+#                                                  sol_exp.array_V,
+#                                                  fill_value="extrapolate")(sol.array_t) - sol.array_V)
+# plt.show()

@@ -18,7 +18,7 @@ with open("../saved_results/dOCVdT", "rb") as f_OCV:
     dOCVdT = pickle.load(f_OCV)
 
 
-def func_eta(SOC: float, temp: float) -> float:
+def func_eta(soc: float, temp: float) -> float:
     return 1.0
 
 
@@ -40,7 +40,7 @@ cell: SPPy.ECMBatteryCell = SPPy.ECMBatteryCell(R0_ref=0.005, R1_ref=0.001, C1=0
                                                 func_docvdtemp=func_dOCVdT, M_0=4.4782e-4, M=0.0012, gamma=523.8311)
 # set-up cycler and solver
 dc: SPPy.Discharge = SPPy.Discharge(discharge_current=I, v_min=v_min, SOC_LIB_min=SOC_min, SOC_LIB=SOC_LIB)
-solver: SPPy.ESCDTSolver = SPPy.ESCDTSolver(battery_cell_instance=cell, isothermal=True)
+solver: SPPy.ESCDTSolver = SPPy.ESCDTSolver(battery_cell_instance=cell, isothermal=False)
 # solve
 sol: SPPy.ECMSolution = solver.solve_standard_cycling_step(dt=0.1, cycler=dc)
 
