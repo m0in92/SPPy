@@ -304,6 +304,13 @@ class Solution:
             sol_init.lst_cap = ((cell_cap - df['cap [Ahr]']) / cell_cap).tolist()
         return cls(base_solution_instance=sol_init)
 
+    @classmethod
+    def set_matplotlib_plot_line_color(cls, plot_line_color: Optional[str] = None) -> str:
+        color: str = '#1f77b4'  # default Matplotlib color for the first line plot
+        if plot_line_color is not None:
+            color: str = plot_line_color
+        return color
+
     def create_df(self):
         df = pd.DataFrame({
             'Time [s]': self.t,
@@ -416,14 +423,17 @@ class Solution:
     def dis_cap_array(self):
         return np.array([self.calc_discharge_cap(cycle_no_) for cycle_no_ in np.unique(self.cycle_num)])
 
-    def set_matplotlib_settings(self):
+    def set_matplotlib_settings(self, plot_line_color: Optional[str] = None):
         mpl.rcParams['lines.linewidth'] = 3
         plt.rc('axes', titlesize=20)
         plt.rc('axes', labelsize=20)
         plt.rcParams['font.size'] = 15
 
-    def comprehensive_isothermal_plot(self, save_dir: str = None):
+    def comprehensive_isothermal_plot(self,
+                                      save_dir: str = None,
+                                      plot_line_color: Optional[str] = None) -> None:
         self.set_matplotlib_settings()
+        color: str = self.set_matplotlib_plot_line_color(plot_line_color=plot_line_color)
 
         num_rows: int = 2
         num_cols: int = 2
@@ -486,22 +496,24 @@ class Solution:
 
         plt.show()
 
-    def comprehensive_plot(self, save_dir: str = None):
+    def comprehensive_plot(self, save_dir: str = None, plot_line_color: Optional[str] = None):
         self.set_matplotlib_settings()
 
         num_rows = 3
         num_cols = 2
         fig = plt.figure(figsize=(6.4 * 2, 4.8 * 3), dpi=300)
 
+        color: str = self.set_matplotlib_plot_line_color(plot_line_color=plot_line_color)
+
         ax1 = fig.add_subplot(num_rows, num_cols, 1)
-        ax1.plot(self.t, self.V)
+        ax1.plot(self.t, self.V, color=color)
         ax1.set_xlabel('Time [s]')
         ax1.set_ylabel('V [V]')
         ax1.set_title('V vs. Time')
 
         ax2 = fig.add_subplot(num_rows, num_cols, 2)
         if len(np.unique(self.cycle_num)) == 1:
-            ax2.plot(self.cap, self.V)
+            ax2.plot(self.cap, self.V, color=color)
         else:
             # omit cycle 0
             first_cycle_no = np.unique(self.cycle_num)[1]
@@ -518,26 +530,26 @@ class Solution:
         ax2.legend()
 
         ax3 = fig.add_subplot(num_rows, num_cols, 3)
-        ax3.plot(self.t, self.x_surf_p)
+        ax3.plot(self.t, self.x_surf_p, color=color)
         ax3.set_xlabel('Time [s]')
         ax3.set_ylabel('SOC')
         ax3.set_title('Positive Electrode SOC')
 
         ax4 = fig.add_subplot(num_rows, num_cols, 4)
-        ax4.plot(self.t, self.x_surf_n)
+        ax4.plot(self.t, self.x_surf_n, color=color)
         ax4.set_xlabel('Time [s]')
         ax4.set_ylabel('SOC')
         ax4.set_title('Negative Electrode SOC')
 
         ax5 = fig.add_subplot(num_rows, num_cols, 5)
-        ax5.plot(self.t, self.T - Constants.T_abs)
+        ax5.plot(self.t, self.T - Constants.T_abs, color=color)
         ax5.set_xlabel('Time [s]')
         ax5.set_ylabel('Temperature [C]')
         ax5.set_title('Battery Cell Surface Temp.')
 
         ax6 = fig.add_subplot(num_rows, num_cols, 6)
         if len(np.unique(self.cycle_num)) == 1:
-            ax6.plot(self.cap, self.T - Constants.T_abs)
+            ax6.plot(self.cap, self.T - Constants.T_abs, color=color)
         else:
             # omit cycle 0
             first_cycle_no = np.unique(self.cycle_num)[1]
