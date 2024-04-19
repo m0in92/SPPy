@@ -17,6 +17,8 @@ if __name__ == '__main__':
     eigen_solver = EigenFuncExp(x_init=SOC_init, n=5, electrode_type='n')
     cn_solver = CNSolver(c_init=SOC_init*c_max, electrode_type='n')
     poly_solver = PolynomialApproximation(c_init=SOC_init*c_max, electrode_type='n', type='higher')
+    poly_solver_two: PolynomialApproximation = PolynomialApproximation(c_init=SOC_init * c_max, electrode_type='n',
+                                                                       type='two')
 
     # ----------------------------------Eigen Solver------------------------------------------------------------------------
     # Simulation parameters below
@@ -73,12 +75,30 @@ if __name__ == '__main__':
     t_end = time.time()  # end timer
     print(f"Poly solver solved in {t_end - t_start} s")
 
+    # -------------------------------------- Poly Solver -------------------------------------------------------------------
+
+    # Simulation parameters below
+    t_prev: float = 0  # previous time [s]
+
+    # solve for SOC wrt to time
+    lst_time_poly_two, lst_poly_solver_two = [], []
+    t_start = time.time()  # start timer
+    SOC_poly: float = SOC_init
+    while SOC_poly > 0:
+        SOC_poly = poly_solver_two(dt=dt, t_prev=t_prev, i_app=i_app, R=R, S=S, D_s=D, c_smax=c_max)
+        lst_time_poly_two.append(t_prev)
+        lst_poly_solver_two.append(SOC_poly)
+
+        t_prev += dt  # update the time
+    t_end = time.time()  # end timer
+    print(f"Poly solver - Two terms solved in {t_end - t_start} s")
 
     # ----------------------------------------------Plots------------------------------------------------------------------
 
     plt.plot(lst_time_eigen, lst_eigen_SOC, label="Eigen Expansion Method")
     plt.plot(lst_time_cn, lst_cn_solver, label="Crank-Nicolson Scheme")
-    plt.plot(lst_time_poly, lst_poly_solver, label="Polynomial Approximation")
+    plt.plot(lst_time_poly, lst_poly_solver, label="Polynomial Approximation - Higher")
+    plt.plot(lst_time_poly_two, lst_poly_solver_two, label="Polynomial Approximation - Two")
 
     plt.xlabel("Time [s]")
     plt.ylabel("Negative Electrode SOC")
