@@ -15,6 +15,7 @@ SOC_init = 0.4956  # initial electrode SOC
 eigen_solver = EigenFuncExp(x_init=SOC_init, n=5, electrode_type='p')
 cn_solver = CNSolver(c_init=c_max*SOC_init, electrode_type='p')
 poly_solver = PolynomialApproximation(c_init=SOC_init*c_max, electrode_type='p', type='higher')
+poly_solver_two: PolynomialApproximation = PolynomialApproximation(c_init=SOC_init*c_max, electrode_type='p', type='two')
 
 # ----------------------------------Eigen Solver------------------------------------------------------------------------
 # Simulation parameters below
@@ -71,11 +72,30 @@ while SOC_poly < 1:
 t_end = time.time()  # end timer
 print(f"Poly solver solved in {t_end - t_start} s")
 
+# -------------------------------------- Poly Solver _ two terms -------------------------------------------------------------------
+
+# Simulation parameters below
+t_prev: float = 0  # previous time [s]
+
+# solve for SOC wrt to time
+lst_time_poly_two_p, lst_poly_solver_two_p = [], []
+t_start = time.time()  # start timer
+SOC_poly = SOC_init
+while SOC_poly < 1:
+    SOC_poly = poly_solver_two(dt=dt, t_prev=t_prev, i_app=i_app, R=R, S=S, D_s=D, c_smax=c_max)
+    lst_time_poly_two_p.append(t_prev)
+    lst_poly_solver_two_p.append(SOC_poly)
+
+    t_prev += dt  # update the time
+t_end = time.time()  # end timer
+print(f"Poly solver with two terms solved in {t_end - t_start} s")
+
 # ----------------------------------------------Plots------------------------------------------------------------------
 
 plt.plot(lst_time_eigen_p, lst_eigen_SOC_p, label="Eigen Expansion Method")
 plt.plot(lst_time_cn_p, lst_cn_solver_p, label="Crank-Nicolson Scheme")
-plt.plot(lst_time_poly_p, lst_poly_solver_p, label="Polynomial Approximation")
+plt.plot(lst_time_poly_p, lst_poly_solver_p, label="Polynomial Approximation - Higher")
+plt.plot(lst_time_poly_p, lst_poly_solver_p, label="Polynomial Approximation - Two")
 plt.xlabel("Time [s]")
 plt.ylabel("Positive Electrode SOC")
 plt.legend()
