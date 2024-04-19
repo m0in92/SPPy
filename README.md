@@ -54,12 +54,11 @@ installation procedures are listed below.
 
 ### Git Clone
 
-1. Install external python package dependencies required for this repository. The required dependencies are:
-   - numpy
-   - pandas
-   - matplotlib
-   - scipy
-   - tqdm
+1. Install external python package dependencies required for this repository. Use the following code
+   ```angular2html
+        pip install -r requirements.txt
+    ```
+
 2. Clone the repository, for example using git clone git@github.com:m0in92/EV_sim.git using Git Bash.
 
 ### Python setup and tests

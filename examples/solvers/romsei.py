@@ -43,9 +43,12 @@ for i, soc_ in enumerate(soc_n):
 
 # plots
 fig, ax1 = plt.subplots()
-ax1.plot(soc_n, I_i, label="J_i")
+ax1.plot(soc_n, I_i, label="intercalation current")
 ax2 = ax1.twinx()
-ax2.plot(soc_n, I_s, color="red", label="J_s")
+ax2.plot(soc_n, I_s, color="red", label="side-reaction current")
+
+plt.xlabel("Negative Electrode SOC")
+plt.ylabel("Lithium Ion Current [A]")
 
 plt.legend()
 plt.show()
