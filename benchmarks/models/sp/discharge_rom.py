@@ -31,7 +31,7 @@ dc: SPPy.Discharge = SPPy.Discharge(discharge_current=I, v_min=V_min,
                                     SOC_LIB_min=SOC_min, SOC_LIB=soc_lib_init)
 solver: SPPy.SPPySolver = SPPy.SPPySolver(b_cell=cell,
                                           isothermal=True, degradation=False,
-                                          electrode_SOC_solver='cn')
+                                          electrode_SOC_solver='poly')
 
 # simulate
 time_start: float = time.time()
