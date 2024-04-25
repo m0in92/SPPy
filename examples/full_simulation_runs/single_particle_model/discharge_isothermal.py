@@ -32,7 +32,7 @@ solver: SPPy.SPPySolver = SPPy.SPPySolver(b_cell=cell,
                                           electrode_SOC_solver='poly')
 
 # simulate
-sol: SPPy.SPPySolver = solver.solve(cycler_instance=dc)
+sol: SPPy.Solution = solver.solve(cycler_instance=dc)
 
 # Plot
 sol.comprehensive_isothermal_plot()

@@ -35,7 +35,7 @@ solver: SPPy.SPPySolver = SPPy.SPPySolver(b_cell=cell,
 
 # simulate
 time_start: float = time.time()
-sol: SPPy.SPPySolver = solver.solve(cycler_instance=dc)
+sol: SPPy.Solution = solver.solve(cycler_instance=dc)
 time_end: float = time.time()
 
 print(f"Solution Time: {time_end - time_start} s")

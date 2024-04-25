@@ -342,11 +342,18 @@ class Solution:
         ax = fig.add_subplot(111)
         return ax
 
-    def single_plot(self, x_var, y_var, x_label, y_label):
+    def single_plot(self, x_var, y_var, x_label, y_label, plot_title: str = None):
+        self.set_matplotlib_settings()
+
         ax = self.initiate_single_plot()
         ax.plot(x_var, y_var)
         ax.set_xlabel(xlabel=x_label)
         ax.set_ylabel(ylabel=y_label)
+
+        if plot_title is not None:
+            ax.set_title(plot_title)
+
+        plt.tight_layout()
         plt.show()
 
     def filter_cycle_nums(self):
@@ -415,7 +422,12 @@ class Solution:
         return np.array([self.filter_battery_cap(i) for i in self.filter_cycle_nums()])
 
     def plot_tV(self):
-        self.single_plot(self.t, self.V, x_label='t [s]', y_label='V [V]')
+        self.single_plot(self.t, self.V, x_label='t [s]', y_label='V [V]', plot_title="V vs. Time")
+
+    def plot_tTemp(self):
+        self.single_plot(self.t, self.T,
+                         x_label='t [s]', y_label=r'Temperature [$0^C$]',
+                         plot_title="Battery Cell Surface Temp.")
 
     def plot_capV(self):
         self.single_plot(self.cap, self.V, x_label='capacity [Ahr]', y_label='V [V]')
