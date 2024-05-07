@@ -1,3 +1,11 @@
+"""
+Contains unittests for the custom cyclers
+"""
+
+__all__ = ["TestCustomCycler"]
+__author__ = "Moin Ahmed"
+__copyright__ = "Copyright 2023 by Moin Ahmed. All Rights Reserved"
+
 import unittest
 import numpy as np
 
