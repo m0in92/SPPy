@@ -1,3 +1,12 @@
+"""
+Unittests for ParameterSets
+"""
+
+__all__ = ["TestParameterSets", "TestECMParameterSet", "TestPydanticParameterSet"]
+__author__ = "Moin Ahmed"
+__copyright__ = "Copyright 2024 by Moin Ahmed. All Rights Reserved."
+__status__ = "Deployed"
+
 from typing import Callable
 
 import numpy as np

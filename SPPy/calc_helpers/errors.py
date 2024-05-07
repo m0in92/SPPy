@@ -1,7 +1,16 @@
+"""
+Contains functionalities for different error metrics.
+"""
+
+__all__ = ["calc_mse"]
+__author__ = "Moin Ahmed"
+__copyright__ = "Copyright 2024 by Moin Ahmed. All Rights Reserved."
+__status__ = "Deployed"
+
 import numpy as np
 
 
-def calc_mse(array1, array2):
+def calc_mse(array1: np.ndarray, array2: np.ndarray) -> np.ndarray:
     """
     Calcs the mse of two numpy array
     :param array1: numpy array of observed values.

@@ -1,3 +1,11 @@
+"""
+Contains the functionalities for performing ODEs using different solvers.
+"""
+
+__all__ = ["euler", "rk4", "TDMAsolver"]
+__author__ = "Moin Ahmed"
+__copyright__ = "Copyright 2024 by BMSLogic. All Rights Reserved."
+
 from typing import Callable
 
 import numpy as np

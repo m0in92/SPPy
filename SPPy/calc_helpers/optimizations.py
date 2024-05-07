@@ -1,9 +1,4 @@
 import time
-import warnings
-
-import numpy as np
-import numpy.typing as npt
-import matplotlib.pyplot as plt
 
 
 def timer(solver_func):
