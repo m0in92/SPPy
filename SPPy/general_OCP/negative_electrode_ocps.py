@@ -12,6 +12,8 @@ Guo, M., Sikha, G., & White, R. E. (2011). Single-Particle Model for a Lithium-I
 Journal of The Electrochemical Society, 158(2), A122. https://doi.org/10.1149/1.3521314/XML
 """
 
+__all__ = ["MCMB", "PetroleumCoke", "HardCarbon", "LTO", "graphite"]
+
 from typing import Union
 
 import numpy as np

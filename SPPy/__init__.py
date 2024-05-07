@@ -8,7 +8,7 @@ __all__ = ['battery_components', 'calc_helpers', 'config', 'cycler', 'general_OC
 
 __author__ = 'Moin Ahmed'
 __copyright__ = 'Copyright 2023 by Moin Ahmed. All rights are reserved.'
-__status__ = 'deployed'
+__status__ = 'Deployed'
 
 from SPPy.battery_components.electrode import NElectrode, PElectrode
 from SPPy.battery_components.electrolyte import Electrolyte
