@@ -1,3 +1,9 @@
+__all__ = ["TestSolutionInitializer", "TestSolution"]
+
+__author__ = "Moin Ahmed"
+__copyright__ = "Copyright 2023 by Moin Ahmed. All Rights Reserved."
+__status__ = "Deployed"
+
 import unittest
 
 import numpy as np

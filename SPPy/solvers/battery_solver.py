@@ -2,19 +2,19 @@
 Contains the source code for the battery solvers.
 """
 
+__all__ = ["time", "BaseSolver", "SPPySolver", "KFSPSolver", "EnhancedSPSolver"]
+
 __author__ = 'Moin Ahmed'
 __copyright__ = 'Copyright 2023 by Moin Ahmed. All rights are reserved.'
-__status__ = 'deployed'
+__status__ = 'Deployed'
 
 import time
 from typing import Union, Optional
 
 import numpy as np
-import numpy.typing as npt
 from tqdm import tqdm
 
 from SPPy.battery_components.battery_cell import BatteryCell
-# from SPPy.solvers.base import BaseSolver, timer
 from SPPy.calc_helpers import ode_solvers
 from SPPy.sol_and_visualization.solution import SolutionInitializer, Solution
 

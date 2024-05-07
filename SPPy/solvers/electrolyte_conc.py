@@ -2,7 +2,7 @@
 Contains classes for electrolyte solvers.
 """
 
-__all__ = ['ElectrolyteConcFVMSolver']
+__all__ = ["BaseElectrolyteConcSolver", 'ElectrolyteConcFVMSolver', "ElectrolyteConcVolAvgSolver"]
 
 __authors__ = "Moin Ahmed"
 __copyright__ = "Copyright by SPPy. All rights reserved."

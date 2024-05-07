@@ -1,3 +1,9 @@
+__all__ = ["TestESPSolver"]
+
+__author__ = "Moin Ahmed"
+__copyright__ = "Copyright 2024 by Moin Ahmed. All Rights Reserved."
+__status__ = "Deployed"
+
 import unittest
 import numpy as np
 

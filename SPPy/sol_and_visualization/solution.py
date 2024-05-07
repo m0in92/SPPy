@@ -6,8 +6,9 @@ __all__ = ['ECMSolution', 'SolutionInitializer', 'Solution']
 
 __author__ = 'Moin Ahmed'
 __copyright__ = 'Copyright 2023 by Moin Ahmed. All rights are reserved.'
-__status__ = 'deployed'
+__status__ = 'Deployed'
 
+from dataclasses import dataclass, field
 import pickle
 from typing import Optional
 import sys
@@ -19,7 +20,7 @@ import matplotlib.pyplot as plt
 import matplotlib as mpl
 
 from SPPy.calc_helpers.constants import Constants
-from dataclasses import dataclass, field
+
 
 # Below checks for the Python3 version and imports the relevant packages for the type hinting. Note that the keyword
 # Self was introduced in Python3.11
