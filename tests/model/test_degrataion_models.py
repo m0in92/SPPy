@@ -1,3 +1,13 @@
+"""
+Contains the unittests for the battery cell degradation models
+"""
+
+__all__ = ["TESTROMSEI"]
+
+__author__ = "Moin Ahmed"
+__copyright__ = "Copytright 2024 by Moin Ahmed. All Rights Reserved."
+__status__ = "Deployed"
+
 import unittest
 
 import numpy as np

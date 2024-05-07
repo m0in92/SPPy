@@ -1,3 +1,13 @@
+"""
+Contains the unittests for the battery cell models
+"""
+
+__all__ = ["TestSPModel", "TestESP", "TestP2DM"]
+
+__author__ = "Moin Ahmed"
+__copyright__ = "Copyright 2023 by Moin Ahmed. All Rights Reserved."
+__status__ = "Deployed"
+
 import unittest
 
 import numpy as np

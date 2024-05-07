@@ -2,8 +2,10 @@
 Contains classes with the equations for the relevant continuum-scale battery models.
 """
 
+__all__ = ["SPM", "SPMe", "P2DM"]
+
 __author__ = 'Moin Ahmed'
-__copywrite__ = 'Copyright 2024 by Moin Ahmed. All rights are reserved.'
+__copyright__ = 'Copyright 2024 by Moin Ahmed. All rights are reserved.'
 __status__ = 'deployed'
 
 from typing import Union
