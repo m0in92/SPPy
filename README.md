@@ -38,6 +38,14 @@ The [documentation](https://libsim.readthedocs.io/en/latest/) is available and c
 - Visualization tools
 - Sigma Point Kalman Filter (for analyzing application' battery management system (BMS)) </b>
 
+## How to Cite
+
+If you are using the code and results in your code, please cite the following publication into your work.
+
+Ahmed, M., Mao, Z., Liu, Y., Yu, A., Fowler, M., & Chen, Z. (2024). Comparative Analysis of Computational Times of 
+Lithium-Ion Battery Management Solvers and Battery Models Under Different Programming Languages and Computing 
+Architectures. Batteries, 10(12), 439. https://doi.org/10.3390/batteries10120439
+
 ## Dependencies
 - Python 3.10 and above
 - numpy
